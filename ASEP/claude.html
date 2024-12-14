@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Our Food Sharing Community</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            color: #f57c00;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Grid */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Features Section */
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-icon {
+            background: #e8f5e9;
+            padding: 1rem;
+            border-radius: 8px;
+            color: #4caf50;
+            font-size: 1.5rem;
+        }
+
+        .feature-text h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-text p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Statistics Grid */
+        .statistics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #f57c00;
+        }
+
+        .stat-card .number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Form Styles */
+        .signup-form {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #f57c00;
+            box-shadow: 0 0 0 2px rgba(245, 124, 0, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #f57c00;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #ef6c00;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .form-footer a {
+            color: #f57c00;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Animation Classes */
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .success-message {
+            display: none;
+            background: #4caf50;
+            color: white;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>Join Our Food Sharing Community</h1>
+            <p>Together we can make a difference. Sign up today to start sharing food and spreading joy in your community.</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Column - Features -->
+            <div class="features">
+                <div class="card">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Make an Impact</h3>
+                            <p>Help reduce food waste while supporting those in need in your local community.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Build Connections</h3>
+                            <p>Connect with like-minded individuals and organizations passionate about food sharing.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Easy to Use</h3>
+                            <p>Simple platform to donate, receive, or organize food sharing initiatives.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="statistics">
+                    <div class="card stat-card">
+                        <i class="fas fa-apple-alt"></i>
+                        <div class="number">10,000+</div>
+                        <div class="label">Meals Shared</div>
+                    </div>
+                    <div class="card stat-card">
+                        <i class="fas fa-carrot"></i>
+                        <div class="number">500+</div>
+                        <div class="label">Active Members</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Signup Form -->
+            <div class="card signup-form">
+                <div class="success-message" id="successMessage">
+                    Thank you for joining our community!
+                </div>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="organization">Organization (Optional)</label>
+                        <input type="text" id="organization">
+                    </div>
+
+                    <button type="submit" class="submit-btn">Join the Community</button>
+
+                    <p class="form-footer">
+                        By signing up, you agree to our Terms of Service and Privacy Policy <br>
+                        <a href="claude_login.html">Sign in</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Basic form validation
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            
+            if (!name || !email || !phone) {
+                this.classList.add('shake');
+                setTimeout(() => this.classList.remove('shake'), 500);
+                return;
+            }
+            
+            // Show success message
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+            
+            // Clear form
+            this.reset();
+            
+            // Hide success message after 3 seconds
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        });
+
+        // Add focus effects to inputs
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        });
+    </script>
+</body>
+</html>
