@@ -3,57 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Food Donation Signup</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Join Our Food Sharing Community</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="signup.css">
 </head>
 <body>
-    <header>
-        <div class="logo">❤️ Food Heroes</div>
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">How It Works</a></li>
-                <li><a href="#">Get Involved</a></li>
-                <li><a href="#">Contact Us</a></li>
-                <li><a class="active" href="#">Sign Up</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <section class="hero">
-        <h1>Join Us in Nourishing Our Community!</h1>
-        <p>Together, we can make a difference, one meal at a time.</p>
-        <button id="signup-button">Sign Up Now</button>
-    </section>
-
-    <section class="signup-form">
-        <h2>Become a Food Hero!</h2>
-        <form id="form">
-            <input type="text" placeholder="Name" required>
-            <input type="email" placeholder="Email Address" required>
-            <input type="tel" placeholder="Phone Number" required>
-            <input type="text" placeholder="Address" required>
-            <select required>
-                <option value="">Preferred Method of Donation</option>
-                <option value="food">Food</option>
-                <option value="funds">Funds</option>
-                <option value="volunteer">Volunteer</option>
-            </select>
-            <textarea placeholder="Tell us how you’d like to help!" required></textarea>
-            <button type="submit">Join the Movement</button>
-        </form>
-    </section>
-
-    <footer>
-        <p>Stay updated on our mission!</p>
-        <input type="email" placeholder="Your Email">
-        <button id="subscribe-button">Subscribe</button>
-        <div class="contact-info">
-            <p>Email: info@foodheroes.org | Phone: (123) 456-7890</p>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>Join Our Food Sharing Community</h1>
+            <p>Together we can make a difference. Sign up today to start sharing food and spreading joy in your community.</p>
         </div>
-    </footer>
 
-    <script src="script.js"></script>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Column - Features -->
+            <div class="features">
+                <div class="card">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Make an Impact</h3>
+                            <p>Help reduce food waste while supporting those in need in your local community.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Build Connections</h3>
+                            <p>Connect with like-minded individuals and organizations passionate about food sharing.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Easy to Use</h3>
+                            <p>Simple platform to donate, receive, or organize food sharing initiatives.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="statistics">
+                    <div class="card stat-card">
+                        <i class="fas fa-apple-alt"></i>
+                        <div class="number">0</div>
+                        <div class="label">Meals Shared</div>
+                    </div>
+                    <div class="card stat-card">
+                        <i class="fas fa-carrot"></i>
+                        <div class="number">0</div>
+                        <div class="label">Active NGOs and Restaurants</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Signup Form -->
+            <div class="card signup-form">
+                <div class="success-message" id="successMessage">
+                    Thank you for joining our community!
+                </div>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="organization">Organization</label>
+                        <input type="text" id="organization">
+                    </div>
+
+                    <button type="submit" class="submit-btn">Join the Community</button>
+
+                    <p class="form-footer">
+                        By signing up, you agree to our Terms of Service and Privacy Policy <br>
+                        <a href="claude_login.html">Sign in</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="signup.js"></script>
 </body>
 </html>

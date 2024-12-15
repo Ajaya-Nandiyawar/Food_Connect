@@ -1,97 +1,213 @@
-body {
-    font-family: Arial, sans-serif;
+* {
     margin: 0;
     padding: 0;
-    background-color: #f9f9f9;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-header {
-    background-color: #4CAF50;
-    color: white;
-    padding: 15px;
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.login-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin: 0 auto;
+    max-width: 900px;
+}
+
+@media (min-width: 768px) {
+    .login-container {
+        grid-template-columns: 1.2fr 0.8fr;
+    }
+}
+
+/* Welcome Section */
+.welcome-section {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.welcome-section h1 {
+    color: #f57c00;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.welcome-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.stat-item {
     text-align: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
 }
 
-header .logo {
-    font-size: 24px;
+.stat-item i {
+    font-size: 2rem;
+    color: #f57c00;
+    margin-bottom: 0.5rem;
+}
+
+.stat-number {
+    font-size: 1.5rem;
     font-weight: bold;
+    color: #333;
 }
 
-nav ul {
-    list-style-type: none;
-    padding: 0;
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
 }
 
-nav ul li {
-    display: inline;
-    margin: 0 15px;
+/* Login Form */
+.login-form-container {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-nav ul li a {
-    color: white;
+.form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form-header h2 {
+    color: #333;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #f57c00;
+    box-shadow: 0 0 0 2px rgba(245, 124, 0, 0.2);
+}
+
+.remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.forgot-password {
+    color: #f57c00;
     text-decoration: none;
 }
 
-nav ul li a.active {
+.forgot-password:hover {
     text-decoration: underline;
 }
 
-.login-form {
-    background-color: #fff;
-    padding: 40px;
-    margin: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    margin: 100px auto;
-    text-align: center;
-}
-
-.login-form h2 {
-    margin-bottom: 20px;
-}
-
-.login-form input {
+.login-btn {
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-button {
-    background-color: #FF9800;
+    padding: 1rem;
+    background: #f57c00;
     color: white;
     border: none;
-    padding: 10px 20px;
-    font-size: 16px;
+    border-radius: 6px;
+    font-size: 1rem;
     cursor: pointer;
-    border-radius: 5px;
+    transition: background-color 0.3s;
 }
 
-footer {
-    background-color: #4CAF50;
-    color: white;
+.login-btn:hover {
+    background: #ef6c00;
+}
+
+.signup-prompt {
     text-align: center;
-    padding: 20px;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: #666;
 }
 
-footer input {
-    padding: 10px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 5px;
+.signup-prompt a {
+    color: #f57c00;
+    text-decoration: none;
+    font-weight: 500;
 }
 
-footer button {
-    background-color: #FF9800;
+.signup-prompt a:hover {
+    text-decoration: underline;
+}
+
+.error-message {
+    display: none;
+    background: #ff5252;
     color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    text-align: center;
 }
 
-.contact-info {
-    margin-top: 20px;
+.shake {
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-10px);
+    }
+
+    75% {
+        transform: translateX(10px);
+    }
 }
