@@ -60,3 +60,159 @@ body {
     text-align: justify;
 }
 
+
+/* footer */
+.footer {
+    background-color: #414141;
+    width: 100%;
+    text-align: left;
+  
+    font-weight: bold;
+    font-size: 16px;
+    padding: 50px;
+    margin-top: 50px;
+  }
+  
+  .footer .footer-left,
+  .footer .footer-center,
+  .footer .footer-right {
+    display: inline-block;
+    vertical-align: top;
+  }
+  
+  /* footer left*/
+  
+  .footer .footer-left {
+    width: 33%;
+    padding-right: 15px;
+  }
+  
+  .footer .about {
+    line-height: 20px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: normal;
+    margin: 0;
+  }
+  
+  .footer .about span {
+    display: block;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  /* footer center*/
+  
+  .footer .footer-center {
+    width: 30%;
+  }
+  
+  .footer .footer-center p {
+    display: inline-block;
+    color: #ffffff;
+    vertical-align: middle;
+    margin: 0;
+  }
+  
+  .footer .footer-center p span {
+    display: block;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .footer .footer-center p a {
+    color: #f57c00;
+    text-decoration: none;
+  }
+  
+  /* footer right*/
+  
+  .footer .footer-right {
+    width: 35%;
+  }
+  
+  .footer h2 {
+    color: #ffffff;
+    font-size: 36px;
+    font-weight: normal;
+    margin: 0;
+  }
+  
+  .footer h2 span {
+    color: #f57c00;
+  }
+  
+  .footer .menu {
+    color: #ffffff;
+    margin: 20px 0 12px;
+    padding: 0;
+  }
+  
+  .footer .menu a {
+    display: inline-block;
+    line-height: 1.8;
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .footer .menu a:hover {
+    color: #f57c00;
+  }
+  
+  .footer .name {
+    color: #f57c00;
+    font-size: 14px;
+    font-weight: normal;
+    margin: 0;
+  }
+  .deli .para {
+    font-size: 30px;
+    text-align: center;
+  }
+  .para {
+    font-size: 20px;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  @media (max-width: 767px) {
+    .content {
+      padding: 10px;
+    }
+    .deli .para {
+      font-size: 23px;
+      text-align: center;
+    }
+    .deli img {
+      width: 100%;
+      height: 100%;
+    }
+  
+    .footer {
+      font-size: 14px;
+    }
+    .footer .footer-left,
+    .footer .footer-center,
+    .footer .footer-right {
+      display: block;
+      width: 100%;
+      margin-bottom: 60px;
+      text-align: center;
+    }
+    .sociallist {
+      padding-left: 60px;
+    }
+  }
+  
+  .sociallist h3 {
+    color: white;
+  }
+  
+  .sociallist a:hover {
+    transform: scale(1.2);
+  }
+  /* footer end  */
