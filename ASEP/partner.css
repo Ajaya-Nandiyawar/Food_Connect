@@ -1,0 +1,131 @@
+        
+    :root {
+        --primary: #6366F1;
+        --primary-light: #818CF8;
+        --secondary: #10B981;
+        --accent: #F59E0B;
+        --background: #F8FAFC;
+        --text: #1E293B;
+        --success: #059669;
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --gradient: linear-gradient(135deg, #6366F1 0%, #10B981 100%); 
+      }
+      
+      .section-header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+      
+      .filters {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+      }
+      
+      .filter-btn {
+        padding: 0.5rem 1.5rem;
+        border: 1px solid var(--primary);
+        border-radius: 25px;
+        background: transparent;
+        color: var(--primary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .filter-btn:hover,
+      .filter-btn.active {
+        background: var(--gradient);
+        color: white;
+        border-color: transparent;
+      }
+      
+      .ngo-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin: 3rem auto;
+        max-width: 1200px;
+        padding: 0 2rem;
+      }
+      
+      .stat-card {
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+      }
+      
+      .stat-card:hover {
+        transform: translateY(-5px);
+      }
+      
+      .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+      }
+      
+      .stat-label {
+        color: var(--text);
+        font-size: 0.9rem;
+      }
+      
+      .ngo-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(99, 102, 241, 0.1);
+        transform-origin: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .ngo-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      
+      .partner-btn {
+        background: var(--gradient);
+        transform-origin: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .partner-btn:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      }
+      
+      @media (max-width: 768px) {
+        .ngo-stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .stat-card {
+          padding: 1.5rem;
+        }
+      }
+      
+      /* Add smooth transitions for filtering */
+      .ngo-card {
+        animation: fadeIn 0.5s ease-out;
+      }
+      
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
