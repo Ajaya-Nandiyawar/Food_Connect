@@ -5,21 +5,6 @@ body {
     background-color: lightyellow;
     background: linear-gradient(to top, #ffeda6, lightyellow);
 }
-.header {
-    background-color: orange;
-    background: linear-gradient(135deg, orange, #ff6347);
-    color: white;
-    padding: 40px 0;
-    text-align: center;
-}
-.header h1 {
-    margin: 0;
-    font-size: 40px;
-}
-.header p {
-    margin: 10px 0;
-    font-size: 20px;
-}
 
 /* container */
 .container {
@@ -216,3 +201,61 @@ body {
     transform: scale(1.2);
   }
   /* footer end  */
+
+
+  /* add ons  */
+
+
+  /* Hamburger menu styles */
+.hamburger {
+  display: none;
+  cursor: pointer;
+}
+
+.hamburger .line {
+  width: 30px;
+  height: 3px;
+  background: #f57c00;
+  margin: 6px 0;
+  transition: 0.4s;
+}
+
+/* Mobile navbar styles */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .nav-bar {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    transition: 0.3s;
+    overflow: hidden;
+    max-height: 0;
+  }
+
+  .nav-bar.active {
+    max-height: 300px;
+  }
+
+  .nav-bar ul {
+    display: block;
+    width: fit-content;
+    margin: 80px auto 0 auto;
+    text-align: center;
+    transition: 0.5s;
+    opacity: 0;
+  }
+
+  .nav-bar.active ul {
+    opacity: 1;
+  }
+
+  .nav-bar ul li a {
+    margin-bottom: 12px;
+  }
+}
+
