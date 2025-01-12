@@ -1,3 +1,8 @@
+:root {
+  --white: #ffffff;
+  --orange: #f57c00;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -17,14 +22,12 @@ body {
     padding: 40px 0;
 }
 
-
-
 .section {
-    border: 5px solid orange;
-    background-color: #ffffff;
+    border: 5px solid var(--orange);
+    background-color: var(--white);
     padding: 40px;
     border-radius: 8px;
-    box-shadow: 0px 0px 15px orange;
+    box-shadow: 0px 0px 15px var(--orange);
     margin-bottom: 30px;
     width: 100%;
     max-width: 900px; 
@@ -34,7 +37,7 @@ body {
 .section-header {
     text-align: center;
     font-size: 36px;
-    color: orange;
+    color: var(--orange);
     margin-bottom: 20px;
 }
 
@@ -44,7 +47,6 @@ body {
     line-height: 1.6;
     text-align: justify;
 }
-
 
 /* footer */
 .footer {
@@ -66,7 +68,7 @@ body {
   }
   
   /* footer left*/
-  
+
   .footer .footer-left {
     width: 33%;
     padding-right: 15px;
@@ -74,7 +76,7 @@ body {
   
   .footer .about {
     line-height: 20px;
-    color: #ffffff;
+    color: var(--white);
     font-size: 13px;
     font-weight: normal;
     margin: 0;
@@ -82,7 +84,7 @@ body {
   
   .footer .about span {
     display: block;
-    color: #ffffff;
+    color: var(--white);
     font-size: 14px;
     font-weight: bold;
     margin-bottom: 20px;
@@ -96,21 +98,21 @@ body {
   
   .footer .footer-center p {
     display: inline-block;
-    color: #ffffff;
+    color: var(--white);
     vertical-align: middle;
     margin: 0;
   }
   
   .footer .footer-center p span {
     display: block;
-    color: #ffffff;
+    color: var(--white);
     font-size: 14px;
     font-weight: bold;
     margin-bottom: 20px;
   }
   
   .footer .footer-center p a {
-    color: #f57c00;
+    color: var(--orange);
     text-decoration: none;
   }
   
@@ -121,18 +123,18 @@ body {
   }
   
   .footer h2 {
-    color: #ffffff;
+    color: var(--white);
     font-size: 36px;
     font-weight: normal;
     margin: 0;
   }
   
   .footer h2 span {
-    color: #f57c00;
+    color: var(--orange);
   }
   
   .footer .menu {
-    color: #ffffff;
+    color: var(--white);
     margin: 20px 0 12px;
     padding: 0;
   }
@@ -145,11 +147,11 @@ body {
   }
   
   .footer .menu a:hover {
-    color: #f57c00;
+    color: var(--orange);
   }
   
   .footer .name {
-    color: #f57c00;
+    color: var(--orange);
     font-size: 14px;
     font-weight: normal;
     margin: 0;
@@ -194,7 +196,7 @@ body {
   }
   
   .sociallist h3 {
-    color: white;
+    color: var(--white);
   }
   
   .sociallist a:hover {
