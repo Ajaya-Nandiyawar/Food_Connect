@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,500;0,700;0,800;1,400;1,600&display=swap");
 :root {
-  --navcolor: white;
+  --navcolor: rgb(255, 255, 255);
   --navfont: black;
   --green: #f57c00;
   --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0.1);
