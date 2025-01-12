@@ -2,7 +2,7 @@
 :root {
   --navcolor: rgb(255, 255, 255);
   --navfont: black;
-  --green: #f57c00;
+  --orange: #f57c00;
   --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0.1);
 }
 * {
@@ -68,7 +68,6 @@ header {
 .nav-bar ul li a.active {
   color: var(--navcolor);
   background-color: var(--navfont);
-  /* border-bottom: 8px solid #f57c00; */
 }
 @media only screen and (max-width: 1320px) {
   header {
@@ -109,7 +108,7 @@ header {
     left: 0;
     right: 0;
     width: 100vw;
-    background-color: #f57c00;
+    background-color: var(--orange);
     transition: 0.2s;
     overflow: hidden;
   }
@@ -184,8 +183,7 @@ header {
 }
 .content {
   padding: 20px;
-  background-color: #f57c00;
-
+  background-color: va;
   z-index: 0;
 }
 
@@ -280,7 +278,7 @@ header {
 }
 
 .footer .footer-center p a {
-  color: #f57c00;
+  color: var(--orange);
   text-decoration: none;
 }
 
@@ -298,7 +296,7 @@ header {
 }
 
 .footer h2 span {
-  color: #f57c00;
+  color: var(--orange);
 }
 
 .footer .menu {
@@ -315,11 +313,11 @@ header {
 }
 
 .footer .menu a:hover {
-  color: #f57c00;
+  color: var(--orange);
 }
 
 .footer .name {
-  color: #f57c00;
+  color: var(--orange);
   font-size: 14px;
   font-weight: normal;
   margin: 0;
@@ -460,7 +458,7 @@ header {
   text-align: center;
   align-items: center;
   text-decoration: underline 5px;
-  text-decoration-color: #f57c00;
+  text-decoration-color: var(--orange);
 }
 .heading:hover {
   letter-spacing: 3px;
