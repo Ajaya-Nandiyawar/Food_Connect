@@ -191,6 +191,7 @@ box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
 .metric .number {
 background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
 -webkit-background-clip: text;
+background-clip: text;
 -webkit-text-fill-color: transparent;
 }
 
