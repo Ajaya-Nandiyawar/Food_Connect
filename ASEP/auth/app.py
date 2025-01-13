@@ -1,64 +1,77 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, request, session, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
+import bcrypt
 
 app = Flask(__name__)
-app.secret_key = "your_secret_key"
-
-# MySQL Database Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://app_user:secure_password@localhost/food_sharing_app'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+app.secret_key = 'your_secret_key'  # Set a secret key for sessions
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
-# Define the User model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     organization = db.Column(db.String(50), nullable=False)
+    
+    def __init__(self, name, email, password, organization):
+        self.name = name
+        self.organization = organization
+        self.email = email
+        self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
-# Route to serve the registration page
+    def check_password(self, password):
+        return bcrypt.checkpw(password.encode('utf-8'), self.password)
+
+
+with app.app_context():
+    db.create_all()
+
 @app.route('/')
-def signup_page():
-    return render_template('register.html')
+def hello_world():
+    return 'Hello, World!'
 
-# Route to handle form submission
-@app.route('/register', methods=['POST'])
-def register():
-    try:
-        # Extract form data
-        name = request.form.get('name')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        organization = request.form.get('organization')
 
-        # Input validation
-        if not name or not email or not password or not organization:
-            flash("All fields are required.", "error")
-            return redirect(url_for('signup_page'))
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        
+        user = User.query.filter_by(email=email).first()
+        
+        if user and user.check_password(password):
+            session['name'] = user.name
+            session['email'] = user.email
+            session['organization'] = user.organization
+            return redirect('/dashboard')
+        else:
+            return 'Invalid email or password'
+    
+    return render_template('login.html')
 
-        # Check if email already exists
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user:
-            flash("Email already registered.", "error")
-            return redirect(url_for('signup_page'))
-
-        # Save data to the database
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        organization = request.form['organization']
+        
         new_user = User(name=name, email=email, password=password, organization=organization)
-        db.session.add(new_user)
+        db.session.add(new_user)    
         db.session.commit()
+        
+        return redirect('/login')
+    
+    return render_template('signup.html')
+    
 
-        flash("Registration successful!", "success")
-        return redirect(url_for('signup_page'))
-
-    except Exception as e:
-        flash(f"An error occurred: {str(e)}", "error")
-        return redirect(url_for('signup_page'))
+@app.route('/dashboard')
+def dashboard():
+    if 'name' in session and 'email' in session and 'organization' in session:
+        return render_template('dashboard.html', name=session['name'], organization=session['organization'])
+    return redirect('/login')
 
 if __name__ == '__main__':
-    # Create database tables before running the app
-    with app.app_context():
-        db.create_all()
-
     app.run(debug=True)
