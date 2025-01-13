@@ -28,9 +28,12 @@ with app.app_context():
     db.create_all()
 
 @app.route('/')
-def hello_world():
-    return 'Hello, World!'
+def home():
+    return render_template('home page.html')
 
+@app.route('/about_us')
+def about_us():
+    return render_template('about_us.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

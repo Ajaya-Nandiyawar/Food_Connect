@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - Food Connect</title>
-    <link rel="icon" href="img/logo.ico" type="logo" />
-    <link rel="stylesheet" href="/ASEP/auth/static/css/about_us.css">
+    <link rel="icon" href={{url_for('static', filename='img/logo.ico')}} type="logo" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about_us.css') }}">
 </head>
 <body>
     <div class="header">
@@ -110,7 +110,7 @@
             <h3><u>Socials</u></h3>
             <a target="_blank" href="#">
               <img
-                src="img/icon.png"
+                src={{url_for('static',filename='img/icon.png')}}
                 width="25"
                 height="25"
                 alt="LinkedIn Icon"
@@ -118,7 +118,7 @@
             </a>
             <a target="_blank" href="#">
               <img
-                src="img/icon1.png"
+                src={{url_for('static',filename='img/icon1.png')}}
                 width="25"
                 height="25"
                 alt="Instagram Icon"

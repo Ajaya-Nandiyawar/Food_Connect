@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Food Connect</title>
     <link rel="icon" href="img/logo.ico" type="logo" />
-    <link rel="stylesheet" href="/ASEP/auth/static/css/home page.css" />
-    <link rel="stylesheet" href="/ASEP/auth/static/css/partner.css" />
+    <link rel="stylesheet" href={{ url_for('static', filename='css/home page.css') }} />
+    <link rel="stylesheet" href={{ url_for('static', filename='css/partner.css') }} />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -16,7 +16,7 @@
   <body>
     <header>
       <div id="together">
-        <img id="food_connect" src="img/logo_png.png" alt="logo" />
+        <img id="food_connect" src={{url_for('static', filename='img/logo.ico')}} alt="logo" />
         <div class="logo">
           Food
           <b style="color: #f57c00">Connect</b>
@@ -30,16 +30,16 @@
       <nav class="nav-bar">
         <ul>
           <li><a href="#" class="active">Home</a></li>
-          <li><a href="about_us.html" target="_blank">About</a></li>
+          <li><a href="{{url_for('about_us')}}" target="_blank">About</a></li>
           <!-- <li><a href="contact.html" target="_blank">Contact</a></li> -->
-          <li><a href="/ASEP/auth/templates/login.html" target="_blank">Login </a></li>
-          <li><a href="/ASEP/auth/templates/signup.html" target="_blank">Join Us</a></li>
+          <li><a href={{url_for('login')}} target="_blank">Login </a></li>
+          <li><a href={{url_for('signup')}} target="_blank">Join Us</a></li>
           <!-- <li><a href="profile.php">Profile</a></li> -->
         </ul>
       </nav>
     </header>
 
-    <section class="banner"></section>
+    <section class="banner" style="background-image: url('{{ url_for('static', filename='img/donation.png') }}')"></section>
     <div class="content">
       <center>
         <p style="font-size: 23px">
@@ -79,9 +79,9 @@
       </p>
       <br />
       <div class="wrapper">
-        <div class="box"><img src="img/p1.jpeg" alt="" /></div>
-        <div class="box"><img src="img/p4.jpeg" alt="" /></div>
-        <div class="box"><img src="img/p3.jpeg" alt="" /></div>
+        <div class="box"><img src={{url_for('static',filename='img/p1.jpeg')}} alt="" /></div>
+        <div class="box"><img src={{url_for('static',filename='img/p4.jpeg')}} alt="" /></div>
+        <div class="box"><img src={{url_for('static',filename='img/p3.jpeg')}} alt="" /></div>
       </div>
       <!-- <p style="font-size: 19px">
         The basic concept of this project Food Waste Management is to collect
@@ -179,7 +179,7 @@
           <h3><u>Socials</u></h3>
           <a target="_blank" href="#">
             <img
-              src="img/icon.png"
+              src={{url_for('static',filename='img/icon.png')}}
               width="25"
               height="25"
               alt="LinkedIn Icon"
@@ -187,7 +187,7 @@
           </a>
           <a target="_blank" href="#">
             <img
-              src="img/icon1.png"
+              src={{url_for('static',filename='img/icon1.png')}}
               width="25"
               height="25"
               alt="Instagram Icon"
@@ -199,14 +199,14 @@
         <h2>Food<span> Connect</span></h2>
 
         <p class="menu">
-          <a href="#"> Home</a> | <a href="signup.html">Join us</a> |
+          <a href={{url_for('home')}}> Home</a> | <a href="signup.html">Join us</a> |
           <a href="profile.php"> Profile</a> |
-          <a href="about_us.html"> About us</a>
+          <a href={{url_for('about_us')}}> About us</a>
         </p>
         <p class="name">Food Connect &copy 2024</p>
       </div>
     </footer>
-    <script src="/ASEP/auth/static/js/home page.js"></script>
-    <script src="/ASEP/auth/static/js/partner.js"></script>
+    <script src={{url_for('static', filename='js/home page.js')}}></script>
+    <script src={{url_for('static', filename='js/partner.js')}}></script>
   </body>
 </html>
