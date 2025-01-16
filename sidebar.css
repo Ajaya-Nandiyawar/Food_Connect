@@ -1,0 +1,131 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.sidebar {
+    width: 250px;
+    background: white;
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    margin: 8px 0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #333;
+    text-decoration: none;
+}
+
+.menu-item:hover {
+    background-color: #f5f5f5;
+}
+
+.menu-item.active {
+    background-color: orange;
+    color: white;
+}
+
+.menu-item i {
+    margin-right: 12px;
+    font-size: 20px;
+}
+
+.menu-text {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Collapsed sidebar styles */
+.sidebar.collapsed {
+    width: 70px; /* Set the width for collapsed state */
+    overflow: hidden;
+    transition: width 0.3s ease;
+}
+
+/* Ensure icons are always visible */
+.sidebar .menu-text {
+    display: inline-block;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+/* Hide text when collapsed */
+.sidebar.collapsed .menu-text {
+    opacity: 0;
+    transform: translateX(-20px);
+    pointer-events: none;
+}
+/* Add transition for smooth expansion */
+.sidebar {
+    transition: width 0.4s ease;
+}
+
+/* Keep icons aligned and visible */
+.menu-item .icon {
+    flex-shrink: 0; /* Prevent icon from shrinking */
+    width: 20px; /* Fixed size for the icon */
+    height: 20px;
+    margin-right: 12px; /* Adjust if needed */
+    background-size: contain; /* Ensure background color fits the icon */
+}
+
+/* Hide logo when sidebar is collapsed */
+.sidebar.collapsed .logo {
+    display: none;
+}
+
+.toggle-btn {
+    background-color: white;
+    border: none;
+    color: black;
+    padding: 10px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    display: block;
+    text-align: left;
+}
+
+/* Toggle button */
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+.logo h1 {
+    font-size: 20px;
+    font-weight: 600;
+}
+.logo img {
+    width: 35px; 
+    height: 35px;
+}
+
+/* Icons */
+.icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+}
+
+.dashboard-icon {
+    background: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 13h6a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1zm-1 7a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v4zm10 0a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-7a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v7zm1-10h6a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1z'/%3E%3C/svg%3E") no-repeat center;
+}
+
+.settings-icon {
+    background: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5zm7.43-2.53c.04-.32.07-.65.07-.97 0-.32-.03-.65-.07-.97l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65A.488.488 0 0 0 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.63c-.04.32-.07.65-.07.97 0 .32.03.65.07.97l-2.11 1.63c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.31.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.63z'/%3E%3C/svg%3E") no-repeat center;
+}
+
+.logout-icon {
+    background: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z'/%3E%3C/svg%3E") no-repeat center;
+}
