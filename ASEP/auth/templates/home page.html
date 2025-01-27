@@ -30,10 +30,10 @@
       <nav class="nav-bar">
         <ul>
           <li><a href="#" class="active">Home</a></li>
-          <li><a href="{{url_for('about_us')}}" target="_blank">About</a></li>
+          <li><a href="{{url_for('about_us')}}">About</a></li>
           <!-- <li><a href="contact.html" target="_blank">Contact</a></li> -->
-          <li><a href={{url_for('login')}} target="_blank">Login </a></li>
-          <li><a href={{url_for('signup')}} target="_blank">Join Us</a></li>
+          <li><a href={{url_for('login')}} >Login </a></li>
+          <li><a href={{url_for('signup')}} >Join Us</a></li>
           <!-- <li><a href="profile.php">Profile</a></li> -->
         </ul>
       </nav>
@@ -140,7 +140,7 @@
         "Your donate will be immediately collected and sent to needy people "
       </p>
       <img
-        src="img/delivery.gif"
+        src={{url_for('static',filename='img/delivery.gif')}}
         alt=""
         style="margin-left: auto; margin-right: auto"
       />

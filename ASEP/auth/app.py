@@ -1,22 +1,29 @@
-from flask import Flask, request, session, render_template, redirect
+from flask import Flask, request, session, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-import bcrypt
+from extensions import db
+import bcrypt, os
+from NGO import ngo_blueprint
 
+# Initialize the Flask app
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Set a secret key for sessions
 
 # MySQL connection string
 db_user = "root"
-db_password = "Rishi%400211"  # URL-encoded password (%40 represents @)
+db_password = "%40J%21nky%40ub%40le5"  # URL-encoded password (%40 represents @)
 db_host = "127.0.0.1"
-db_name = "food_sharing"
+db_name = "registered"
 
 # Configuring database URI
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking
 
-# Initialize SQLAlchemy
-db = SQLAlchemy(app)
+
+# Register blueprint before app initialization (if using blueprints)
+app.register_blueprint(ngo_blueprint, url_prefix='/ngo')
+
+# Initialize SQLAlchemy with the app
+db.init_app(app)
 
 # User Model
 class User(db.Model):
@@ -37,9 +44,13 @@ class User(db.Model):
         # Encode stored password to bytes for comparison
         return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
 
-# Create database tables
-with app.app_context():
-    db.create_all()
+# Create database tables manually using app context
+def create_tables():
+    with app.app_context():
+        db.create_all()
+
+# Call this function once before running the app
+create_tables()
 
 # Routes
 @app.route('/')
@@ -92,8 +103,33 @@ def signup():
 @app.route('/dashboard')
 def dashboard():
     if 'name' in session and 'email' in session and 'organization' in session:
-        return render_template('dashboard.html', name=session['name'], organization=session['organization'])
+        api_key = os.getenv('AIzaSyA083VfuQXN3YIRY_uMmjldA8VhjIat5FE')  # Store the key as an environment variable
+        return render_template('dashboard2.html', name=session['name'], organization=session['organization'] , api_key=api_key) 
     return redirect('/login')
+    
+
+@app.route('/profile', methods=['GET'])
+def profile():
+    if request.method == 'GET' and 'email' in session:
+        user = User.query.filter_by(email=session['email']).first()
+        if user:
+            return render_template(
+            'settings.html',
+            name=user.name,
+            email=user.email
+        )
+    return redirect('/login')
+
+@app.route('/notifications')
+def notifications():
+    return render_template('notification.html')
+
+@app.route('/stat')
+def stat():
+    return render_template('stats.html')
+
+
+
 
 # Run the app
 if __name__ == '__main__':

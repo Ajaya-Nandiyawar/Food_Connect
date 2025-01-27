@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodShare - Request Donations</title>
+    <link rel="stylesheet" href={{url_for('static',filename='css/request.css')}} />
+    <link rel="stylesheet" href={{url_for('static', filename='css/sidebar.css')}}/>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <!-- <div class="sidebar">
+        <div class="logo">
+          <div class="logo-icon"></div>
+          <span>FoodShare</span>
+        </div>
+        <nav>
+          <a href="#" class="nav-item active">Dashboard</a>
+          <a href="#" class="nav-item">Alerts</a>
+          <a href="#" class="nav-item">Stats</a>
+          <a href="#" class="nav-item">Requests</a>
+          <a href="#" class="nav-item">Settings</a>
+        </nav>
+      </div> -->
+      <div class="sidebar" id="sidebar">
+        <div class="logo">
+          <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare" />
+          <h1>Food<b style="color: rgb(239, 107, 13)">Connect</b></h1>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <button class="toggle-btn" id="toggleBtn">X</button>
+        </div>
+        <div>
+          <a href={{url_for('dashboard')}} class="menu-item">
+            <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Dashboard</span>
+          </a>
+        </div>
+        <a href={{url_for('notifications')}} class="menu-item">
+          <div class="icon alert-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Notifications</span>
+        </a>
+        <a href={{url_for('ngo.handle_request')}} class="menu-item active">
+          <div class="icon alert-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Requests</span>
+        </a>
+        <a href={{url_for('stat')}} class="menu-item">
+          <div class="icon stats-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Stats</span>
+        </a>
+        <a href={{url_for('profile')}} class="menu-item">
+          <div class="icon settings-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Settings</span>
+        </a>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="header">
+          <h1>Request Donations</h1>
+          <button class="new-request-btn">New Request</button>
+        </div>
+        
+        <div class="content-container">
+          <!-- Left Section - Create Donation Request -->
+          <div class="create-request">
+            <h2>Create Donation Request</h2>
+            <form id="donationForm" action="/ngo/request" method="POST">
+              <div class="form-group">
+                <label>Food Category</label>
+                <select name="food_category">
+                  <option>Select Category</option>
+                  <option>Vegetables</option>
+                  <option>Fruits</option>
+                  <option>Grains</option>
+                  <option>Dairy</option>
+                  <option>Protein</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Quantity (kg)</label>
+                <input name="quantity" type="text" placeholder="Enter quantity" />
+              </div>
+
+              <div class="form-group">
+                <label>Preferred Restaurants</label>
+                <div class="restaurant-list">
+                  <div class="restaurant-item">Restaurant A - 2.5km away</div>
+                  <div class="restaurant-item">Restaurant B - 3.2km away</div>
+                  <div class="restaurant-item">Restaurant C - 4.0km away</div>
+                  <div class="restaurant-item">Restaurant D - 4.8km away</div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Pickup Date</label>
+                  <input name="pick_up_date" type="date" id="pickupDate" class="date-input" />
+                </div>
+                <div class="form-group">
+                  <label>Preferred Time</label>
+                  <input name="preferred_time" type="time" id="pickupTime" class="time-input" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Additional Notes</label>
+                <textarea
+                  name="additional_note"
+                  placeholder="Any specific requirements or notes"
+                ></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="cancel-btn">Cancel</button>
+                <button type="submit" class="submit-btn">Submit Request</button>
+              </div>
+            </form>
+          </div>
+          
+          <!-- Right Section - Active Requests -->
+          <div class="active-requests">
+            <h2>Active Requests</h2>
+            <div class="request-cards">
+              {% for request in requests %}
+              <div class="request-card pending">
+                <div class="status">{{request.status}}</div>
+                <h3>{{request.food_category}}</h3>
+                <p>Pickup: {{ request.pick_up_date }}</p>
+                <p>Time: {{ request.preferred_time }}</p>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.querySelector("form").addEventListener("submit", function (e) {
+        e.preventDefault();
+    
+        fetch("/ngo/request", {  // Note the '/ngo' prefix
+            method: "POST",
+            body: new FormData(this),
+        })
+        .then((response) => {
+            console.log("Response status:", response.status);
+            return response.json();
+        })
+        .then((data) => {
+            console.log("Received data:", data);
+            if (data.status === "success") {
+                window.location.reload(); // Reload page to show new request
+            } else {
+                alert("Error submitting request: " + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Full error:", error);
+            alert("Error submitting request: " + error.message);
+        });
+      });
+    </script>
+    <script src={{url_for('static', filename='js/request.js')}}></script>
+    <script src={{url_for('static', filename='js/sidebar.js')}}></script>
+  </body>
+</html>
