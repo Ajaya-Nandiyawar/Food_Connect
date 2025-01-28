@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodShare Dashboard</title>
+    <link rel="stylesheet" href="dashboard2.css" />
+    <link rel="stylesheet" href="sidebar.css">
+  </head>
+  <body>
+  
+    <div class="container">
+      
+      <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <img src="logo.ico" alt="FoodShare">
+            <h1>Food<b style="color: rgb(239, 107, 13);">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="toggle-btn" id="toggleBtn">X</button>
+        </div>
+        <div class="menu">
+        <a href="dashboard2.html" class="menu-item active" >
+            <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Dashboard</span>
+        </a>
+        </div>
+        <a href="notification.html" class="menu-item">
+            <div class="icon alert-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Notifications</span>
+        </a>
+        <a href="request.html" class="menu-item">
+            <div class="icon alert-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Requests</span>
+        </a>
+        <a href="stats.html" class="menu-item">
+            <div class="icon stats-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Stats</span>
+        </a>
+        <a href="settings.html" class="menu-item">
+            <div class="icon settings-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Settings</span>
+        </a>
+    </div>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card" id="totalFood">
+            <h3>Total Food Available</h3>
+            <div class="stat-value">2,450 kg</div>
+            <div class="stat-change positive">↑ 12% from last week</div>
+          </div>
+          <div class="stat-card" id="activeDonors">
+            <h3>Active Donors</h3>
+            <div class="stat-value">128</div>
+            <div class="stat-change">↑ 4 new today</div>
+          </div>
+          <div class="stat-card" id="pendingPickups">
+            <h3>Pending Pickups</h3>
+            <div class="stat-value">15</div>
+            <div class="stat-change warning">Within 24 hours</div>
+          </div>
+          <div class="stat-card" id="criticalItems">
+            <h3>Critical Items</h3>
+            <div class="stat-value">8</div>
+            <div class="stat-change critical">Expiring soon</div>
+          </div>
+        </div>
+
+        <!-- Map and Food Items Section -->
+        <div class="content-grid">
+          <div class="map-section">
+            <div class="section-header">
+              <h3>Food Availability Map</h3>
+            </div>
+            <div class="map-container" id="map">
+              <!-- Map will be loaded here -->
+              <img
+                src="https://via.placeholder.com/800x400"
+                alt="Map"
+                style="width: 100%; height: 100%; object-fit: cover"
+              />
+            </div>
+          </div>
+
+          <div class="food-items-section">
+            <div class="section-header">
+              <h3>Available Food Items</h3>
+              <select>
+                <option>All Categories</option>
+                <option>Fresh Vegetables</option>
+                <option>Fruits</option>
+                <option>Grains</option>
+              </select>
+            </div>
+            <div class="food-items-list">
+              <div class="food-item">
+                <h4>Fresh Vegetables</h4>
+                <p>Restaurant A</p>
+                <span class="quantity">2</span>
+              </div>
+              <!-- More food items can be added here -->
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="main.js"></script>
+    
+    <!-- Replace YOUR_API_KEY with your actual Google Maps API key -->
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA083VfuQXN3YIRY_uMmjldA8VhjIat5FE&callback=initMap">
+    </script>
+  <script src="sidebar.js"></script>
+  <script src="maps.js"></script>
+  </body>
+</html>

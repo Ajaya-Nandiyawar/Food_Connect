@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics Overview</title>
+    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="stats.css">
+    <Style>
+        
+    </Style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <img src="logo.ico" alt="FoodShare">
+            <h1>Food<b style="color: rgb(239, 107, 13);">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="toggle-btn" id="toggleBtn">X</button>
+        </div>
+        <div>
+        <a href="dashboard2.html" class="menu-item ">
+            <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Dashboard</span>
+        </a>
+        </div>
+        <a href="notification.html" class="menu-item">
+            <div class="icon alert-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Notifications</span>
+        </a>
+        <a href="request.html" class="menu-item">
+            <div class="icon alert-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Requests</span>
+        </a>
+        <a href="stats.html" class="menu-item active">
+            <div class="icon stats-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Stats</span>
+        </a>
+        <a href="settings.html" class="menu-item">
+            <div class="icon settings-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Settings</span>
+        </a>
+    </div>
+
+    <main class="main-content">
+        <header>
+            <h1>Statistics Overview</h1>
+            <select id="timeRange">
+                <option>Last 7 Days</option>
+                <option>Last 30 Days</option>
+                <option>Last 3 Months</option>
+            </select>
+        </header>
+
+        <div class="stats-cards">
+            <div class="stat-card">
+                <h3>Total Food Collected</h3>
+                <div class="stat-value">12,450 kg</div>
+                <div class="stat-change positive">↑ 1.23% vs last period</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Locations</h3>
+                <div class="stat-value">48</div>
+                <div class="stat-change positive">↑ 4 new this week</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Donors</h3>
+                <div class="stat-value">156</div>
+                <div class="stat-change positive">↑ 12 new this week</div>
+            </div>
+        </div>
+
+        <div class="charts-container">
+            <div class="chart-box">
+                <h2>Weekly Food Collection</h2>
+                <canvas id="barChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <h2>Distribution by Category</h2>
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="stats.js"></script>
+    <script src="sidebar.js"></script>
+</body>
+</html>

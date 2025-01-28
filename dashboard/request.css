@@ -1,0 +1,227 @@
+:root {
+  --primary-color: #3366ff;
+  --sidebar-width: 240px;
+  --header-height: 80px;
+  --border-radius: 8px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+body {
+  background-color: #f8f9fb;
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+
+/* Main Content Styles */
+.main-content {
+  flex: 1;
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.header h1 {
+  font-size: 24px;
+  color: #111827;
+}
+
+.new-request-btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.content-container {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+}
+
+/* Form Styles */
+.create-request,
+.active-requests {
+  background: white;
+  padding: 24px;
+  border-radius: var(--border-radius);
+}
+
+h2 {
+  font-size: 18px;
+  margin-bottom: 24px;
+  color: #111827;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #374151;
+  font-weight: 500;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+}
+
+/* Date and Time Input Styles */
+.date-input,
+.time-input {
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  color: #374151;
+  background-color: white;
+  cursor: pointer;
+}
+
+.date-input::-webkit-calendar-picker-indicator,
+.time-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.date-input:hover::-webkit-calendar-picker-indicator,
+.time-input:hover::-webkit-calendar-picker-indicator {
+  opacity: 1;
+}
+
+.restaurant-list {
+  border: 1px solid #d1d5db;
+  border-radius: var(--border-radius);
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.restaurant-item {
+  padding: 12px;
+  border-bottom: 1px solid #d1d5db;
+  color: #374151;
+}
+
+.restaurant-item:last-child {
+  border-bottom: none;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.cancel-btn {
+  padding: 10px 20px;
+  border: none;
+  background: white;
+  color: #374151;
+  cursor: pointer;
+}
+
+.submit-btn {
+  padding: 10px 20px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+/* Active Requests Styles */
+.request-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.request-card {
+  padding: 16px;
+  border-radius: var(--border-radius);
+  background: #f9fafb;
+  position: relative;
+}
+
+.request-card h3 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.request-card p {
+  color: #4b5563;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.timestamp {
+  font-size: 12px !important;
+  color: #6b7280 !important;
+}
+
+.status {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.pending .status {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.approved .status {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.declined .status {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.view-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+}

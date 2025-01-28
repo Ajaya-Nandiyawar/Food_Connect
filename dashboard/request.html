@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodShare - Request Donations</title>
+    <link rel="stylesheet" href="request.css" />
+    <link rel="stylesheet" href="sidebar.css">
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <!-- <div class="sidebar">
+        <div class="logo">
+          <div class="logo-icon"></div>
+          <span>FoodShare</span>
+        </div>
+        <nav>
+          <a href="#" class="nav-item active">Dashboard</a>
+          <a href="#" class="nav-item">Alerts</a>
+          <a href="#" class="nav-item">Stats</a>
+          <a href="#" class="nav-item">Requests</a>
+          <a href="#" class="nav-item">Settings</a>
+        </nav>
+      </div> -->
+      <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <img src="logo.ico" alt="FoodShare">
+            <h1>Food<b style="color: rgb(239, 107, 13);">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="toggle-btn" id="toggleBtn">X</button>
+        </div>
+        <div>
+        <a href="dashboard2.html" class="menu-item">
+            <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Dashboard</span>
+        </a>
+        </div>
+        <a href="notification.html" class="menu-item">
+            <div class="icon alert-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Notifications</span>
+        </a>
+        <a href="request.html" class="menu-item active">
+            <div class="icon alert-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Requests</span>
+        </a>
+        <a href="stats.html" class="menu-item">
+            <div class="icon stats-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Stats</span>
+        </a>
+        <a href="settings.html" class="menu-item">
+            <div class="icon settings-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Settings</span>
+        </a>
+    </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="header">
+          <h1>Request Donations</h1>
+          <button class="new-request-btn">New Request</button>
+        </div>
+
+        <div class="content-container">
+          <!-- Left Section - Create Donation Request -->
+          <div class="create-request">
+            <h2>Create Donation Request</h2>
+            <form id="donationForm">
+              <div class="form-group">
+                <label>Food Category</label>
+                <select>
+                  <option>Select Category</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Quantity (kg)</label>
+                <input type="text" placeholder="Enter quantity" />
+              </div>
+
+              <div class="form-group">
+                <label>Preferred Restaurants</label>
+                <div class="restaurant-list">
+                  <div class="restaurant-item">Restaurant A - 2.5km away</div>
+                  <div class="restaurant-item">Restaurant B - 3.2km away</div>
+                  <div class="restaurant-item">Restaurant C - 4.0km away</div>
+                  <div class="restaurant-item">Restaurant D - 4.8km away</div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Pickup Date</label>
+                  <input type="date" id="pickupDate" class="date-input" />
+                </div>
+                <div class="form-group">
+                  <label>Preferred Time</label>
+                  <input type="time" id="pickupTime" class="time-input" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Additional Notes</label>
+                <textarea
+                  placeholder="Any specific requirements or notes"
+                ></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="cancel-btn">Cancel</button>
+                <button type="submit" class="submit-btn">Submit Request</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Right Section - Active Requests -->
+          <div class="active-requests">
+            <h2>Active Requests</h2>
+            <div class="request-cards">
+              <div class="request-card pending">
+                <div class="status">Pending</div>
+                <h3>Vegetables Request</h3>
+                <p>Restaurant A</p>
+                <p class="timestamp">Requested: Today, 10:30 AM</p>
+                <a href="#" class="view-link">View</a>
+              </div>
+
+              <div class="request-card approved">
+                <div class="status">Approved</div>
+                <h3>Grains Request</h3>
+                <p>Restaurant C</p>
+                <p class="timestamp">Pickup: Tomorrow, 2:00 PM</p>
+                <a href="#" class="view-link">View</a>
+              </div>
+
+              <div class="request-card declined">
+                <div class="status">Declined</div>
+                <h3>Dairy Products</h3>
+                <p>Restaurant B</p>
+                <p class="timestamp">Requested: Yesterday</p>
+                <a href="#" class="view-link">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="request.js"></script>
+    <script src="sidebar.js"></script>
+  </body>
+</html>

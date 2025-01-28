@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodShare - Notifications</title>
+    <link rel="stylesheet" href="notification.css"/>
+    <link rel="stylesheet" href="sidebar.css">
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <!-- <div class="sidebar">
+        <div class="logo">
+          <div class="logo-icon"></div>
+          <span>FoodShare</span>
+        </div>
+        <nav>
+          <a href="#" class="nav-item">
+            <span class="icon">🏠</span>
+            Dashboard
+          </a>
+          <a href="#" class="nav-item active">
+            <span class="icon">🔔</span>
+            Alerts
+          </a>
+          <a href="#" class="nav-item">
+            <span class="icon">📊</span>
+            Stats
+          </a>
+          <a href="#" class="nav-item">
+            <span class="icon">📝</span>
+            Requests
+          </a>
+          <a href="#" class="nav-item">
+            <span class="icon">⚙️</span>
+            Settings
+          </a>
+        </nav>
+      </div> -->
+      <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <img src="logo.ico" alt="FoodShare">
+            <h1>Food<b style="color: rgb(239, 107, 13);">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="toggle-btn" id="toggleBtn">X</button>
+        </div>
+        <div>
+        <a href="dashboard2.html" class="menu-item ">
+            <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Dashboard</span>
+        </a>
+        </div>
+        <a href="notification.html" class="menu-item active">
+            <div class="icon alert-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Notifications</span>
+        </a>
+        <a href="request.html" class="menu-item">
+            <div class="icon alert-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Requests</span>
+        </a>
+        <a href="stats.html" class="menu-item">
+            <div class="icon stats-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Stats</span>
+        </a>
+        <a href="settings.html" class="menu-item">
+            <div class="icon settings-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Settings</span>
+        </a>
+    </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Alert Banner -->
+        <div class="alert-banner">New Donation Scheduled</div>
+
+        <!-- Notifications Header -->
+        <div class="notifications-header">
+          <h1>Notifications</h1>
+          <div class="header-actions">
+            <button class="mark-read">Mark all as read</button>
+            <div class="filter-dropdown">
+              <select>
+                <option>All notifications</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notifications Content -->
+        <div class="notifications-content">
+          <div class="section">
+            <h2>Urgent Notifications</h2>
+            <div class="notification urgent">
+              <div class="notification-icon">⭕</div>
+              <div class="notification-content">
+                <div class="notification-header">
+                  <h3>Food Items Expiring Today</h3>
+                  <span class="time">2 hours ago</span>
+                </div>
+                <p>
+                  50kg of vegetables at Restaurant A will expire in 6 hours.
+                </p>
+                <a href="#" class="action-link">View Details</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>Today</h2>
+            <div class="notification info">
+              <div class="notification-icon">📅</div>
+              <div class="notification-content">
+                <div class="notification-header">
+                  <h3>New Donation Pickup Scheduled</h3>
+                  <span class="time">4 hours ago</span>
+                </div>
+                <p>
+                  Bakery B has scheduled a donation pickup for tomorrow at 9 AM.
+                </p>
+                <a href="#" class="action-link">View Schedule</a>
+              </div>
+            </div>
+
+            <div class="notification warning">
+              <div class="notification-icon">⚠️</div>
+              <div class="notification-content">
+                <div class="notification-header">
+                  <h3>Shortage Alert</h3>
+                  <span class="time">6 hours ago</span>
+                </div>
+                <p>Area X is running low on essential food supplies.</p>
+                <a href="#" class="action-link">Take Action</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>Earlier</h2>
+            <div class="notification default">
+              <div class="notification-icon">📄</div>
+              <div class="notification-content">
+                <div class="notification-header">
+                  <h3>Monthly Report Available</h3>
+                  <span class="time">2 days ago</span>
+                </div>
+                <p>Your food distribution report for last month is ready.</p>
+                <a href="#" class="action-link">View Report</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="sidebar.js"></script>
+</html>
