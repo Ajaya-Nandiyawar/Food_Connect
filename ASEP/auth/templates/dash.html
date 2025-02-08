@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome Dialog</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href={{url_for('static', filename='css/dash.css')}}>
+  </head>
+  <body>
+
+    <div class="dialog-container" id="welcomeDialog">
+      <div class="dialog-content">
+        <button class="close-button" onclick="closeDialog()">×</button>
+
+        <!-- Header -->
+        <div class="dialog-header">
+          <h2>Welcome to Our Food Connect Community</h2>
+          <p class="subtitle">Choose how you'd like to make a difference today</p>
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-container">
+          <button class="action-button" onclick="handleRedirect('need-food')">
+            <i class="fas fa-utensils icon"></i>
+            <h3>Need Food</h3>
+            <p>Connect with restaurants and organizations offering surplus food</p>
+          </button>
+
+          <button class="action-button" onclick="handleRedirect('donate-food')">
+            <i class="fas fa-hand-holding-heart icon"></i>
+            <h3>Donate Food</h3>
+            <p>Share excess food from your events or business</p>
+          </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="dialog-footer">
+          <p>Together we can reduce food waste and help those in need</p>
+        </div>
+      </div>
+    </div>
+<script src={{url_for('static', filename='js/dash.js')}}></script>
+  </body>
+</html>

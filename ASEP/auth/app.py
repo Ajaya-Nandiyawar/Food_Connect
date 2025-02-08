@@ -1,8 +1,9 @@
-from flask import Flask, request, session, render_template, redirect, url_for
+from flask import Flask, request, session, render_template, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from extensions import db
 import bcrypt, os
 from NGO import ngo_blueprint
+import pyrebase
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -73,6 +74,10 @@ def login():
             session['name'] = user.name
             session['email'] = user.email
             session['organization'] = user.organization
+            
+            if user.organization.lower() == 'ngo'and session.get('first_time'):
+                return redirect('/N-guide')
+            
             return redirect('/dashboard')
         else:
             return 'Invalid email or password'
@@ -96,6 +101,16 @@ def signup():
         db.session.add(new_user)    
         db.session.commit()
         
+        session['name'] = new_user.name
+        session['email'] = new_user.email
+        session['organization'] = new_user.organization
+
+        # If the organization is NGO, mark as first-time user
+        if new_user.organization.lower() == 'ngo':
+            session['first_time'] = True  # Flag for first-time users
+            
+        
+        
         return redirect('/login')
     
     return render_template('signup.html')
@@ -110,15 +125,21 @@ def dashboard():
 
 @app.route('/profile', methods=['GET'])
 def profile():
-    if request.method == 'GET' and 'email' in session:
-        user = User.query.filter_by(email=session['email']).first()
-        if user:
-            return render_template(
-            'settings.html',
-            name=user.name,
-            email=user.email
-        )
-    return redirect('/login')
+    if "email" not in session:
+        return redirect("/login")  # Ensure the user is logged in
+
+    # Check if the user exists in the database (for normal registration users)
+    user = User.query.filter_by(email=session["email"]).first()
+
+    if user:
+        return render_template("settings.html", name=user.name, email=user.email)
+
+    # If user is logged in via Firebase, use session data
+    if "name" in session:
+        return render_template("settings.html", name=session["name"], email=session["email"])
+
+    return redirect("/login")  # If no valid session exists, redirect to login
+
 
 @app.route('/notifications')
 def notifications():
@@ -128,8 +149,60 @@ def notifications():
 def stat():
     return render_template('stats.html')
 
+@app.route('/N-guide')
+def ngo_guide():
+    session.pop('first_time', None)
+    return render_template('NGO.html')
+
+@app.route('/R-guide')
+def restaurant_guide():
+    return render_template('Restaurant.html')
 
 
+    
+
+firebase_config = {
+    "apiKey": "AIzaSyBbW25iCUlAwslI_2zdoiIavEQe_Uiz_wo",
+    "authDomain": "foodconnect-4e64e.firebaseapp.com",
+    "projectId": "foodconnect-4e64e",
+    "databaseURL": "https://foodconnect-4e64e-default-rtdb.firebaseio.com",
+    "storageBucket": "foodconnect-4e64e.firebasestorage.app",
+    "messagingSenderId": "574910241302",
+    "appId": "1:574910241302:web:970aaa182b7d7f23387337",
+    "measurementId": "G-KJ4QPSNTYY",
+}
+
+firebase = pyrebase.initialize_app(firebase_config)
+auth = firebase.auth()
+
+@app.route('/firebase-login', methods=['POST'])
+def firebase_login():
+    data = request.json
+    email = data.get("email")
+    name = data.get("name")
+
+    if not email:
+        return jsonify({"success": False, "message": "Invalid email"}), 400
+
+    # Check if the user exists in the database
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        # If the user is new, store session and redirect to select role
+        session["email"] = email
+        session["name"] = name
+        return jsonify({"success": True, "new_user": True})
+
+    # If the user exists, store session and redirect to dashboard
+    session["email"] = user.email
+    session["name"] = user.name
+    return jsonify({"success": True, "new_user": False})
+
+@app.route('/select_type')
+def user_type():
+    if "email" not in session:
+        return redirect("/login")
+    return render_template("dash.html", name=session.get("name", "User"))    
 
 # Run the app
 if __name__ == '__main__':

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NGO Partnership</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+        padding: 2rem;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+      }
+
+      .info-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s;
+      }
+
+      .info-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .info-icon {
+        font-size: 2rem;
+        color: #f57c00;
+        margin-bottom: 1rem;
+      }
+
+      .info-title {
+        font-size: 1.2rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+
+      .info-text {
+        color: #666;
+        line-height: 1.6;
+      }
+
+      /* Loader Styles */
+      .loader-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .loader-container.active {
+        display: flex;
+        opacity: 1;
+      }
+
+      .donation-loader {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .basket {
+        position: absolute;
+        bottom: 20px;
+        width: 100px;
+        height: 60px;
+        border: 5px solid #795548;
+        border-radius: 0 0 50px 50px;
+        border-top: none;
+        animation: basket-glow 2s infinite;
+        background-image: {{url_for('static', filename='img/logo.png')}};
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+
+      .food-items {
+        position: absolute;
+        top: 0;
+        display: flex;
+        gap: 15px;
+      }
+
+      .food-item {
+        position: relative;
+        animation: drop-food 2s infinite;
+      }
+
+      .food-item i {
+        font-size: 24px;
+        color: #ff9800;
+      }
+
+      .food-item:nth-child(2) {
+        animation-delay: 0.6s;
+      }
+
+      .food-item:nth-child(3) {
+        animation-delay: 1.2s;
+      }
+
+      .heart-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .heart {
+        color: #e91eac;
+        font-size: 40px;
+        opacity: 0;
+        transform: scale(0.5);
+        animation: heart-beat 2s infinite;
+      }
+
+      .loading-text {
+        position: absolute;
+        bottom: -40px;
+        color: #ff9800;
+        font-size: 1.2rem;
+        text-align: center;
+        width: 100%;
+      }
+
+      @keyframes drop-food {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+        20% {
+          opacity: 1;
+        }
+        60% {
+          transform: translateY(80px);
+          opacity: 1;
+        }
+        80% {
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(80px);
+          opacity: 0;
+        }
+      }
+
+      @keyframes heart-beat {
+        0%,
+        100% {
+          transform: scale(0.5);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      @keyframes basket-glow {
+        0%,
+        100% {
+          box-shadow: 0 0 5px rgba(121, 85, 72, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 20px rgba(121, 85, 72, 0.5);
+        }
+      }
+
+      .Continue_button{
+        position: relative;
+      }
+
+      .Start {
+        background: transparent;
+        padding: 10px 15px;
+        border: 1px solid orangered;
+        color: #f57c00;
+        border-radius: 10px;
+      }
+
+      button:hover{
+        background-color:#f57c00;
+        color: white;
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 5px orangered);
+        transition: drop-shadow 0.1s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loader -->
+    <div class="loader-container" id="loaderContainer">
+      <div class="donation-loader">
+        <div class="food-items">
+          <div class="food-item">
+            <i class="fas fa-apple-alt"></i>
+          </div>
+          <div class="food-item">
+            <i class="fas fa-bread-slice"></i>
+          </div>
+          <div class="food-item">
+            <i class="fas fa-carrot"></i>
+          </div>
+        </div>
+        <div class="basket"></div>
+        <div class="heart-container">
+          <i class="fas fa-heart heart"></i>
+        </div>
+        <div class="loading-text">Connecting hearts through food...</div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2 style="color: #f57c00; margin-bottom: 1.5rem">NGO Partnership</h2>
+      <p>
+        Connect with restaurants and receive quality food donations for your
+        beneficiaries.
+      </p>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-hands-helping info-icon"></i>
+          <h3 class="info-title">Reliable Donations</h3>
+          <p class="info-text">
+            Get connected with verified restaurants for regular, quality food
+            donations.
+          </p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-truck info-icon"></i>
+          <h3 class="info-title">Efficient Distribution</h3>
+          <p class="info-text">
+            Coordinate pickups and manage distribution with our easy-to-use
+            platform.
+          </p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-users info-icon"></i>
+          <h3 class="info-title">Community Impact</h3>
+          <p class="info-text">
+            Make a bigger impact in your community with consistent food
+            supplies.
+          </p>
+        </div>
+        <div class="Continue_button">
+          <button class="Start button"><a href={{url_for('dashboard')}} >Get Started --></a></button>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Show loader immediately for demo
+      document.addEventListener("DOMContentLoaded", function () {
+        const loader = document.getElementById("loaderContainer");
+        loader.classList.add("active");
+
+        // Auto-hide loader after 5 seconds for demo
+        setTimeout(() => {
+          loader.classList.remove("active");
+        }, 5000);
+      });
+    </script>
+  </body>
+</html>
