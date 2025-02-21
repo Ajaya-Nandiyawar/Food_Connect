@@ -4,9 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from extensions import db
   # Initialize SQLAlchemy
 
-
 ngo_blueprint = Blueprint('ngo', __name__)
-
 
 class RequestModel(db.Model):  # Request model
     id = db.Column(db.Integer, primary_key=True)
@@ -20,23 +18,40 @@ class RequestModel(db.Model):  # Request model
 
     def to_dict(self):
         return {
+            'id': self.id,
             'food_category': self.food_category,
             'quantity': self.quantity,
             'pick_up_date': self.pick_up_date.strftime('%Y-%m-%d'),
             'preferred_time': self.preferred_time.strftime('%H:%M'),
             'status': self.status,
-            'created_at': self.created_at
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }
 
 @ngo_blueprint.route('/request', methods=['GET', 'POST'])
 def handle_request():
     if request.method == 'POST':
         try:
-            food_category = request.form['food_category']
-            quantity = float(request.form['quantity'])
-            pick_up_date = datetime.strptime(request.form['pick_up_date'], '%Y-%m-%d').date()
-            preferred_time = datetime.strptime(request.form['preferred_time'], '%H:%M').time()
-            additional_note = request.form['additional_note']
+            data = request.get_json()  # Accept JSON input
+
+            # If it's a status update request
+            if "request_id" in data and "status" in data:
+                request_id = data["request_id"]
+                new_status = data["status"]
+
+                request_entry = RequestModel.query.get(request_id)
+                if not request_entry:
+                    return jsonify({'status': 'error', 'message': 'Request not found'}), 404
+
+                request_entry.status = new_status
+                db.session.commit()
+                return jsonify({'status': 'success', 'message': 'Request status updated'})
+
+            # If it's a new request submission
+            food_category = data['food_category']
+            quantity = float(data['quantity'])
+            pick_up_date = datetime.strptime(data['pick_up_date'], '%Y-%m-%d').date()
+            preferred_time = datetime.strptime(data['preferred_time'], '%H:%M').time()
+            additional_note = data['additional_note']
 
             new_request = RequestModel(
                 food_category=food_category,
@@ -49,10 +64,11 @@ def handle_request():
             db.session.commit()
 
             return jsonify({'status': 'success'})
+
         except Exception as e:
             print(f"Error: {str(e)}")
             return jsonify({'status': 'error', 'message': str(e)}), 400
 
-    # For GET requests, fetch all requests and pass to template
+    # Fetch all requests for GET requests
     requests = RequestModel.query.order_by(RequestModel.created_at).all()
-    return render_template('request.html', requests=requests)
+    return render_template('request.html', requests=[request.to_dict() for request in requests])

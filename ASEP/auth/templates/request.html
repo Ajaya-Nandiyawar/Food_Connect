@@ -125,8 +125,9 @@
             <div class="request-cards">
               {% for request in requests %}
               <div class="request-card pending">
-                <div class="status">{{request.status}}</div>
+                <div class="status">{{ request.status }}</div>
                 <h3>{{request.food_category}}</h3>
+                <p>Request ID: {{ request.id }}</p>
                 <p>Pickup: {{ request.pick_up_date }}</p>
                 <p>Time: {{ request.preferred_time }}</p>
               </div>
@@ -139,26 +140,37 @@
     <script>
       document.querySelector("form").addEventListener("submit", function (e) {
         e.preventDefault();
+        
+        const formData = {
+          food_category: this.food_category.value,
+          quantity: this.quantity.value,
+          pick_up_date: this.pick_up_date.value,
+          preferred_time: this.preferred_time.value,
+          additional_note: this.additional_note.value
+        };
     
-        fetch("/ngo/request", {  // Note the '/ngo' prefix
-            method: "POST",
-            body: new FormData(this),
+        fetch("/ngo/request", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
         })
         .then((response) => {
-            console.log("Response status:", response.status);
-            return response.json();
+          console.log("Response status:", response.status);
+          return response.json();
         })
         .then((data) => {
-            console.log("Received data:", data);
-            if (data.status === "success") {
-                window.location.reload(); // Reload page to show new request
-            } else {
-                alert("Error submitting request: " + data.message);
-            }
+          console.log("Received data:", data);
+          if (data.status === "success") {
+            window.location.reload();
+          } else {
+            alert("Error submitting request: " + data.message);
+          }
         })
         .catch((error) => {
-            console.error("Full error:", error);
-            alert("Error submitting request: " + error.message);
+          console.error("Full error:", error);
+          alert("Error submitting request: " + error.message);
         });
       });
     </script>

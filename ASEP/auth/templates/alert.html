@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodShare - Notifications</title>
+    <link rel="stylesheet" href={{url_for('static', filename='css/alert.css')}}>
+    <link rel="stylesheet" href={{url_for('static', filename='css/sidebar.css')}}> 
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare">
+                <h1>Food<b style="color: rgb(239, 107, 13);">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="toggle-btn" id="toggleBtn">X</button>
+            </div>
+            <a href={{url_for('restaurant_dashboard')}} class="menu-item">
+                <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Dashboard</span>
+            </a>
+            <a href={{url_for('restaurant_alerts')}} class="menu-item active">
+                <div class="icon alert-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Notifications</span>
+            </a>
+            <a href={{url_for('restaurant_requests')}} class="menu-item">
+                <div class="icon request-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Requests</span>
+            </a>
+            <a href={{url_for('restaurant_donate')}} class="menu-item">
+                <div class="icon stats-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Donations</span>
+            </a>
+            <a href={{url_for('restaurant_settings')}} class="menu-item">
+                <div class="icon settings-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Settings</span>
+            </a>
+        </div>
+
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Notifications</h1>
+                <p>Stay updated with your donation activities and requests</p>
+            </header>
+
+            <div class="notifications-header">
+                <div class="notification-actions">
+                    <button class="btn btn-link" onclick="markAllAsRead()">Mark all as read</button>
+                    <button class="btn btn-link" onclick="clearAll()">Clear all</button>
+                </div>
+                <div class="notification-filter">
+                    <label for="filterNotifications">Filter:</label>
+                    <select id="filterNotifications" onchange="filterNotifications()">
+                        <option value="all">All Notifications</option>
+                        <option value="unread">Unread</option>
+                        <option value="requests">Requests</option>
+                        <option value="donations">Donations</option>
+                        <option value="system">System</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="notifications-list" id="notificationsList">
+                <div class="notification-item unread">
+                    <div class="notification-icon request">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-header">
+                            <h3>New Food Request</h3>
+                            <span class="notification-time">5 mins ago</span>
+                        </div>
+                        <p>Food for All NGO has requested 50 meals for immediate donation.</p>
+                        <div class="notification-actions">
+                            <a href="#" class="btn-link">View Request</a>
+                            <button class="btn-link" onclick="markAsRead(this)">Mark as read</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notification-item">
+                    <div class="notification-icon success">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-header">
+                            <h3>Donation Completed</h3>
+                            <span class="notification-time">2 hours ago</span>
+                        </div>
+                        <p>Your donation of 30 meals has been successfully delivered to Hope Foundation.</p>
+                        <div class="notification-actions">
+                            <a href="#" class="btn-link">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notification-item">
+                    <div class="notification-icon system">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-header">
+                            <h3>System Update</h3>
+                            <span class="notification-time">1 day ago</span>
+                        </div>
+                        <p>New features have been added to improve your donation management experience.</p>
+                        <div class="notification-actions">
+                            <a href="#" class="btn-link">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notification-item">
+                    <div class="notification-icon reminder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-header">
+                            <h3>Donation Reminder</h3>
+                            <span class="notification-time">2 days ago</span>
+                        </div>
+                        <p>You have a scheduled donation pickup tomorrow at 2:00 PM.</p>
+                        <div class="notification-actions">
+                            <a href="#" class="btn-link">View Schedule</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pagination">
+                <span class="pagination-info">Showing 4 of 24 notifications</span>
+                <div class="pagination-controls">
+                    <button class="btn btn-link" disabled>Previous</button>
+                    <button class="btn btn-page active">1</button>
+                    <button class="btn btn-page">2</button>
+                    <button class="btn btn-page">3</button>
+                    <button class="btn btn-link">Next</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src={{url_for('static',filename='js/alert.js')}}></script>
+    <script src={{url_for('static',filename='js/sidebar.js')}}></script>
+</body>
+</html>

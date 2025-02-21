@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forgot Password</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #f8f8f8;
+      }
+
+      .container {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        margin: 1rem;
+      }
+
+      h2 {
+        color: #ff6b00;
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+
+      .description {
+        color: #666;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      label {
+        color: #555;
+        font-size: 0.9rem;
+      }
+
+      input {
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #ff6b00;
+      }
+
+      button {
+        background-color: #ff6b00;
+        color: white;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #e65100;
+      }
+
+      .message {
+        text-align: center;
+        margin-top: 1rem;
+        padding: 0.8rem;
+        border-radius: 5px;
+        display: none;
+      }
+
+      .success {
+        background-color: #fff3e0;
+        color: #e65100;
+        border: 1px solid #ffe0b2;
+      }
+
+      .error {
+        background-color: #fbe9e7;
+        color: #d84315;
+        border: 1px solid #ffccbc;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        margin-top: 1rem;
+      }
+
+      .spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #ff6b00;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Forgot Password</h2>
+      <p class="description">
+        Enter your email address and we'll send you a link to reset your
+        password.
+      </p>
+
+      <form
+        id="forgotPasswordForm"
+        action="{{ url_for('forgot_password') }}"
+        method="POST"
+      >
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          {{ form.email(class="form-control", placeholder="Enter your email") }}
+        </div>
+        {{ form.submit(class="btn btn-primary", type='submit') }}
+      </form>
+
+      <div class="loading">
+        <div class="spinner"></div>
+      </div>
+
+      <div id="message" class="message"></div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="message {{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+    </div>
+
+    <script>
+      document
+        .getElementById("forgotPasswordForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          let csrfToken = document.querySelector(
+            "input[name='csrf_token']"
+          ).value; // Get CSRF token
+          let email = document.getElementById("email").value;
+
+          fetch("{{ url_for('forgot_password') }}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "X-CSRFToken": csrfToken, // Include CSRF token
+            },
+            body: new URLSearchParams({ email: email }),
+          })
+            .then((response) => response.text())
+            .then((data) => alert(data))
+            .catch((error) => console.error("Error:", error));
+        });
+    </script>
+  </body>
+</html>

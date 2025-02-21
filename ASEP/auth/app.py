@@ -1,13 +1,25 @@
-from flask import Flask, request, session, render_template, redirect, url_for, jsonify
+from flask import Flask, request, session, render_template, redirect, url_for, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer
 from extensions import db
 import bcrypt, os
-from NGO import ngo_blueprint
+from NGO import ngo_blueprint, RequestModel
 import pyrebase
 
 # Initialize the Flask app
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Set a secret key for sessions
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'your_email@gmail.com'
+app.config['MAIL_PASSWORD'] = 'your_password'
+app.config['MAIL_DEFAULT_SENDER'] = 'your_email@gmail.com'
+
+mail = Mail(app)
+s = URLSafeTimedSerializer(app.secret_key)
 
 # MySQL connection string
 db_user = "root"
@@ -75,12 +87,16 @@ def login():
             session['email'] = user.email
             session['organization'] = user.organization
             
-            if user.organization.lower() == 'ngo'and session.get('first_time'):
-                return redirect('/N-guide')
-            
-            return redirect('/dashboard')
-        else:
-            return 'Invalid email or password'
+            if session.get('first_time'):
+                if user.organization.lower() == 'ngo':
+                    return redirect('/N-guide')  # Redirect to NGO Guidelines
+                elif user.organization.lower() == 'restaurant':
+                    return redirect('/R-guide')
+        
+            if user.organization.lower() == 'ngo':
+                return redirect('/dashboard')
+            elif user.organization.lower() == 'restaurant':
+                return redirect('/restaurant_dashboard')
     
     return render_template('login.html')
 
@@ -108,8 +124,9 @@ def signup():
         # If the organization is NGO, mark as first-time user
         if new_user.organization.lower() == 'ngo':
             session['first_time'] = True  # Flag for first-time users
-            
         
+        if new_user.organization.lower() == 'restaurant':
+            session['first_time'] = True
         
         return redirect('/login')
     
@@ -118,10 +135,9 @@ def signup():
 @app.route('/dashboard')
 def dashboard():
     if 'name' in session and 'email' in session and 'organization' in session:
-        api_key = os.getenv('AIzaSyA083VfuQXN3YIRY_uMmjldA8VhjIat5FE')  # Store the key as an environment variable
-        return render_template('dashboard2.html', name=session['name'], organization=session['organization'] , api_key=api_key) 
+        api_key = 'AIzaSyA083VfuQXN3YIRY_uMmjldA8VhjIat5FE'  # Replace with your actual API key
+        return render_template('dashboard2.html', name=session['name'], organization=session['organization'], api_key=api_key) 
     return redirect('/login')
-    
 
 @app.route('/profile', methods=['GET'])
 def profile():
@@ -156,10 +172,56 @@ def ngo_guide():
 
 @app.route('/R-guide')
 def restaurant_guide():
+    session.pop('first_time', None)
     return render_template('Restaurant.html')
 
+@app.route('/restaurant_dashboard')
+def restaurant_dashboard():
+    return render_template('home.html')
 
+@app.route('/restaurant_alerts')
+def restaurant_alerts():
+    return render_template('alert.html')
+
+@app.route('/restaurant_donate')
+def restaurant_donate():
+    return render_template('donationManagement.html')
+
+@app.route('/restaurant_requests')
+def restaurant_requests():
+    requests = RequestModel.query.order_by(RequestModel.created_at).all()
+    return render_template('NGO Food Requests.html', requests=requests)
+
+@app.route('/update_request_status/<int:request_id>', methods=['POST'])
+def update_request_status(request_id):
+    """Update the status of a food request."""
     
+    # Ensure the request contains JSON
+    if request.content_type != 'application/json':
+        return jsonify({"success": False, "message": "Content-Type must be application/json"}), 415
+    
+    data = request.get_json()
+    
+    if not data or "status" not in data:
+        return jsonify({"success": False, "message": "Invalid or missing JSON data"}), 400
+    
+    # Retrieve the request entry from the database
+    request_entry = RequestModel.query.get(request_id)
+    
+    if not request_entry:
+        return jsonify({"success": False, "message": "Request not found"}), 404
+
+    # Update status
+    request_entry.status = data["status"]
+    db.session.commit()
+    
+    return jsonify({"success": True, "message": "Request status updated successfully"}), 200
+
+
+
+@app.route('/restaurant_settings')
+def restaurant_settings():
+    return render_template('settings_rest.html')
 
 firebase_config = {
     "apiKey": "AIzaSyBbW25iCUlAwslI_2zdoiIavEQe_Uiz_wo",
@@ -203,6 +265,55 @@ def user_type():
     if "email" not in session:
         return redirect("/login")
     return render_template("dash.html", name=session.get("name", "User"))    
+
+@app.route('/forgot_password', methods=['POST'])
+def forgot_password():
+    email = request.form['email']
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        flash('Email does not exist', 'error')
+        return redirect('/forgot_password')
+    
+    token = s.dumps(email, salt='password-reset')
+    
+    reset_url = url_for('reset_password', token=token, _external=True)
+    
+    msg = Message('Password Reset Request', recipients=[email])
+    msg.body = f'To reset your password, visit the following link: {reset_url}\n\nThis link will expire in 30 minutes.'
+    mail.send(msg)
+    
+    flash('Password reset link has been sent to your email', 'success')
+    return redirect('/login')
+    
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    try:
+        # Verify the token (expires in 30 minutes)
+        email = s.loads(token, salt='password-reset', max_age=1800)
+    except:
+        flash('Invalid or expired token', 'error')
+        return redirect(url_for('forgot_password'))
+
+    if request.method == 'POST':
+        new_password = request.form['new_password']
+        
+        # Find the user in the database
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            flash('User not found', 'error')
+            return redirect(url_for('forgot_password'))
+        
+        # Hash the new password before storing
+        hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+
+        flash('Your password has been updated successfully!', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('reset_pass.html', token=token)
+
+
 
 # Run the app
 if __name__ == '__main__':

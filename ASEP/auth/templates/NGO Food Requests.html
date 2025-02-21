@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodShare - NGO Food Requests</title>
+    <link rel="stylesheet" href={{url_for('static', filename='css/NGO Food Requests.css')}} />
+    <link rel="stylesheet" href={{url_for('static' , filename='css/sidebar.css')}} />
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <img src={{url_for('static',filename='img/logo.ico')}} alt="FoodShare">
+                <h1>Food<b style="color: rgb(239, 107, 13);">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="toggle-btn" id="toggleBtn">X</button>
+            </div>
+            <div>
+            <a href="restaurant_dashboard" class="menu-item">
+                <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Dashboard</span>
+            </a>
+            </div>
+            <a href="restaurant_alerts" class="menu-item">
+                <div class="icon alert-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Notifications</span>
+            </a>
+            <a href="restaurant_requests" class="menu-item active">
+                <div class="icon request-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Requests</span>
+            </a>
+            <a href="restaurant_donate" class="menu-item">
+                <div class="icon stats-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Donations</span>
+            </a>
+            <a href="restaurant_settings" class="menu-item">
+                <div class="icon settings-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Settings</span>
+            </a>
+        </div>
+
+        <main class="main-content">
+            <h1>NGO Food Requests</h1>
+            <p class="subtitle">View and manage incoming food requests from NGOs</p>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="status-filter">
+                        <option>Pending</option>
+                        <option>Accepted</option>
+                        <option>Completed</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Food Type</label>
+                    <select id="food-type-filter">
+                        <option>Cooked Meals</option>
+                        <option>Raw Materials</option>
+                        <option>Packaged Food</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Date Range</label>
+                    <input type="date" id="date-filter">
+                </div>
+                <button class="apply-filters">Apply Filters</button>
+            </div>
+
+            <div class="requests-container">
+                {% for request in requests %}
+                <div class="request-card">
+                    <div class="request-header">
+                        <div>
+                            <h3>{{ request.name }}</h3>
+                            <span class="request-id">Request ID: {{ request.id }}</span>
+                        </div>
+                        <span class="status pending">{{ request.status }}</span>
+                    </div>
+                    <div class="request-details">
+                        <div class="detail-item">
+                            <i class="material-icons">schedule</i>
+                            <span>Requested: 2 hours ago</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="material-icons">group</i>
+                            <span>Required for: 200 people</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="material-icons">place</i>
+                            <span id="userLocation">Fetching location...</span>
+                            <a id="locationLink" href="#" target="_blank" class="location-button" style="display: none;">
+                                Open in Maps
+                            </a>
+                        </div>                        
+                    </div>
+                    <div class="requirements">
+                        <h4>Requirements:</h4>
+                        <ul>
+                            <li>Food Type: {{ request.food_category }}</li>
+                            <li>Preferred Time: {{ request.preferred_time }}</li>
+                            <li>Pickup Date:{{ request.pick_up_date }}</li>
+                            <li>Quantity: {{ request.quantity }}</li>
+                        </ul>
+                    </div>
+                    <div class="card-actions">
+                        <button class="primary-btn accept-btn", data-id="{{ request.id }}" >Accept Request</button>
+                        <button class="secondary-btn details-btn" data-id="{{ request.id }}">View Details</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="pagination">
+                <button class="page-btn">Previous</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">Next</button>
+            </div>
+        </main>
+    </div>
+    <script type="module" src={{url_for('static',filename='js/NGO Food Requests.js')}}></script>
+    <script type="module" src={{url_for('static',filename='js/settings.js')}}></script>
+    <script src={{url_for('static',filename='js/sidebar.js')}}></script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodShare Dashboard</title>
+    <link rel="stylesheet" href={{url_for('static', filename='css/home.css')}} />
+    <link rel="stylesheet" href={{url_for('static' , filename='css/sidebar.css')}} />
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar" id="sidebar">
+        <div class="logo">
+          <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare" />
+          <h1>Food<b style="color: rgb(239, 107, 13)">Connect</b></h1>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <button class="toggle-btn" id="toggleBtn">X</button>
+        </div>
+        <div>
+          <a href="restaurant_dashboard" class="menu-item active">
+            <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Dashboard</span>
+          </a>
+          <a href="restaurant_alerts" class="menu-item">
+            <div class="icon alert-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Notifications</span>
+          </a>
+          <a href="restaurant_requests" class="menu-item">
+            <div class="icon request-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Requests</span>
+          </a>
+          <a href="restaurant_donate" class="menu-item">
+            <div class="icon stats-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Donations</span>
+          </a>
+          <a href="restaurant_settings" class="menu-item">
+            <div class="icon settings-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Settings</span>
+          </a>
+        </div>
+      </div>
+
+      <main class="main-content">
+        <header class="page-header">
+          <h1>Dashboard Overview</h1>
+          <p>Welcome to your food donation management system</p>
+        </header>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
+                />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+            </div>
+            <div class="stat-info">
+              <p class="stat-title">Active Requests</p>
+              <p class="stat-value">24</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            </div>
+            <div class="stat-info">
+              <p class="stat-title">Pending Donations</p>
+              <p class="stat-value">12</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+                />
+              </svg>
+            </div>
+            <div class="stat-info">
+              <p class="stat-title">Total Donations</p>
+              <p class="stat-value">156</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon yellow">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            </div>
+            <div class="stat-info">
+              <p class="stat-title">NGOs Connected</p>
+              <p class="stat-value">8</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="requests-table">
+            <h2>Recent NGO Requests</h2>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>NGO Name</th>
+                    <th>Food Type</th>
+                    <th>Quantity Needed</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Food for All</td>
+                    <td>Cooked Meals</td>
+                    <td>50 servings</td>
+                    <td><span class="status pending">Pending</span></td>
+                    <td><a href="#" class="action-link">Respond</a></td>
+                  </tr>
+                  <tr>
+                    <td>Hope Foundation</td>
+                    <td>Vegetables</td>
+                    <td>100 kg</td>
+                    <td><span class="status accepted">Accepted</span></td>
+                    <td><a href="#" class="action-link">View Details</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="side-content">
+            <div class="quick-actions">
+              <h2>Quick Actions</h2>
+              <button class="btn btn-primary">Create New Donation</button>
+              <button class="btn btn-secondary">View All Requests</button>
+            </div>
+
+            <div class="donation-summary">
+              <h2>Donation Summary</h2>
+              <div class="summary-item">
+                <span>This Week</span>
+                <span>12 donations</span>
+              </div>
+              <div class="summary-item">
+                <span>This Month</span>
+                <span>45 donations</span>
+              </div>
+              <div class="summary-item">
+                <span>Total Impact</span>
+                <span>2,500+ meals</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="script.js"></script>
+    <script src={{url_for('static', filename='js/sidebar.js')}}></script>
+  </body>
+</html>

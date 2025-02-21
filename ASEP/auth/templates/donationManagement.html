@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodShare - Donation Management</title>
+    <link rel="stylesheet" href={{url_for('static', filename='css/donationManagement.css')}}>
+    <link rel="stylesheet" href={{url_for('static', filename='css/sidebar.css')}}> 
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar" id="sidebar">
+        <div class="logo">
+          <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare" />
+          <h1>Food<b style="color: rgb(239, 107, 13)">Connect</b></h1>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <button class="toggle-btn" id="toggleBtn">X</button>
+        </div>
+        <div>
+          <a href="restaurant_dashboard" class="menu-item ">
+            <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Dashboard</span>
+          </a>
+        </div>
+        <a href="restaurant_alerts" class="menu-item">
+          <div class="icon alert-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Notifications</span>
+        </a>
+        <a href="restaurant_requests" class="menu-item">
+          <div class="icon request-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Requests</span>
+        </a>
+        <a href="restaurant_donate" class="menu-item active">
+          <div class="icon stats-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Donations</span>
+        </a>
+        <a href="restaurant_settings" class="menu-item">
+          <div class="icon settings-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Settings</span>
+        </a>
+      </div>
+
+
+      <main class="main-content">
+        <header class="page-header">
+          <h1>Donation Management</h1>
+          <p>Manage your food donations and track their status</p>
+        </header>
+
+        <div class="donation-form-container">
+          <h2>Create New Donation</h2>
+          <form id="donationForm" class="donation-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="foodType">Food Type</label>
+                <select id="foodType" required>
+                  <option value="Cooked Meals">Cooked Meals</option>
+                  <option value="Raw Materials">Raw Materials</option>
+                  <option value="Packaged Food">Packaged Food</option>
+                  <option value="Beverages">Beverages</option>
+                </select>
+              </div>
+              <div class="form-group quantity-group">
+                <label for="quantity">Quantity</label>
+                <div class="quantity-input">
+                  <input
+                    type="number"
+                    id="quantity"
+                    placeholder="Enter quantity"
+                    required
+                  />
+                  <select id="unit">
+                    <option value="Servings">Servings</option>
+                    <option value="kg">kg</option>
+                    <option value="items">items</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="expiryDate">Expiry/Best Before</label>
+                <input type="datetime-local" id="expiryDate" required />
+              </div>
+              <div class="form-group">
+                <label for="pickupTime">Pickup Time Window</label>
+                <input type="time" id="pickupTime" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="instructions">Special Instructions</label>
+              <textarea
+                id="instructions"
+                rows="4"
+                placeholder="Add any special handling instructions or notes"
+              ></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="clearForm()"
+              >
+                Clear Form
+              </button>
+              <button type="submit" class="btn btn-primary">
+                Create Donation
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="active-donations">
+          <h2>Active Donations</h2>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Donation ID</th>
+                  <th>Food Type</th>
+                  <th>Quantity</th>
+                  <th>Pickup Time</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="activeDonationsTable">
+                <tr>
+                  <td>#DON001</td>
+                  <td>Cooked Meals</td>
+                  <td>50 servings</td>
+                  <td>Today, 2:00 PM</td>
+                  <td><span class="status pending">Pending Pickup</span></td>
+                  <td class="actions">
+                    <a href="#" class="action-link edit">Edit</a>
+                    <a href="#" class="action-link cancel">Cancel</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#DON002</td>
+                  <td>Raw Materials</td>
+                  <td>25 kg</td>
+                  <td>Today, 4:00 PM</td>
+                  <td><span class="status confirmed">Confirmed</span></td>
+                  <td class="actions">
+                    <a href="#" class="action-link view">View</a>
+                    <a href="#" class="action-link complete">Complete</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="stats-panel">
+            <h3>Monthly Statistics</h3>
+            <div class="stat-item">
+              <span>Total Donations</span>
+              <span class="stat-value">45</span>
+            </div>
+            <div class="stat-item">
+              <span>Food Quantity</span>
+              <span class="stat-value">750 kg</span>
+            </div>
+            <div class="stat-item">
+              <span>People Served</span>
+              <span class="stat-value">1,500+</span>
+            </div>
+          </div>
+
+          <div class="quick-links">
+            <h3>Quick Links</h3>
+            <a href="#" class="link">View Donation History</a>
+            <a href="#" class="link">Download Reports</a>
+            <a href="#" class="link">Manage Templates</a>
+          </div>
+
+          <div class="help-panel">
+            <h3>Need Help?</h3>
+            <p>
+              Contact our support team for assistance with donation management.
+            </p>
+            <button class="btn btn-secondary">Contact Support</button>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src={{url_for('static',filename='js/donationManagement.js')}}></script>
+    <script src={{url_for('static',filename='js/sidebar.js')}}></script>
+  </body>
+</html>
