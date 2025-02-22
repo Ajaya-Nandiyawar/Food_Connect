@@ -2,7 +2,9 @@ from flask import Flask, request, session, render_template, redirect, url_for, j
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
+from flask_wtf import CSRFProtect
 from extensions import db
+from forms import ForgotPasswordForm, ResetPasswordForm,  SignupForm # Import the form class
 import bcrypt, os
 from NGO import ngo_blueprint, RequestModel
 import pyrebase
@@ -11,12 +13,14 @@ import pyrebase
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Set a secret key for sessions
 
+csrf = CSRFProtect(app)
+
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'your_email@gmail.com'
-app.config['MAIL_PASSWORD'] = 'your_password'
-app.config['MAIL_DEFAULT_SENDER'] = 'your_email@gmail.com'
+app.config['MAIL_USERNAME'] = 'iitajinkyaubale2005@gmail.com'
+app.config['MAIL_PASSWORD'] = 'cdfl npps gpfm rcov'
+app.config['MAIL_DEFAULT_SENDER'] = 'iitajinkyaubale2005@gmail.com'
 
 mail = Mail(app)
 s = URLSafeTimedSerializer(app.secret_key)
@@ -74,12 +78,15 @@ def home():
 def about_us():
     return render_template('about_us.html')  # Ensure file name matches template
 
+from forms import LoginForm  # Import the form
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        
+    form = LoginForm()
+    
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
         user = User.query.filter_by(email=email).first()
         
         if user and user.check_password(password):
@@ -89,48 +96,47 @@ def login():
             
             if session.get('first_time'):
                 if user.organization.lower() == 'ngo':
-                    return redirect('/N-guide')  # Redirect to NGO Guidelines
+                    return redirect('/N-guide')
                 elif user.organization.lower() == 'restaurant':
                     return redirect('/R-guide')
-        
+
             if user.organization.lower() == 'ngo':
                 return redirect('/dashboard')
             elif user.organization.lower() == 'restaurant':
                 return redirect('/restaurant_dashboard')
-    
-    return render_template('login.html')
+
+        flash("Invalid email or password", "error")
+
+    return render_template('login.html', form=form)
+
+  
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        password = request.form['password']
-        organization = request.form['organization']
-        
-        # Check if the email already exists
-        if User.query.filter_by(email=email).first():
-            return 'Email already registered'
+    form = SignupForm()
 
-        # Create and save the new user
+    if form.validate_on_submit():  # This will validate CSRF token too
+        name = form.name.data
+        email = form.email.data
+        password = form.password.data
+        organization = form.organization.data
+
+        if User.query.filter_by(email=email).first():
+            flash('Email already registered', 'error')
+            return redirect(url_for('signup'))
+
         new_user = User(name=name, email=email, password=password, organization=organization)
-        db.session.add(new_user)    
+        db.session.add(new_user)
         db.session.commit()
-        
+
         session['name'] = new_user.name
         session['email'] = new_user.email
         session['organization'] = new_user.organization
+        session['first_time'] = True
 
-        # If the organization is NGO, mark as first-time user
-        if new_user.organization.lower() == 'ngo':
-            session['first_time'] = True  # Flag for first-time users
-        
-        if new_user.organization.lower() == 'restaurant':
-            session['first_time'] = True
-        
-        return redirect('/login')
-    
-    return render_template('signup.html')
+        return redirect(url_for('login'))  # Redirect to login page after successful signup
+
+    return render_template('signup.html', form=form)
 
 @app.route('/dashboard')
 def dashboard():
@@ -239,26 +245,59 @@ auth = firebase.auth()
 
 @app.route('/firebase-login', methods=['POST'])
 def firebase_login():
-    data = request.json
+    print("🔍 Received request at /firebase-login")  # Debugging
+
+    # Check if request is JSON
+    if not request.is_json:
+        print("❌ Request is not JSON")
+        return jsonify({"success": False, "message": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    print("📨 Received data:", data)  # Debugging
+
+    if not data or "idToken" not in data:
+        print("❌ Missing idToken in request")
+        return jsonify({"success": False, "message": "Missing idToken"}), 400  
+
     email = data.get("email")
     name = data.get("name")
 
     if not email:
+        print("❌ Invalid email")
         return jsonify({"success": False, "message": "Invalid email"}), 400
 
-    # Check if the user exists in the database
-    user = User.query.filter_by(email=email).first()
+    try:
+        decoded_token = auth.verify_id_token(data["idToken"])  # Verify Firebase token
+        user_email = decoded_token.get("email")
+        print("✅ Firebase Token Verified for:", user_email)
 
-    if not user:
-        # If the user is new, store session and redirect to select role
-        session["email"] = email
-        session["name"] = name
-        return jsonify({"success": True, "new_user": True})
+        if not user_email:
+            print("❌ Token verification failed")
+            return jsonify({"success": False, "message": "Token verification failed"}), 401
 
-    # If the user exists, store session and redirect to dashboard
-    session["email"] = user.email
-    session["name"] = user.name
-    return jsonify({"success": True, "new_user": False})
+        user = User.query.filter_by(email=user_email).first()
+
+        if not user:
+            session["email"] = user_email
+            session["name"] = name
+            print("🔄 New user, redirecting to select_type")
+            return jsonify({"success": True, "redirect_url": url_for('select_type')})
+
+        session["email"] = user.email
+        session["name"] = user.name
+        print("🏠 Existing user, redirecting to dashboard")
+        return jsonify({"success": True, "redirect_url": url_for('dashboard')})
+
+    except Exception as e:
+        print("🔥 Error in Firebase verification:", str(e))
+        return jsonify({"success": False, "message": str(e)}), 401
+
+    
+@app.after_request
+def set_response_headers(response):
+    response.headers["Cross-Origin-Opener-Policy"] = "same-origin-allow-popups"
+    return response
+
 
 @app.route('/select_type')
 def user_type():
@@ -266,44 +305,51 @@ def user_type():
         return redirect("/login")
     return render_template("dash.html", name=session.get("name", "User"))    
 
-@app.route('/forgot_password', methods=['POST'])
+
+@app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
-    email = request.form['email']
-    user = User.query.filter_by(email=email).first()
-    if not user:
-        flash('Email does not exist', 'error')
-        return redirect('/forgot_password')
-    
-    token = s.dumps(email, salt='password-reset')
-    
-    reset_url = url_for('reset_password', token=token, _external=True)
-    
-    msg = Message('Password Reset Request', recipients=[email])
-    msg.body = f'To reset your password, visit the following link: {reset_url}\n\nThis link will expire in 30 minutes.'
-    mail.send(msg)
-    
-    flash('Password reset link has been sent to your email', 'success')
-    return redirect('/login')
-    
+    form = ForgotPasswordForm()  # Initialize the form
+
+    if form.validate_on_submit():
+        email = form.email.data
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            flash('Email does not exist', 'error')
+            return redirect(url_for('forgot_password'))
+
+        token = s.dumps(email, salt='password-reset')
+        reset_url = url_for('reset_password', token=token, _external=True)
+
+        msg = Message('Password Reset Request', recipients=[email])
+        msg.body = f'To reset your password, visit the following link: {reset_url}\n\nThis link will expire in 30 minutes.'
+        mail.send(msg)
+
+        flash('Password reset link has been sent to your email', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('Forgot_Pass.html', form=form)
+
+
+
 @app.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
+    form = ResetPasswordForm()  # Create form instance
+
     try:
-        # Verify the token (expires in 30 minutes)
         email = s.loads(token, salt='password-reset', max_age=1800)
     except:
         flash('Invalid or expired token', 'error')
         return redirect(url_for('forgot_password'))
 
-    if request.method == 'POST':
-        new_password = request.form['new_password']
+    if form.validate_on_submit():
+        new_password = form.new_password.data  # Get validated password
         
-        # Find the user in the database
         user = User.query.filter_by(email=email).first()
         if not user:
             flash('User not found', 'error')
             return redirect(url_for('forgot_password'))
-        
-        # Hash the new password before storing
+
         hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         user.password = hashed_password
         db.session.commit()
@@ -311,7 +357,8 @@ def reset_password(token):
         flash('Your password has been updated successfully!', 'success')
         return redirect(url_for('login'))
 
-    return render_template('reset_pass.html', token=token)
+    return render_template('reset_pass.html', form=form, token=token)
+
 
 
 

@@ -58,15 +58,16 @@
           </div>
 
           <form id="loginForm" action="/login" method="POST">
-            <div class="form-group">
-              <label for="email">Email Address</label>
-              <input type="email" id="email" name="email" required />
-            </div>
+            {{ form.hidden_tag() }}  <!-- This adds CSRF token -->
+  <div class="form-group">
+    <label for="email">Email Address</label>
+    {{ form.email(class="form-control") }}
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    {{ form.password(class="form-control") }}
+  </div>
 
-            <div class="form-group">
-              <label for="password">Password</label>
-              <input type="password" id="password" name="password" required />
-            </div>
 
             <div class="remember-forgot">
               <label class="remember-me">
@@ -127,35 +128,36 @@
       const provider = new GoogleAuthProvider();
 
       document
-        .getElementById("googleSignInButton")
-        .addEventListener("click", function () {
-          signInWithPopup(auth, provider)
-            .then((result) => {
-              const user = result.user;
-              user.getIdToken().then((idToken) => {
-                fetch("/firebase-login", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    idToken: idToken,
-                    name: user.displayName,
-                    email: user.email,
-                  }),
-                })
-                  .then((response) => response.json())
-                  .then((data) => {
-                    if (data.new_user) {
-                      window.location.href = "/select_type"; // Redirect to dash.html
-                    } else {
-                      window.location.href = "/dashboard"; // Redirect existing users to their dashboard
-                    }
-                  });
-              });
-            })
-            .catch((error) => {
-              console.error("Error signing in:", error);
+  .getElementById("googleSignInButton")
+  .addEventListener("click", function () {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const user = result.user;
+        user.getIdToken().then((idToken) => {
+          fetch("/firebase-login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              idToken: idToken,
+              name: user.displayName,
+              email: user.email,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                window.location.href = data.redirect_url; // Use dynamic redirect from backend
+              } else {
+                alert("Google login failed: " + data.message);
+              }
             });
         });
+      })
+      .catch((error) => {
+        console.error("Error signing in:", error);
+      });
+  });
+
     </script>
   </body>
 </html>

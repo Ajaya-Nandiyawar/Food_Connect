@@ -85,31 +85,29 @@
           <div class="success-message" id="successMessage">
             Registration complete!
           </div>
-          <form id="signupForm" action="/signup" method="POST">
+          <form id="signupForm" action="{{ url_for('signup') }}" method="POST">
+            {{ form.hidden_tag() }}
+            <!-- CSRF Token -->
+
             <div class="form-group">
               <label for="name">Full Name</label>
-              <input type="text" id="name" name="name" required />
+              {{ form.name(class="form-control") }}
             </div>
 
             <div class="form-group">
               <label for="email">Email Address</label>
-              <input type="email" id="email" name="email" required />
+              {{ form.email(class="form-control") }}
             </div>
 
             <div class="form-group">
               <label for="password">Set Password</label>
-              <input type="password" id="password" name="password" required />
+              {{ form.password(class="form-control") }}
             </div>
 
             <div class="form-group">
               <label for="organization">Organization Type</label>
-              <select id="organization" name="organization" required>
-                <option value="" disabled selected>
-                  Select Organization Type
-                </option>
-                <option value="NGO" name="ngo">NGO</option>
-                <option value="Restaurant" name="restaurant">Restaurant</option>
-              </select>
+              {{ form.organization(class="form-control") }}
+              <!-- This generates the select dropdown -->
             </div>
 
             <button type="submit" class="submit-btn">Join the Community</button>
@@ -117,7 +115,7 @@
             <p class="form-footer">
               By signing up, you agree to our Terms of Service and Privacy
               Policy.<br />
-              <a href="/login">Sign in</a>
+              <a href="{{ url_for('login') }}">Sign in</a>
             </p>
           </form>
         </div>
