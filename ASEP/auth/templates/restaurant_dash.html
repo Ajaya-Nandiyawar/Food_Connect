@@ -93,11 +93,12 @@
             <div class="dashboard-grid">
                 <div class="requests-table">
                     <h2>Recent NGO Requests</h2>
+                    {% for request in requests %}
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>NGO Name</th>
+                                    <th>Request ID</th>
                                     <th>Food Type</th>
                                     <th>Quantity Needed</th>
                                     <th>Status</th>
@@ -106,22 +107,16 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Food for All</td>
-                                    <td>Cooked Meals</td>
-                                    <td>50 servings</td>
-                                    <td><span class="status pending">Pending</span></td>
+                                    <td>{{ request.id }}</td>
+                                    <td>{{ request.food_category }}</td>
+                                    <td>{{ request.quantity }}</td>
+                                    <td><span class="status pending">{{ request.status }}</span></td>
                                     <td><a href="#" class="action-link">Respond</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Hope Foundation</td>
-                                    <td>Vegetables</td>
-                                    <td>100 kg</td>
-                                    <td><span class="status accepted">Accepted</span></td>
-                                    <td><a href="#" class="action-link">View Details</a></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+                    {% endfor %}
                 </div>
 
                 <div class="side-content">

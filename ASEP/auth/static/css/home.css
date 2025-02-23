@@ -233,6 +233,7 @@ td {
 .btn-primary {
   background-color: #2563eb;
   color: white;
+  text-decoration: none;
 }
 
 .btn-primary:hover {

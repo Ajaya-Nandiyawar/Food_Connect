@@ -8,6 +8,11 @@ from forms import ForgotPasswordForm, ResetPasswordForm,  SignupForm # Import th
 import bcrypt, os
 from NGO import ngo_blueprint, RequestModel
 import pyrebase
+from notifications import notifications_bp
+
+
+
+
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -38,6 +43,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tra
 
 # Register blueprint before app initialization (if using blueprints)
 app.register_blueprint(ngo_blueprint, url_prefix='/ngo')
+
+app.register_blueprint(notifications_bp, url_prefix='/notifications')
 
 # Initialize SQLAlchemy with the app
 db.init_app(app)
@@ -183,7 +190,8 @@ def restaurant_guide():
 
 @app.route('/restaurant_dashboard')
 def restaurant_dashboard():
-    return render_template('home.html')
+    requests = RequestModel.query.order_by(RequestModel.created_at).all()
+    return render_template('home.html', requests=requests)
 
 @app.route('/restaurant_alerts')
 def restaurant_alerts():

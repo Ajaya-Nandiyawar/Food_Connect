@@ -68,9 +68,18 @@
                     <div class="notification-content">
                         <div class="notification-header">
                             <h3>New Food Request</h3>
-                            <span class="notification-time">5 mins ago</span>
                         </div>
-                        <p>Food for All NGO has requested 50 meals for immediate donation.</p>
+                        <ul>
+                            {% for notification in notifications %}
+                            <li>
+                                <strong>{{ notification.message }}</strong><br>
+                                Food Type: {{ notification.food_type }}<br>
+                                Quantity: {{ notification.quantity }}<br>
+                                Note: {{ notification.additional_note }}<br>
+                                <span class="notification-time">{{ notification.created_at }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
                         <div class="notification-actions">
                             <a href="#" class="btn-link">View Request</a>
                             <button class="btn-link" onclick="markAsRead(this)">Mark as read</button>
@@ -141,5 +150,29 @@
     </div>
     <script src={{url_for('static',filename='js/alert.js')}}></script>
     <script src={{url_for('static',filename='js/sidebar.js')}}></script>
+    <script>
+        function showNotification(message) {
+            if (Notification.permission === "granted") {
+                new Notification("New Food Request", { body: message });
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        new Notification("New Food Request", { body: message });
+                    }
+                });
+            }
+        }
+
+        // Fetch new notifications every 10 seconds
+        setInterval(() => {
+            fetch('/notifications/api/notifications')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        showNotification(data[0].message);
+                    }
+                });
+        }, 10000);       
+    </script>
 </body>
 </html>

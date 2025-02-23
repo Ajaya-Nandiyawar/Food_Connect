@@ -176,5 +176,39 @@
     </script>
     <script src={{url_for('static', filename='js/request.js')}}></script>
     <script src={{url_for('static', filename='js/sidebar.js')}}></script>
+    <script>
+      fetch("/ngo/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.status === "success") {
+              fetch("/notifications/add_notification", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ message: `New food request from ${formData.ngo_name}: ${formData.food_category} (${formData.quantity} kg)` })
+              });
+      
+              // Show Browser Notification
+              if (Notification.permission === "granted") {
+                  new Notification("FoodConnect Alert", { body: `New request from ${formData.ngo_name}: ${formData.food_category} (${formData.quantity} kg).` });
+              } else if (Notification.permission !== "denied") {
+                  Notification.requestPermission().then(permission => {
+                      if (permission === "granted") {
+                          new Notification("FoodConnect Alert", { body: `New request from ${formData.ngo_name}: ${formData.food_category} (${formData.quantity} kg).` });
+                      }
+                  });
+              }
+      
+              window.location.reload();
+          } else {
+              alert("Error submitting request: " + data.message);
+          }
+      })
+      .catch(error => alert("Error: " + error.message));
+    
+    </script>
   </body>
 </html>
