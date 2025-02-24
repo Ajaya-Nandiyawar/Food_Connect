@@ -3,6 +3,10 @@
   --orange: #f57c00;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -41,11 +45,63 @@ body {
     margin-bottom: 20px;
 }
 
+.section-header {
+  transition: color 0.3s ease;
+}
+
+.section-header:hover {
+  color: #f57c00;
+}
+
+.line {
+  transition: transform 0.3s ease;
+}
+
+.line:hover {
+  transform: scale(1.1);
+}
+
 .section-text {
     font-size: 18px;
     color: #7f8c8d;
     line-height: 1.6;
     text-align: justify;
+}
+
+/* filepath: /c:/Users/manth/OneDrive/Desktop/Foodconnect95/Food_Connect/about_us.css */
+.carousel {
+  position: relative;
+  max-width: 100%;
+  margin: auto;
+}
+
+.carousel-item {
+  display: none;
+  width: 100%;
+}
+
+.carousel-item.active {
+  display: block;
+}
+
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  margin-top: -22px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
 }
 
 /* footer */
@@ -204,3 +260,19 @@ body {
   }
   /* footer end  */
 
+  #goToTop {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #f57c00;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: none;
+  }
+  
+  #goToTop:hover {
+    background-color: #e65100;
+  }
