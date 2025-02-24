@@ -21,6 +21,7 @@ app.secret_key = 'your_secret_key'  # Set a secret key for sessions
 
 csrf = CSRFProtect(app)
 
+
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
@@ -33,9 +34,9 @@ s = URLSafeTimedSerializer(app.secret_key)
 
 # MySQL connection string
 db_user = "root"
-db_password = "Rishi%400211"  # URL-encoded password (%40 represents @)
+db_password = "%40J%21nky%40ub%40le5"  # URL-encoded password (%40 represents @)
 db_host = "127.0.0.1"
-db_name = "food_sharing"
+db_name = "registered"
 
 # Configuring database URI
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
@@ -199,10 +200,6 @@ def restaurant_dashboard():
 @app.route('/restaurant_alerts')
 def restaurant_alerts():
     return render_template('alert.html')
-
-@app.route('/restaurant_donate')
-def restaurant_donate():
-    return render_template('donationManagement.html')
 
 @app.route('/restaurant_requests')
 def restaurant_requests():

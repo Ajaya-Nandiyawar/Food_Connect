@@ -2,7 +2,7 @@ from flask import Blueprint, request, render_template, jsonify
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from extensions import db
-  
+
 restaurant_blueprint = Blueprint('restaurant', __name__)
 
 class DonationModel(db.Model):  # Donation model
@@ -31,34 +31,48 @@ class DonationModel(db.Model):  # Donation model
 
 @restaurant_blueprint.route('/donation', methods=['GET', 'POST'])
 def handle_donation():
+    if request.method == 'GET' and request.headers.get('Accept') == 'application/json':
+        donations = DonationModel.query.all()
+        return jsonify({
+            'status': 'success',
+            'donations': [donation.to_dict() for donation in donations]
+        })
+    elif request.method == 'GET':  # Render template for normal requests
+        donations = DonationModel.query.all()
+        return render_template('donationManagement.html', donations=donations)
+    
     if request.method == 'POST':
         try:
-            data = request.get_json()  # Accept JSON input
+            data = request.get_json()
+            if not data:
+                return jsonify({'status': 'error', 'message': 'Invalid JSON data'}), 400
 
-            food_type = data['food_type']
-            quantity = float(data['quantity'])
-            unit = data['unit']
-            expiry_date = datetime.strptime(data['expiry_date'], '%Y-%m-%d %H:%M')
-            pickup_time = datetime.strptime(data['pickup_time'], '%H:%M').time()
-            special_instructions = data.get('special_instructions', '')
+            required_fields = ['food_type', 'quantity', 'unit', 'expiry_date', 'pickup_time']
+            for field in required_fields:
+                if field not in data:
+                    return jsonify({'status': 'error', 'message': f'Missing required field: {field}'}), 400
 
             new_donation = DonationModel(
-                food_type=food_type,
-                quantity=quantity,
-                unit=unit,
-                expiry_date=expiry_date,
-                pickup_time=pickup_time,
-                special_instructions=special_instructions
+                food_type=data['food_type'],
+                quantity=float(data['quantity']),
+                unit=data['unit'],
+                expiry_date=datetime.strptime(data['expiry_date'], '%Y-%m-%dT%H:%M'),
+                pickup_time=datetime.strptime(data['pickup_time'], '%H:%M').time(),
+                special_instructions=data.get('special_instructions', '')
             )
             db.session.add(new_donation)
             db.session.commit()
+            
+            return jsonify({
+                'status': 'success', 
+                'message': 'Donation created successfully',
+                'donation': new_donation.to_dict()
+            })
 
-            return jsonify({'status': 'success', 'message': 'Donation created successfully'})
-
+        except ValueError as ve:
+            return jsonify({'status': 'error', 'message': 'Invalid date format'}), 400
+        
         except Exception as e:
-            print(f"Error: {str(e)}")
-            return jsonify({'status': 'error', 'message': str(e)}), 400
+            db.session.rollback()
+            return jsonify({'status': 'error', 'message': str(e)}), 500
 
-    # Fetch all donations for GET requests
-    donations = DonationModel.query.order_by(DonationModel.created_at).all()
-    return render_template('donationManagement.html', donations=[donation.to_dict() for donation in donations])

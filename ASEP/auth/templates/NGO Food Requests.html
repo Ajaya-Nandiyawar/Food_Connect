@@ -16,24 +16,24 @@
                 <button class="toggle-btn" id="toggleBtn">X</button>
             </div>
             <div>
-            <a href="restaurant_dashboard" class="menu-item">
+            <a href={{url_for('restaurant_dashboard')}} class="menu-item">
                 <div class="icon dashboard-icon" onclick="openSidebar()"></div>
                 <span class="menu-text">Dashboard</span>
             </a>
             </div>
-            <a href="restaurant_alerts" class="menu-item">
+            <a href={{url_for('restaurant_alerts')}} class="menu-item">
                 <div class="icon alert-icon" onclick="openSidebar()"></div>
                 <span class="menu-text">Notifications</span>
             </a>
-            <a href="restaurant_requests" class="menu-item active">
+            <a href={{url_for('restaurant_requests')}} class="menu-item active">
                 <div class="icon request-icon" onclick="openSidebar()"></div>
                 <span class="menu-text">Requests</span>
             </a>
-            <a href="restaurant_donate" class="menu-item">
+            <a href={{url_for('restaurant.handle_donation')}} class="menu-item">
                 <div class="icon stats-icon" onclick="openSidebar()"></div>
                 <span class="menu-text">Donations</span>
             </a>
-            <a href="restaurant_settings" class="menu-item">
+            <a href={{url_for('restaurant_settings')}} class="menu-item">
                 <div class="icon settings-icon" onclick="openSidebar()"></div>
                 <span class="menu-text">Settings</span>
             </a>

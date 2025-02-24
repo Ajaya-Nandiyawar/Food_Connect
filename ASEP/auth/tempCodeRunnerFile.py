@@ -1,1 +1,1 @@
-restaurant_dash
+csrf = CSRFProtect(app)

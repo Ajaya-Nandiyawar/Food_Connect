@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>FoodShare - Donation Management</title>
   <link rel="stylesheet" href={{url_for('static', filename='css/donationManagement.css' )}}>
   <link rel="stylesheet" href={{url_for('static', filename='css/sidebar.css' )}}>
@@ -19,24 +20,24 @@
         <button class="toggle-btn" id="toggleBtn">X</button>
       </div>
       <div>
-        <a href="restaurant_dashboard" class="menu-item ">
+        <a href={{url_for('restaurant_dashboard')}} class="menu-item ">
           <div class="icon dashboard-icon" onclick="openSidebar()"></div>
           <span class="menu-text">Dashboard</span>
         </a>
       </div>
-      <a href="restaurant_alerts" class="menu-item">
+      <a href={{url_for('restaurant_alerts')}} class="menu-item">
         <div class="icon alert-icon" onclick="openSidebar()"></div>
         <span class="menu-text">Notifications</span>
       </a>
-      <a href="restaurant_requests" class="menu-item">
+      <a href={{url_for('restaurant_requests')}} class="menu-item">
         <div class="icon request-icon" onclick="openSidebar()"></div>
         <span class="menu-text">Requests</span>
       </a>
-      <a href="restaurant_donate" class="menu-item active">
+      <a href={{url_for('restaurant.handle_donation')}} class="menu-item active">
         <div class="icon stats-icon" onclick="openSidebar()"></div>
         <span class="menu-text">Donations</span>
       </a>
-      <a href="restaurant_settings" class="menu-item">
+      <a href={{url_for('restaurant_settings')}} class="menu-item">
         <div class="icon settings-icon" onclick="openSidebar()"></div>
         <span class="menu-text">Settings</span>
       </a>
@@ -118,28 +119,19 @@
               </tr>
             </thead>
             <tbody id="activeDonationsTable">
+              {% for donation in donations %}
               <tr>
-                <td>#DON001</td>
-                <td>Cooked Meals</td>
-                <td>50 servings</td>
-                <td>Today, 2:00 PM</td>
-                <td><span class="status pending">Pending Pickup</span></td>
+                <td>{{ donation.id }}</td>
+                <td>{{ donation.food_type }}</td>
+                <td>{{ donation.quantity }}</td>
+                <td>{{ donation.pickup_time }}</td>
+                <td><span class="status pending">{{ donation.status }}</span></td>
                 <td class="actions">
                   <a href="#" class="action-link edit">Edit</a>
                   <a href="#" class="action-link cancel">Cancel</a>
                 </td>
               </tr>
-              <tr>
-                <td>#DON002</td>
-                <td>Raw Materials</td>
-                <td>25 kg</td>
-                <td>Today, 4:00 PM</td>
-                <td><span class="status confirmed">Confirmed</span></td>
-                <td class="actions">
-                  <a href="#" class="action-link view">View</a>
-                  <a href="#" class="action-link complete">Complete</a>
-                </td>
-              </tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -181,35 +173,7 @@
   </div>
   <script src={{url_for('static',filename='js/donationManagement.js' )}}></script>
   <script src={{url_for('static',filename='js/sidebar.js' )}}></script>
-  <script>
-    document.getElementById("donationForm").addEventListener("submit", function (event) {
-      event.preventDefault(); // Prevent form reload
-
-      let formData = {
-        food_type: document.getElementById("foodType").value,
-        quantity: document.getElementById("quantity").value,
-        unit: document.getElementById("unit").value,
-        expiry_date: document.getElementById("expiryDate").value,
-        pickup_time: document.getElementById("pickupTime").value,
-        special_instructions: document.getElementById("instructions").value
-      };
-
-      fetch("/Restaurant/donation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      })
-        .then(response => response.json())
-        .then(data => {
-          alert(data.message); // Show response message
-          if (data.status === "success") {
-            window.location.reload();
-          }
-        })
-        .catch(error => console.error("Error:", error));
-    });
-
-  </script>
+  
 </body>
 
 </html>
