@@ -25,9 +25,9 @@ csrf = CSRFProtect(app)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'iitajinkyaubale2005@gmail.com'
-app.config['MAIL_PASSWORD'] = 'cdfl npps gpfm rcov'
-app.config['MAIL_DEFAULT_SENDER'] = 'iitajinkyaubale2005@gmail.com'
+app.config['MAIL_USERNAME'] = 'foodconnect5621@gmail.com'
+app.config['MAIL_PASSWORD'] = 'nqkl tveg zbys hqkr'
+app.config['MAIL_DEFAULT_SENDER'] = 'foodconnect5621@gmail.com'
 
 mail = Mail(app)
 s = URLSafeTimedSerializer(app.secret_key)
