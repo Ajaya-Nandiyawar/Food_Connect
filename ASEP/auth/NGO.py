@@ -34,41 +34,44 @@ class RequestModel(db.Model):
 
 @ngo_blueprint.route('/request', methods=['GET', 'POST'])
 def handle_request():
-    if request.method == 'POST':
-        try:
-            data = request.get_json()
-            if "request_id" in data and "status" in data:
-                request_id = data["request_id"]
-                new_status = data["status"]
+    if request.method == 'GET':
+        # Fetch all requests from the database
+        requests = RequestModel.query.order_by(RequestModel.created_at).all()
+        return render_template('request.html', requests=[request.to_dict() for request in requests])
 
-                request_entry = RequestModel.query.get(request_id)
-                if not request_entry:
-                    return jsonify({'status': 'error', 'message': 'Request not found'}), 404
+    if request.content_type != "application/json":
+        return jsonify({"status": "error", "message": "Content-Type must be application/json"}), 415
 
-                request_entry.status = new_status
-                db.session.commit()
-                return jsonify({'status': 'success', 'message': 'Request status updated'})
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"status": "error", "message": "Invalid JSON data"}), 400
 
+        # Handle request update
+        if "request_id" in data and "status" in data:
+            request_id = data["request_id"]
+            new_status = data["status"]
 
-            # Create new food request
-            new_request = RequestModel(
-                food_category=data['food_category'],
-                quantity=float(data['quantity']),
-                pick_up_date=datetime.strptime(data['pick_up_date'], '%Y-%m-%d').date(),
-                preferred_time=datetime.strptime(data['preferred_time'], '%H:%M').time(),
-                additional_note=data['additional_note']
-            )
-            db.session.add(new_request)
+            request_entry = RequestModel.query.get(request_id)
+            if not request_entry:
+                return jsonify({"status": "error", "message": "Request not found"}), 404
+
+            request_entry.status = new_status
             db.session.commit()
+            return jsonify({"status": "success", "message": "Request status updated"})
 
-            # Send a notification
-            notification_message = f"New food request from {data['food_category']} ({data['quantity']} kg). Note: {data['additional_note']}"
-            send_notification(notification_message)  # Call function to add notification
+        # Handle new request creation
+        new_request = RequestModel(
+            food_category=data["food_category"],
+            quantity=float(data["quantity"]),
+            pick_up_date=datetime.strptime(data["pick_up_date"], "%Y-%m-%d").date(),
+            preferred_time=datetime.strptime(data["preferred_time"], "%H:%M").time(),
+            additional_note=data["additional_note"]
+        )
+        db.session.add(new_request)
+        db.session.commit()
 
-            return jsonify({'status': 'success'})
+        return jsonify({"status": "success"}), 201
 
-        except Exception as e:
-            return jsonify({'status': 'error', 'message': str(e)}), 400
-
-    requests = RequestModel.query.order_by(RequestModel.created_at).all()
-    return render_template('request.html', requests=[request.to_dict() for request in requests])
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400

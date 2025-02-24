@@ -3,26 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>FoodShare - Request Donations</title>
     <link rel="stylesheet" href={{url_for('static',filename='css/request.css')}} />
     <link rel="stylesheet" href={{url_for('static', filename='css/sidebar.css')}}/>
   </head>
   <body>
     <div class="container">
-      <!-- Sidebar -->
-      <!-- <div class="sidebar">
-        <div class="logo">
-          <div class="logo-icon"></div>
-          <span>FoodShare</span>
-        </div>
-        <nav>
-          <a href="#" class="nav-item active">Dashboard</a>
-          <a href="#" class="nav-item">Alerts</a>
-          <a href="#" class="nav-item">Stats</a>
-          <a href="#" class="nav-item">Requests</a>
-          <a href="#" class="nav-item">Settings</a>
-        </nav>
-      </div> -->
       <div class="sidebar" id="sidebar">
         <div class="logo">
           <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare" />
@@ -65,7 +52,7 @@
           <!-- Left Section - Create Donation Request -->
           <div class="create-request">
             <h2>Create Donation Request</h2>
-            <form id="donationForm" action="/ngo/request" method="POST">
+            <form id="donationForm">
               <div class="form-group">
                 <label>Food Category</label>
                 <select name="food_category">
@@ -177,38 +164,48 @@
     <script src={{url_for('static', filename='js/request.js')}}></script>
     <script src={{url_for('static', filename='js/sidebar.js')}}></script>
     <script>
-      fetch("/ngo/request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.status === "success") {
-              fetch("/notifications/add_notification", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ message: `New food request from ${formData.ngo_name}: ${formData.food_category} (${formData.quantity} kg)` })
-              });
+      document.addEventListener("DOMContentLoaded", () => {
+        document
+          .getElementById("donationForm")
+          .addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent default form submission
       
-              // Show Browser Notification
-              if (Notification.permission === "granted") {
-                  new Notification("FoodConnect Alert", { body: `New request from ${formData.ngo_name}: ${formData.food_category} (${formData.quantity} kg).` });
-              } else if (Notification.permission !== "denied") {
-                  Notification.requestPermission().then(permission => {
-                      if (permission === "granted") {
-                          new Notification("FoodConnect Alert", { body: `New request from ${formData.ngo_name}: ${formData.food_category} (${formData.quantity} kg).` });
-                      }
+            const formData = {
+              food_category: document.querySelector("select[name='food_category']").value,
+              quantity: document.querySelector("input[name='quantity']").value,
+              pick_up_date: document.querySelector("input[name='pick_up_date']").value,
+              preferred_time: document.querySelector("input[name='preferred_time']").value,
+              additional_note: document.querySelector("textarea[name='additional_note']").value,
+            };
+      
+            fetch("http://127.0.0.1:5000/ngo/request", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').content,
+              },
+              body: JSON.stringify(formData),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  return response.text().then((text) => {
+                    throw new Error(`HTTP error! Status: ${response.status} - ${text}`);
                   });
-              }
+                }
+                return response.json();
+              })
+              .then((data) => {
+                alert(data.message);
+                if (data.status === "success") window.location.reload();
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+                alert("Error submitting request: " + error.message);
+              });
+          });
+      });
       
-              window.location.reload();
-          } else {
-              alert("Error submitting request: " + data.message);
-          }
-      })
-      .catch(error => alert("Error: " + error.message));
-    
+      
     </script>
   </body>
 </html>
