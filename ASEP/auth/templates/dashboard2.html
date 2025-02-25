@@ -224,6 +224,8 @@
     
       let markers = []; // Array to store marker references
       let locations = []; // Will be populated from DB
+      let currentRoute = null;
+      let directionsControl = null;
     
       function addMarkers(locations) {
         // Clear existing markers
@@ -342,153 +344,183 @@
         });
       }
     
-        function calculateRoute() {
-          const startPoint = JSON.parse(document.getElementById('startPoint').value);
-          const endPoint = JSON.parse(document.getElementById('endPoint').value);
-      
-          if (!startPoint || !endPoint) {
-              alert('Please select both start and end points');
-              return;
-          }
-      
-          // Remove existing route if any
-          if (currentRoute) {
-              currentRoute.remove();
-          }
-      
-          // Remove existing directions control
-          if (directionsControl) {
-              map.removeControl(directionsControl);
-          }
-      
-          // Add directions control
-          directionsControl = new MapboxDirections({
-              accessToken: mapboxgl.accessToken,
-              unit: 'metric',
-              profile: 'mapbox/driving',
-              alternatives: true,
-              geometries: 'geojson'
-          });
-      
-          map.addControl(directionsControl, 'top-right');
-      
-          // Set origin and destination
-          directionsControl.setOrigin([startPoint.lng, startPoint.lat]);
-          directionsControl.setDestination([endPoint.lng, endPoint.lat]);
-      
-          // Update route info when route is calculated
-          directionsControl.on('route', (e) => {
-              const route = e.route[0];
-              document.getElementById('routeDistance').textContent = 
-                  `${(route.distance / 1000).toFixed(2)} km`;
-              document.getElementById('routeDuration').textContent = 
-                  `${Math.round(route.duration / 60)} mins`;
-          });
-      }
+      function calculateRoute() {
+        try {
+            const startPoint = JSON.parse(document.getElementById('startPoint').value || 'null');
+            const endPoint = JSON.parse(document.getElementById('endPoint').value || 'null');
+            
+            if (!startPoint || !endPoint) {
+                alert('Please select both start and end points');
+                return;
+            }
+    
+            // Clear existing route
+            if (currentRoute) {
+                currentRoute.remove();
+            }
+            
+            // Remove existing directions control
+            if (directionsControl) {
+                map.removeControl(directionsControl);
+            }
+    
+            // Create new directions control
+            directionsControl = new MapboxDirections({
+                accessToken: mapboxgl.accessToken,
+                unit: 'metric',
+                profile: 'mapbox/driving',
+                interactive: false,
+                controls: {
+                    inputs: false,
+                    instructions: true
+                },
+                styles: [{
+                    id: 'directions-route-line',
+                    type: 'line',
+                    paint: {
+                        'line-color': '#3887be',
+                        'line-width': 5,
+                        'line-opacity': 0.75
+                    }
+                }]
+            });
+    
+            map.addControl(directionsControl, 'top-right');
+    
+            // Set waypoints
+            directionsControl.setOrigin([startPoint.lng, startPoint.lat]);
+            directionsControl.setDestination([endPoint.lng, endPoint.lat]);
+    
+            // Update route info when route is calculated
+            directionsControl.on('route', (e) => {
+                if (e.route && e.route[0]) {
+                    const route = e.route[0];
+                    document.getElementById('routeDistance').textContent = 
+                        `${(route.distance / 1000).toFixed(2)} km`;
+                    document.getElementById('routeDuration').textContent = 
+                        `${Math.round(route.duration / 60)} mins`;
+                    
+                    // Update total routes counter
+                    const totalRoutes = document.getElementById('totalRoutes');
+                    if (totalRoutes) {
+                        totalRoutes.textContent = parseInt(totalRoutes.textContent || '0') + 1;
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error calculating route:', error);
+            alert('Error calculating route. Please try again.');
+        }
+    }
       
       // Replace the existing optimizeRoute function with this updated version
       function optimizeRoute() {
-          const startPoint = JSON.parse(document.getElementById('startPoint').value);
-          if (!startPoint) {
-              alert('Please select a starting point');
-              return;
-          }
-      
-          try {
-              // Remove existing route if any
-              if (currentRoute) {
-                  currentRoute.remove();
-              }
-      
-              // Get all delivery points (green markers)
-              const deliveryPoints = locations.filter(loc => loc.type === 'green');
-              
-              if (deliveryPoints.length === 0) {
-                  alert('No delivery points found to optimize');
-                  return;
-              }
-      
-              // Convert points to turf features
-              const points = deliveryPoints.map(point => ({
-                  type: 'Feature',
-                  properties: {},
-                  geometry: {
-                      type: 'Point',
-                      coordinates: [point.position.lng, point.position.lat]
-                  }
-              }));
-      
-              // Create a feature collection
-              const collection = turf.featureCollection(points);
-      
-              // Starting point
-              const origin = turf.point([startPoint.lng, startPoint.lat]);
-      
-              // Calculate optimized route
-              let optimizedRoute = [origin];
-              let remaining = [...points];
-      
-              while (remaining.length > 0) {
-                  const currentPoint = optimizedRoute[optimizedRoute.length - 1];
-                  const nearest = turf.nearest(currentPoint, turf.featureCollection(remaining));
-                  optimizedRoute.push(nearest);
-                  remaining = remaining.filter(point => 
-                      point.geometry.coordinates[0] !== nearest.geometry.coordinates[0] ||
-                      point.geometry.coordinates[1] !== nearest.geometry.coordinates[1]
-                  );
-              }
-      
-              // Extract coordinates for the route
-              const routeCoordinates = optimizedRoute.map(point => point.geometry.coordinates);
-      
-              // Add the route to the map
-              map.addLayer({
-                  id: 'optimized-route',
-                  type: 'line',
-                  source: {
-                      type: 'geojson',
-                      data: {
-                          type: 'Feature',
-                          properties: {},
-                          geometry: {
-                              type: 'LineString',
-                              coordinates: routeCoordinates
-                          }
-                      }
-                  },
-                  layout: {
-                      'line-join': 'round',
-                      'line-cap': 'round'
-                  },
-                  paint: {
-                      'line-color': '#3887be',
-                      'line-width': 5,
-                      'line-opacity': 0.75
-                  }
-              });
-      
-              // Store current route for later removal
-              currentRoute = {
-                  remove: () => {
-                      if (map.getLayer('optimized-route')) {
-                          map.removeLayer('optimized-route');
-                      }
-                      if (map.getSource('optimized-route')) {
-                          map.removeSource('optimized-route');
-                      }
-                  }
-              };
-      
-              // Fit map to show the entire route
-              const bounds = new mapboxgl.LngLatBounds();
-              routeCoordinates.forEach(coord => bounds.extend(coord));
-              map.fitBounds(bounds, { padding: 50 });
-      
-          } catch (error) {
-              console.error('Error in route optimization:', error);
-              alert('An error occurred while optimizing the route. Please try again.');
-          }
-      }
+    try {
+        const startPoint = JSON.parse(document.getElementById('startPoint').value || 'null');
+        if (!startPoint) {
+            alert('Please select a starting point');
+            return;
+        }
+
+        // Clear existing route
+        if (currentRoute) {
+            currentRoute.remove();
+        }
+
+        // Get all delivery points (green markers)
+        const deliveryPoints = locations.filter(loc => loc.type === 'green');
+        
+        if (deliveryPoints.length === 0) {
+            alert('No delivery points found to optimize');
+            return;
+        }
+
+        // Convert points to turf features
+        const points = deliveryPoints.map(point => ({
+            type: 'Feature',
+            properties: {},
+            geometry: {
+                type: 'Point',
+                coordinates: [point.position.lng, point.position.lat]
+            }
+        }));
+
+        // Calculate optimized route using nearest neighbor algorithm
+        let optimizedRoute = [turf.point([startPoint.lng, startPoint.lat])];
+        let remaining = [...points];
+
+        while (remaining.length > 0) {
+            const currentPoint = optimizedRoute[optimizedRoute.length - 1];
+            const nearest = turf.nearest(currentPoint, turf.featureCollection(remaining));
+            optimizedRoute.push(nearest);
+            remaining = remaining.filter(point => 
+                point.geometry.coordinates[0] !== nearest.geometry.coordinates[0] ||
+                point.geometry.coordinates[1] !== nearest.geometry.coordinates[1]
+            );
+        }
+
+        // Extract coordinates for the route
+        const routeCoordinates = optimizedRoute.map(point => point.geometry.coordinates);
+
+        // Add the optimized route to the map
+        const sourceId = 'optimized-route-source';
+        const layerId = 'optimized-route-layer';
+
+        // Remove existing layer and source if they exist
+        if (map.getLayer(layerId)) map.removeLayer(layerId);
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+
+        map.addSource(sourceId, {
+            type: 'geojson',
+            data: {
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                    type: 'LineString',
+                    coordinates: routeCoordinates
+                }
+            }
+        });
+
+        map.addLayer({
+            id: layerId,
+            type: 'line',
+            source: sourceId,
+            layout: {
+                'line-join': 'round',
+                'line-cap': 'round'
+            },
+            paint: {
+                'line-color': '#ff4444',
+                'line-width': 5,
+                'line-opacity': 0.75
+            }
+        });
+
+        // Store current route for later removal
+        currentRoute = {
+            remove: () => {
+                if (map.getLayer(layerId)) map.removeLayer(layerId);
+                if (map.getSource(sourceId)) map.removeSource(sourceId);
+            }
+        };
+
+        // Fit map to show the entire route
+        const bounds = new mapboxgl.LngLatBounds();
+        routeCoordinates.forEach(coord => bounds.extend(coord));
+        map.fitBounds(bounds, { padding: 50 });
+
+        // Update route stats
+        const totalDistance = turf.length(turf.lineString(routeCoordinates));
+        document.getElementById('routeDistance').textContent = `${totalDistance.toFixed(2)} km`;
+        document.getElementById('routeDuration').textContent = 
+            `~${Math.round(totalDistance * 2.5)} mins`;
+
+    } catch (error) {
+        console.error('Error in route optimization:', error);
+        alert('An error occurred while optimizing the route. Please try again.');
+    }
+}
       
       function clearRoute() {
           if (currentRoute) {
