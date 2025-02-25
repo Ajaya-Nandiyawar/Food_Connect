@@ -6,6 +6,24 @@
     <title>FoodShare Dashboard</title>
     <link rel="stylesheet" href={{url_for('static', filename='css/dashboard2.css')}} />
     <link rel="stylesheet" href={{url_for('static', filename='css/sidebar.css')}} />
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
+      type="text/css"
+    />
+    <script src="{{ url_for('static', filename='js/mapbox-gl-geocoder.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mapbox-gl-geocoder.css') }}" type="text/css" />
+    <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
+    <link 
+        rel="stylesheet" 
+        href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css"
+    />
   </head>
   <body>
   
@@ -67,50 +85,131 @@
           </div>
         </div>
 
-        <!-- Map and Food Items Section -->
-        <div class="content-grid">
-          <div class="map-section">
-            <div class="section-header">
-              <h3>Food Availability Map</h3>
+       <!-- Map and Food Items Section -->
+       <div class="map-section">
+        <h2>Food tracking</h2>
+        <div id="map" style="width: 100%; height: 500px; border-radius: 8px;"></div>
+      </div>
+      <!-- Replace the existing controls-container div with this improved version -->
+      <div class="controls-container">
+        <!-- Add this new control panel to your HTML (place it within .controls-container) -->
+<div class="control-panel">
+<h3>Create Request</h3>
+<div class="location-form">
+  <input 
+    type="text" 
+    id="locationName" 
+    placeholder="Location Name"
+    class="form-input"
+    required
+  >
+  <input 
+    type="text" 
+    id="foodItem" 
+    placeholder="Food Item Name"
+    class="form-input"
+    required
+  >
+  <input 
+    type="number" 
+    id="quantity" 
+    placeholder="Quantity (kg)"
+    class="form-input"
+    min="1"
+    required
+  >
+  <input 
+    type="tel" 
+    id="contact" 
+    placeholder="Contact Number (+91...)"
+    class="form-input"
+    pattern="^(\+91|0)?[7-9]\d{9}$"
+    required
+  >
+  <select id="locationType" class="form-select">
+    <option value="red">Food Pickup Point</option>
+    <option value="green">Food Delivery Point</option>
+  </select>
+  <div id="locationGeocoder" class="geocoder-container"></div>
+  <button onclick="enableLocationPlacement()" class="btn btn-secondary">
+    Set Location on Map
+  </button>
+  <div id="coordinateStatus" class="status-message"></div>
+  <button onclick="saveNewLocation()" class="btn btn-primary">
+    Save Location
+  </button>
+</div>
+</div>
+        <div class="control-panels-wrapper">
+          <!-- Map Controls Panel -->
+          <div class="control-panel">
+            <h3>Map Controls</h3>
+            <div class="filter-controls">
+              <label>
+                  <input type="checkbox" id="pickupFilter" checked onchange="filterMarkers('red', this.checked)">
+                  Food Pickup Points
+              </label>
+              <label>
+                  <input type="checkbox" id="deliveryFilter" checked onchange="filterMarkers('green', this.checked)">
+                  Food Delivery Points
+              </label>
             </div>
-            <div class="map-container" id="map">
-              <!-- Map will be loaded here -->
-              <img
-                src="https://via.placeholder.com/800x400"
-                alt="Map"
-                style="width: 100%; height: 100%; object-fit: cover"
-              />
-            </div>
+            
           </div>
-
-          <div class="food-items-section">
-            <div class="section-header">
-              <h3>Available Food Items</h3>
-              <select>
-                <option>All Categories</option>
-                <option>Fresh Vegetables</option>
-                <option>Fruits</option>
-                <option>Grains</option>
+      
+          <!-- Route Planning Panel -->
+          <div class="control-panel">
+            <h3>Route Planning</h3>
+            <div class="route-selectors">
+              <select id="startPoint">
+                <option value="">Select starting point</option>
+              </select>
+              <select id="endPoint">
+                <option value="">Select destination</option>
               </select>
             </div>
-            <div class="food-items-list">
-              <div class="food-item">
-                <h4>Fresh Vegetables</h4>
-                <p>Restaurant A</p>
-                <span class="quantity">2</span>
+            <div class="route-actions">
+              <button class="btn btn-primary" onclick="calculateRoute()">Calculate Route</button>
+              <button class="btn btn-secondary" onclick="optimizeRoute()">Optimize Route</button>
+              <button class="btn btn-danger" onclick="clearRoute()">Clear</button>
+            </div>
+            <div class="route-info">
+              <p>Distance: <span id="routeDistance">-</span></p>
+              <p>Duration: <span id="routeDuration">-</span></p>
+            </div>
+          </div>
+      
+          <!-- Data Export Panel -->
+          <div class="control-panel">
+            <h3>Data Management</h3>
+            <div class="export-actions">
+              <button onclick="exportToCSV()" class="btn btn-primary">
+                Export to CSV
+              </button>
+              <button onclick="exportToJSON()" class="btn btn-primary">
+                Export to JSON
+              </button>
+            </div>
+            <div class="stats-summary">
+              <div class="stat-row">
+                <span>Active Points:</span>
+                <span id="activePoints">0</span>
               </div>
-              <!-- More food items can be added here -->
+              <div class="stat-row">
+                <span>Total Routes:</span>
+                <span id="totalRoutes">0</span>
+              </div>
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
-    <script src={{url_for('static', filename='js/main.js')}}></script>
-    
-    <!-- Replace YOUR_API_KEY with your actual Google Maps API key -->
-    <script async src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initMap"  async defer>
-    </script>
-  <script src={{url_for('static', filename='js/sidebar.js')}}></script>
-  <script src={{url_for('static', filename='js/maps.js')}}></script>
+    </main>
+  </div>
+    <script src={{url_for('static', filename='js/dashboard2.js')}}></script>
+    <script src={{url_for('static', filename='js/maps.js')}}></script>
+    <script src={{url_for('static', filename='js/sidebar.js')}}></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
+    <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
   </body>
 </html>
