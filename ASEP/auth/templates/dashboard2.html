@@ -18,7 +18,7 @@
       type="text/css"
     />
     <script src="{{ url_for('static', filename='js/mapbox-gl-geocoder.min.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/mapbox-gl-geocoder.css') }}" type="text/css" />
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css">
     <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
     <link 
         rel="stylesheet" 
@@ -211,5 +211,510 @@
     <script src={{url_for('static', filename='js/sidebar.js')}}></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+    <script>
+      mapboxgl.accessToken = "pk.eyJ1IjoidGhlLWRlc3Ryb3llciIsImEiOiJjbTdkbWd1ZjIwMDJ3MmpxdXp3dWNpb3VlIn0.GtirZBfgEJOCgwsM9ZB0Zg";
+    
+      // Initialize map
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/streets-v11",
+        center: [73.8572, 18.5207], // Pune center
+        zoom: 11,
+      });
+    
+      let markers = []; // Array to store marker references
+      let locations = []; // Will be populated from DB
+    
+      function addMarkers(locations) {
+        // Clear existing markers
+        markers.forEach(marker => marker.remove());
+        markers = [];
+    
+        locations.forEach(location => {
+          const el = document.createElement("div");
+          el.className = location.type === "red" ? "marker-pickup" : "marker-delivery";
+    
+          const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+            <h3>${location.title}</h3>
+            <p><strong>Food Item:</strong> ${location.description}</p>
+            <p><strong>Quantity:</strong> ${location.quantity}</p>
+            ${location.contact ? `<p><strong>Contact:</strong> <a href="tel:${location.contact}">${location.contact}</a></p>` : ""}
+            <p><strong>Type:</strong> ${location.type === "red" ? "Pickup Point" : "Delivery Point"}</p>
+          `);
+    
+          const marker = new mapboxgl.Marker(el)
+            .setLngLat([location.position.lng, location.position.lat])
+            .setPopup(popup)
+            .addTo(map);
+    
+          marker.type = location.type;
+          markers.push(marker);
+        });
+    
+        updateActivePoints();
+      }
+    
+      function updateActivePoints() {
+        const activePointsElement = document.getElementById("activePoints");
+        if (activePointsElement) {
+          const visibleMarkers = markers.filter(marker =>
+            !marker.getElement().style.display ||
+            marker.getElement().style.display !== "none"
+          );
+          activePointsElement.textContent = visibleMarkers.length;
+        }
+      }
+    
+      function filterMarkers(type, show) {
+        markers.forEach(marker => {
+          if (marker.type === type) {
+            marker.getElement().style.display = show ? "block" : "none";
+          }
+        });
+        updateActivePoints();
+      }
+    
+      // Fetch data from the database
+      function fetchNGORequests() {
+        fetch("/ngo/requests_json")
+          .then(response => {
+            if (!response.ok) throw new Error("Failed to fetch requests");
+            return response.json();
+          })
+          .then(data => {
+            locations = data; // Update locations with DB data
+            addMarkers(locations);
+            populateDropdowns(locations); // Update dropdowns with DB data
+          })
+          .catch(error => console.error("Error fetching requests:", error));
+      }
+    
+      map.on("load", () => {
+        fetchNGORequests(); // Load DB data on map load
+        map.addControl(new mapboxgl.NavigationControl());
+    
+        const geocoder = new MapboxGeocoder({
+          accessToken: mapboxgl.accessToken,
+          mapboxgl: mapboxgl,
+          marker: false,
+          placeholder: "Search for a location",
+          countries: "IN",
+          bbox: [73.7, 18.4, 74.0, 18.7],
+        });
+        map.addControl(geocoder, "top-left");
+    
+        geocoder.on("result", (e) => {
+          const marker = new mapboxgl.Marker()
+            .setLngLat(e.result.center)
+            .setPopup(new mapboxgl.Popup().setHTML(`<h3>${e.result.place_name}</h3>`))
+            .addTo(map);
+          map.flyTo({ center: e.result.center, zoom: 14 });
+        });
+      });
+    
+      // Populate dropdowns (keep this function as is)
+      function populateDropdowns(locations) {
+        const startPointSelect = document.getElementById("startPoint");
+        const endPointSelect = document.getElementById("endPoint");
+    
+        if (!startPointSelect || !endPointSelect) {
+          console.warn("Dropdown elements not found in the DOM");
+          return;
+        }
+    
+        startPointSelect.innerHTML = '<option value="">Select starting point</option>';
+        endPointSelect.innerHTML = '<option value="">Select destination</option>';
+    
+        locations.forEach(location => {
+          const startOption = document.createElement("option");
+          const endOption = document.createElement("option");
+    
+          const coordinates = { lng: location.position.lng, lat: location.position.lat };
+    
+          startOption.value = JSON.stringify(coordinates);
+          startOption.textContent = location.title;
+    
+          endOption.value = JSON.stringify(coordinates);
+          endOption.textContent = location.title;
+    
+          startPointSelect.appendChild(startOption);
+          endPointSelect.appendChild(endOption);
+        });
+      }
+    
+        function calculateRoute() {
+          const startPoint = JSON.parse(document.getElementById('startPoint').value);
+          const endPoint = JSON.parse(document.getElementById('endPoint').value);
+      
+          if (!startPoint || !endPoint) {
+              alert('Please select both start and end points');
+              return;
+          }
+      
+          // Remove existing route if any
+          if (currentRoute) {
+              currentRoute.remove();
+          }
+      
+          // Remove existing directions control
+          if (directionsControl) {
+              map.removeControl(directionsControl);
+          }
+      
+          // Add directions control
+          directionsControl = new MapboxDirections({
+              accessToken: mapboxgl.accessToken,
+              unit: 'metric',
+              profile: 'mapbox/driving',
+              alternatives: true,
+              geometries: 'geojson'
+          });
+      
+          map.addControl(directionsControl, 'top-right');
+      
+          // Set origin and destination
+          directionsControl.setOrigin([startPoint.lng, startPoint.lat]);
+          directionsControl.setDestination([endPoint.lng, endPoint.lat]);
+      
+          // Update route info when route is calculated
+          directionsControl.on('route', (e) => {
+              const route = e.route[0];
+              document.getElementById('routeDistance').textContent = 
+                  `${(route.distance / 1000).toFixed(2)} km`;
+              document.getElementById('routeDuration').textContent = 
+                  `${Math.round(route.duration / 60)} mins`;
+          });
+      }
+      
+      // Replace the existing optimizeRoute function with this updated version
+      function optimizeRoute() {
+          const startPoint = JSON.parse(document.getElementById('startPoint').value);
+          if (!startPoint) {
+              alert('Please select a starting point');
+              return;
+          }
+      
+          try {
+              // Remove existing route if any
+              if (currentRoute) {
+                  currentRoute.remove();
+              }
+      
+              // Get all delivery points (green markers)
+              const deliveryPoints = locations.filter(loc => loc.type === 'green');
+              
+              if (deliveryPoints.length === 0) {
+                  alert('No delivery points found to optimize');
+                  return;
+              }
+      
+              // Convert points to turf features
+              const points = deliveryPoints.map(point => ({
+                  type: 'Feature',
+                  properties: {},
+                  geometry: {
+                      type: 'Point',
+                      coordinates: [point.position.lng, point.position.lat]
+                  }
+              }));
+      
+              // Create a feature collection
+              const collection = turf.featureCollection(points);
+      
+              // Starting point
+              const origin = turf.point([startPoint.lng, startPoint.lat]);
+      
+              // Calculate optimized route
+              let optimizedRoute = [origin];
+              let remaining = [...points];
+      
+              while (remaining.length > 0) {
+                  const currentPoint = optimizedRoute[optimizedRoute.length - 1];
+                  const nearest = turf.nearest(currentPoint, turf.featureCollection(remaining));
+                  optimizedRoute.push(nearest);
+                  remaining = remaining.filter(point => 
+                      point.geometry.coordinates[0] !== nearest.geometry.coordinates[0] ||
+                      point.geometry.coordinates[1] !== nearest.geometry.coordinates[1]
+                  );
+              }
+      
+              // Extract coordinates for the route
+              const routeCoordinates = optimizedRoute.map(point => point.geometry.coordinates);
+      
+              // Add the route to the map
+              map.addLayer({
+                  id: 'optimized-route',
+                  type: 'line',
+                  source: {
+                      type: 'geojson',
+                      data: {
+                          type: 'Feature',
+                          properties: {},
+                          geometry: {
+                              type: 'LineString',
+                              coordinates: routeCoordinates
+                          }
+                      }
+                  },
+                  layout: {
+                      'line-join': 'round',
+                      'line-cap': 'round'
+                  },
+                  paint: {
+                      'line-color': '#3887be',
+                      'line-width': 5,
+                      'line-opacity': 0.75
+                  }
+              });
+      
+              // Store current route for later removal
+              currentRoute = {
+                  remove: () => {
+                      if (map.getLayer('optimized-route')) {
+                          map.removeLayer('optimized-route');
+                      }
+                      if (map.getSource('optimized-route')) {
+                          map.removeSource('optimized-route');
+                      }
+                  }
+              };
+      
+              // Fit map to show the entire route
+              const bounds = new mapboxgl.LngLatBounds();
+              routeCoordinates.forEach(coord => bounds.extend(coord));
+              map.fitBounds(bounds, { padding: 50 });
+      
+          } catch (error) {
+              console.error('Error in route optimization:', error);
+              alert('An error occurred while optimizing the route. Please try again.');
+          }
+      }
+      
+      function clearRoute() {
+          if (currentRoute) {
+              currentRoute.remove();
+          }
+          if (directionsControl) {
+              map.removeControl(directionsControl);
+              directionsControl = null;
+          }
+          
+          document.getElementById('routeDistance').textContent = '-';
+          document.getElementById('routeDuration').textContent = '-';
+      }
+      
+      
+      // recent enhnacement
+      // Add these variables to your JavaScript
+      let newLocation = null;
+      let isPlacing = false;
+      
+      // Initialize geocoder for location search
+      const geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl,
+        marker: false,
+        placeholder: 'Search address or coordinates',
+        bbox: [73.7, 18.4, 74.0, 18.7]
+      });
+      
+      // Add geocoder to the form
+      document.getElementById('locationGeocoder').appendChild(geocoder.onAdd(map));
+      
+      // Handle geocoder result
+      geocoder.on('result', (e) => {
+        if (isPlacing) {
+          newLocation = {
+            position: { lat: e.result.center[1], lng: e.result.center[0] },
+            title: document.getElementById('locationName').value,
+            description: 'Custom food location',
+            quantity: '0 containers',
+            type: document.getElementById('locationType').value
+          };
+          updateCoordinateStatus(e.result.center);
+        }
+      });
+      
+      // Handle map clicks for manual placement
+      map.on('click', (e) => {
+        if (isPlacing) {
+          newLocation = {
+            position: { lat: e.lngLat.lat, lng: e.lngLat.lng },
+            title: document.getElementById('locationName').value,
+            description: 'Custom food location',
+            quantity: '0 containers',
+            type: document.getElementById('locationType').value
+          };
+          updateCoordinateStatus([e.lngLat.lng, e.lngLat.lat]);
+        }
+      });
+      
+      function enableLocationPlacement() {
+        const name = document.getElementById('locationName').value;
+        if (!name) {
+          alert('Please enter a location name');
+          return;
+        }
+        isPlacing = true;
+        document.getElementById('coordinateStatus').textContent = 
+          'Search above or click map to set position';
+      }
+      
+      function saveNewLocation() {
+          if (!newLocation) {
+              alert('Please set location position first');
+              return;
+          }
+          
+          // Get additional fields
+          newLocation.foodItem = document.getElementById('foodItem').value;
+          newLocation.quantity = document.getElementById('quantity').value + ' kg';
+          newLocation.contact = document.getElementById('contact').value;
+      
+          // Validate contact number
+          const phonePattern = /^(\+91|0)?[7-9]\d{9}$/;
+          if (!phonePattern.test(newLocation.contact)) {
+              alert('Please enter a valid Indian phone number');
+              return;
+          }
+      
+          locations.push(newLocation);
+          saveLocationsToStorage(); // Save to localStorage
+          addMarkers(locations);
+          populateDropdowns(locations);
+          
+          // Reset form
+          document.getElementById('locationName').value = '';
+          document.getElementById('foodItem').value = '';
+          document.getElementById('quantity').value = '';
+          document.getElementById('contact').value = '';
+          document.getElementById('coordinateStatus').textContent = 
+              'Location added successfully!';
+          newLocation = null;
+          isPlacing = false;
+          
+          map.flyTo({
+              center: [newLocation.position.lng, newLocation.position.lat],
+              zoom: 14
+          });
+      }
+      
+      function updateCoordinateStatus(coords) {
+        document.getElementById('coordinateStatus').innerHTML = `
+          Position set: <br>
+          Latitude: ${coords[1].toFixed(4)}<br>
+          Longitude: ${coords[0].toFixed(4)}
+        `;
+      }
+      
+      function saveLocationsToStorage() {
+          localStorage.setItem('foodLocations', JSON.stringify(locations));
+      }
+      
+      // Add phone number validation
+      document.addEventListener('DOMContentLoaded', () => {
+          const contactInput = document.getElementById('contact');
+          if (contactInput) {
+              contactInput.addEventListener('input', function(e) {
+                  const pattern = /^(\+91|0)?[7-9]\d{9}$/;
+                  if (!pattern.test(e.target.value)) {
+                      this.setCustomValidity('Please enter a valid Indian phone number');
+                  } else {
+                      this.setCustomValidity('');
+                  }
+              });
+          }
+      
+          // Initialize markers and dropdowns from localStorage
+          if (locations.length > 0) {
+              addMarkers(locations);
+              populateDropdowns(locations);
+          }
+      });
+      
+      // Add this function after the saveLocationsToStorage function
+      
+      function exportToCSV() {
+          // Define CSV headers
+          const headers = [
+              'Title',
+              'Description',
+              'Food Item',
+              'Quantity',
+              'Contact',
+              'Type',
+              'Latitude',
+              'Longitude'
+          ];
+      
+          // Convert locations data to CSV format
+          const csvData = locations.map(location => [
+              location.title,
+              location.description,
+              location.foodItem || '',
+              location.quantity,
+              location.contact || '',
+              location.type === 'red' ? 'Pickup Point' : 'Delivery Point',
+              location.position.lat,
+              location.position.lng
+          ]);
+      
+          // Add headers to the beginning
+          csvData.unshift(headers);
+      
+          // Convert to CSV string
+          const csvString = csvData
+              .map(row => row
+                  .map(cell => `"${cell}"`)
+                  .join(',')
+              )
+              .join('\n');
+      
+          // Create blob and download link
+          const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+          const link = document.createElement('a');
+          const url = URL.createObjectURL(blob);
+          
+          link.setAttribute('href', url);
+          link.setAttribute('download', 'food_locations.csv');
+          link.style.visibility = 'hidden';
+          
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+      }
+      
+      function exportToJSON() {
+          try {
+              // Convert locations array to JSON string with proper formatting
+              const jsonString = JSON.stringify(locations, null, 2);
+              
+              // Create blob with JSON data
+              const blob = new Blob([jsonString], { type: 'application/json' });
+              
+              // Create download link
+              const link = document.createElement('a');
+              const url = URL.createObjectURL(blob);
+              
+              // Set link attributes
+              link.setAttribute('href', url);
+              link.setAttribute('download', 'food_locations.json');
+              
+              // Add link to document, trigger click, and remove
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              
+              // Clean up the URL object
+              URL.revokeObjectURL(url);
+          } catch (error) {
+              console.error('Error exporting JSON:', error);
+              alert('Failed to export JSON file. Please try again.');
+          }
+      }
+    
+      document.addEventListener("DOMContentLoaded", fetchNGORequests);
+    </script>
+    
   </body>
 </html>

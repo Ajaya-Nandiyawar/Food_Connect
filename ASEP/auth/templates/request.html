@@ -45,7 +45,6 @@
       <div class="main-content">
         <div class="header">
           <h1>Request Donations</h1>
-          <button class="new-request-btn">New Request</button>
         </div>
         
         <div class="content-container">
@@ -126,42 +125,57 @@
       </div>
     </div>
     <script>
-      document.querySelector("form").addEventListener("submit", function (e) {
-        e.preventDefault();
-        
-        const formData = {
-          phone_number: this.phone_number.value,
-          location: this.location.value,
-          food_category: this.food_category.value,
-          quantity: this.quantity.value,
-          pick_up_date: this.pick_up_date.value,
-          preferred_time: this.preferred_time.value,
-          additional_note: this.additional_note.value
-        };
+      document.addEventListener("DOMContentLoaded", () => {
+        const donationForm = document.getElementById("donationForm");
     
-        fetch("/ngo/request", {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json',
-            "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').content,
-          },
-          body: JSON.stringify(formData)
-        })
-        .then((response) => {
-          console.log("Response status:", response.status);
-          return response.json();
-        })
-        .then((data) => {
-          console.log("Received data:", data);
-          if (data.status === "success") {
-            window.location.reload();
-          } else {
-            alert("Error submitting request: " + data.message);
+        donationForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const formData = {
+            food_category: document.querySelector("select[name='food_category']").value,
+            quantity: document.querySelector("input[name='quantity']").value,
+            pick_up_date: document.querySelector("input[name='pick_up_date']").value,
+            preferred_time: document.querySelector("input[name='preferred_time']").value,
+            phone_number: document.querySelector("input[name='phone_number']").value,
+            location: document.querySelector("input[name='location']").value,
+            additional_note: document.querySelector("textarea[name='additional_note']").value,
+          };
+    
+          if (!formData.location || formData.location.trim() === "") {
+            alert("Please enter a valid location.");
+            return;
           }
-        })
-        .catch((error) => {
-          console.error("Full error:", error);
-          alert("Error submitting request: " + error.message);
+    
+          console.log("Form data being sent:", formData);
+          fetch("http://127.0.0.1:5000/ngo/request", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').content,
+            },
+            body: JSON.stringify(formData),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                return response.text().then((text) => {
+                  throw new Error(`HTTP error! Status: ${response.status} - ${text}`);
+                });
+              }
+              return response.json();
+            })
+            .then((data) => {
+              if (data.status === "success") {
+                alert(data.message);
+                window.location.href = "/ngo/request"; // Redirect to dashboard
+              } else {
+                alert("Error: " + data.message);
+                donationForm.reset(); // Reset form on error
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("Error submitting request: " + error.message);
+              donationForm.reset(); // Reset form on error
+            });
         });
       });
     </script>
@@ -187,7 +201,7 @@
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').content,
+                "X-CSRFToken": document.querySelector('meta[name=\"csrf-token\"]').content,
               },
               body: JSON.stringify(formData),
             })

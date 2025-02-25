@@ -3,9 +3,9 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from extensions import db
 from notifications import send_notification
+from geopy.geocoders import Nominatim  # Import geopy for location conversion
 
-  # Initialize SQLAlchemy
-
+# Initialize SQLAlchemy
 ngo_blueprint = Blueprint('ngo', __name__)
 
 class RequestModel(db.Model):  
@@ -17,6 +17,8 @@ class RequestModel(db.Model):
     additional_note = db.Column(db.Text, nullable=False)
     phone_number = db.Column(db.String(15), nullable=False)  # New field
     location = db.Column(db.String(255), nullable=False)  # New field
+    latitude = db.Column(db.Float, nullable=False)  # New field for latitude
+    longitude = db.Column(db.Float, nullable=False) # New field for longitude
     status = db.Column(db.String(20), default='Pending')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -30,12 +32,11 @@ class RequestModel(db.Model):
             'preferred_time': self.preferred_time.strftime('%H:%M'),
             'phone_number': self.phone_number,  # Include in response
             'location': self.location,  # Include in response
+            'latitude': self.latitude,  # Include latitude
+            'longitude': self.longitude, # Include longitude
             'status': self.status,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }
-
-
-
 
 @ngo_blueprint.route('/request', methods=['GET', 'POST'])
 def handle_request():
@@ -56,11 +57,9 @@ def handle_request():
         if "request_id" in data and "status" in data:
             request_id = data["request_id"]
             new_status = data["status"]
-
             request_entry = RequestModel.query.get(request_id)
             if not request_entry:
                 return jsonify({"status": "error", "message": "Request not found"}), 404
-
             request_entry.status = new_status
             db.session.commit()
             return jsonify({"status": "success", "message": "Request status updated"})
@@ -71,20 +70,49 @@ def handle_request():
             if field not in data or not data[field]:
                 return jsonify({"status": "error", "message": f"Missing required field: {field}"}), 400
 
+        # Convert location name to coordinates
+        geolocator = Nominatim(user_agent="foodconnect")
+        location = geolocator.geocode(data["location"])
+        if not location:
+            return jsonify({"status": "error", "message": "Invalid location name. Try a different one!"}), 400
+
         # Handle new request creation
         new_request = RequestModel(
             food_category=data["food_category"],
             quantity=float(data["quantity"]),
             pick_up_date=datetime.strptime(data["pick_up_date"], "%Y-%m-%d").date(),
             preferred_time=datetime.strptime(data["preferred_time"], "%H:%M").time(),
-            phone_number=data["phone_number"],  # Save phone number
-            location=data["location"],  # Save location
+            phone_number=data["phone_number"],
+            location=data["location"],
+            latitude=location.latitude,  # Store latitude
+            longitude=location.longitude, # Store longitude
             additional_note=data.get("additional_note", "")
         )
         db.session.add(new_request)
         db.session.commit()
 
-        return jsonify({"status": "success", "message": "Request submitted successfully"}), 201
-
+        return jsonify({
+            "status": "success",
+            "message": "Request submitted successfully",
+            "latitude": location.latitude,
+            "longitude": location.longitude,
+            "location": data["location"]
+        }), 201
+    
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 400
+    
+@ngo_blueprint.route('/requests_json', methods=['GET'])
+def get_requests_json():
+    requests = RequestModel.query.order_by(RequestModel.created_at).all()
+    formatted_requests = [
+        {
+            "position": {"lat": req.latitude, "lng": req.longitude},
+            "title": f"{req.location} Donation Request",
+            "description": req.food_category,
+            "quantity": f"{req.quantity} kg",
+            "type": "green"  # NGO requests are delivery points
+        }
+        for req in requests
+    ]
+    return jsonify(formatted_requests)
