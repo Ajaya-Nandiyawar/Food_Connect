@@ -22,7 +22,6 @@ body {
   min-height: 100vh;
 }
 
-
 /* Main Content Styles */
 .main-content {
   flex: 1;
@@ -224,4 +223,25 @@ textarea {
   position: absolute;
   right: 16px;
   bottom: 16px;
+}
+
+.suggestions-list {
+  position: absolute;
+  background: white;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.suggestions-list li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestions-list li:hover {
+  background: #f0f0f0;
 }

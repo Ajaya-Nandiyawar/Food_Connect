@@ -71,13 +71,13 @@
               </div>
 
               <div class="form-group">
-                <label>Preferred Restaurants</label>
-                <div class="restaurant-list">
-                  <div class="restaurant-item">Restaurant A - 2.5km away</div>
-                  <div class="restaurant-item">Restaurant B - 3.2km away</div>
-                  <div class="restaurant-item">Restaurant C - 4.0km away</div>
-                  <div class="restaurant-item">Restaurant D - 4.8km away</div>
-                </div>
+                <label>Phone Number</label>
+                <input name="phone_number" type="tel" placeholder="Enter phone number" required />
+              </div>
+
+              <div class="form-group">
+                <label>Location</label>
+                <input id="locationInput" name="location" type="text" placeholder="Enter pickup location" required />
               </div>
 
               <div class="form-row">
@@ -129,6 +129,8 @@
         e.preventDefault();
         
         const formData = {
+          phone_number: tihs.phone_number.value,
+          location: this.location.value,
           food_category: this.food_category.value,
           quantity: this.quantity.value,
           pick_up_date: this.pick_up_date.value,
@@ -163,6 +165,7 @@
     </script>
     <script src={{url_for('static', filename='js/request.js')}}></script>
     <script src={{url_for('static', filename='js/sidebar.js')}}></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         document

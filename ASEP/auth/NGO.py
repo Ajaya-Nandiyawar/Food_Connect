@@ -15,6 +15,8 @@ class RequestModel(db.Model):
     pick_up_date = db.Column(db.Date, nullable=False)
     preferred_time = db.Column(db.Time, nullable=False)
     additional_note = db.Column(db.Text, nullable=False)
+    phone_number = db.Column(db.String(15), nullable=False)  # New field
+    location = db.Column(db.String(255), nullable=False)  # New field
     status = db.Column(db.String(20), default='Pending')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -26,9 +28,12 @@ class RequestModel(db.Model):
             'additional_note': self.additional_note,
             'pick_up_date': self.pick_up_date.strftime('%Y-%m-%d'),
             'preferred_time': self.preferred_time.strftime('%H:%M'),
+            'phone_number': self.phone_number,  # Include in response
+            'location': self.location,  # Include in response
             'status': self.status,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }
+
 
 
 
@@ -47,7 +52,7 @@ def handle_request():
         if not data:
             return jsonify({"status": "error", "message": "Invalid JSON data"}), 400
 
-        # Handle request update
+        # Handle request status update
         if "request_id" in data and "status" in data:
             request_id = data["request_id"]
             new_status = data["status"]
@@ -60,18 +65,26 @@ def handle_request():
             db.session.commit()
             return jsonify({"status": "success", "message": "Request status updated"})
 
+        # Validate required fields
+        required_fields = ["food_category", "quantity", "pick_up_date", "preferred_time", "phone_number", "location"]
+        for field in required_fields:
+            if field not in data or not data[field]:
+                return jsonify({"status": "error", "message": f"Missing required field: {field}"}), 400
+
         # Handle new request creation
         new_request = RequestModel(
             food_category=data["food_category"],
             quantity=float(data["quantity"]),
             pick_up_date=datetime.strptime(data["pick_up_date"], "%Y-%m-%d").date(),
             preferred_time=datetime.strptime(data["preferred_time"], "%H:%M").time(),
-            additional_note=data["additional_note"]
+            phone_number=data["phone_number"],  # Save phone number
+            location=data["location"],  # Save location
+            additional_note=data.get("additional_note", "")
         )
         db.session.add(new_request)
         db.session.commit()
 
-        return jsonify({"status": "success"}), 201
+        return jsonify({"status": "success", "message": "Request submitted successfully"}), 201
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 400
