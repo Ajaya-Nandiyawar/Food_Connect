@@ -34,9 +34,9 @@ s = URLSafeTimedSerializer(app.secret_key)
 
 # MySQL connection string
 db_user = "root"
-db_password = "%40J%21nky%40ub%40le5"  # URL-encoded password (%40 represents @)
+db_password = "Manthan%409975"  # URL-encoded password (%40 represents @)
 db_host = "127.0.0.1"
-db_name = "registered"
+db_name = "food_Connect"
 
 # Configuring database URI
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
@@ -120,7 +120,11 @@ def login():
 
     return render_template('login.html', form=form)
 
-  
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    return redirect(url_for('login'))  
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
