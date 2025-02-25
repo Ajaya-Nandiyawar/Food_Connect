@@ -12,6 +12,11 @@
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: width 0.4s ease;
+    position: -webkit-sticky; /* For Safari */
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    color: #fff;
 }
 
 .menu-item {
