@@ -78,6 +78,7 @@
               <div class="form-group">
                 <label>Location</label>
                 <input id="locationInput" name="location" type="text" placeholder="Enter pickup location" required />
+                <ul id="suggestions" class="suggestions-list"></ul>
               </div>
 
               <div class="form-row">
@@ -129,7 +130,7 @@
         e.preventDefault();
         
         const formData = {
-          phone_number: tihs.phone_number.value,
+          phone_number: this.phone_number.value,
           location: this.location.value,
           food_category: this.food_category.value,
           quantity: this.quantity.value,
@@ -141,7 +142,8 @@
         fetch("/ngo/request", {
           method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').content,
           },
           body: JSON.stringify(formData)
         })

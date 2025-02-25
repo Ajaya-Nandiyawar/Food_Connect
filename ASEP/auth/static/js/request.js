@@ -27,7 +27,7 @@ async function fetchLocationSuggestions(query) {
     return;
   }
 
-  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${mapboxAccessToken}&autocomplete=true&limit=5`;
+  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${mapboxAccessToken}&autocomplete=true&limit=5&country=IN`;
 
   try {
     const response = await fetch(url);
