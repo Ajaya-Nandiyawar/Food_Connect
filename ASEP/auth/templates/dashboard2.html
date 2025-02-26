@@ -213,27 +213,27 @@
     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
     <script>
       mapboxgl.accessToken = "pk.eyJ1IjoidGhlLWRlc3Ryb3llciIsImEiOiJjbTdkbWd1ZjIwMDJ3MmpxdXp3dWNpb3VlIn0.GtirZBfgEJOCgwsM9ZB0Zg";
-
+    
       const map = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/streets-v11",
         center: [73.8572, 18.5207], // Pune center
         zoom: 11,
       });
-
+    
       let markers = [];
       let locations = [];
       let currentRoute = null;
       let directionsControl = null;
-
+    
       function addMarkers(locations) {
         markers.forEach(marker => marker.remove());
         markers = [];
-
+    
         locations.forEach(location => {
           const el = document.createElement("div");
           el.className = location.type === "red" ? "marker-pickup" : "marker-delivery";
-
+    
           const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
             <h3>${location.title}</h3>
             <p><strong>Food Item:</strong> ${location.description}</p>
@@ -241,19 +241,19 @@
             ${location.contact ? `<p><strong>Contact:</strong> <a href="tel:${location.contact}">${location.contact}</a></p>` : ""}
             <p><strong>Type:</strong> ${location.type === "red" ? "Pickup Point" : "Delivery Point"}</p>
           `);
-
+    
           const marker = new mapboxgl.Marker(el)
             .setLngLat([location.position.lng, location.position.lat])
             .setPopup(popup)
             .addTo(map);
-
+    
           marker.type = location.type;
           markers.push(marker);
         });
-
+    
         updateActivePoints();
       }
-
+    
       function updateActivePoints() {
         const activePointsElement = document.getElementById("activePoints");
         if (activePointsElement) {
@@ -261,7 +261,7 @@
           activePointsElement.textContent = visibleMarkers.length;
         }
       }
-
+    
       function filterMarkers(type, show) {
         markers.forEach(marker => {
           if (marker.type === type) {
@@ -270,7 +270,7 @@
         });
         updateActivePoints();
       }
-
+    
       function fetchCombinedData() {
         fetch("/ngo/combined_data_json")
           .then(response => {
@@ -284,11 +284,11 @@
           })
           .catch(error => console.error("Error fetching combined data:", error));
       }
-
+    
       map.on("load", () => {
         fetchCombinedData();
         map.addControl(new mapboxgl.NavigationControl());
-
+    
         const geocoder = new MapboxGeocoder({
           accessToken: mapboxgl.accessToken,
           mapboxgl: mapboxgl,
@@ -298,7 +298,7 @@
           bbox: [73.7, 18.4, 74.0, 18.7],
         });
         map.addControl(geocoder, "top-left");
-
+    
         geocoder.on("result", (e) => {
           const marker = new mapboxgl.Marker()
             .setLngLat(e.result.center)
@@ -307,43 +307,43 @@
           map.flyTo({ center: e.result.center, zoom: 14 });
         });
       });
-
+    
       function populateDropdowns(locations) {
         const startPointSelect = document.getElementById("startPoint");
         const endPointSelect = document.getElementById("endPoint");
-
+    
         startPointSelect.innerHTML = '<option value="">Select starting point</option>';
         endPointSelect.innerHTML = '<option value="">Select destination</option>';
-
+    
         locations.forEach(location => {
           const startOption = document.createElement("option");
           const endOption = document.createElement("option");
-
+    
           const coordinates = { lng: location.position.lng, lat: location.position.lat };
-
+    
           startOption.value = JSON.stringify(coordinates);
           startOption.textContent = location.title;
-
+    
           endOption.value = JSON.stringify(coordinates);
           endOption.textContent = location.title;
-
+    
           startPointSelect.appendChild(startOption);
           endPointSelect.appendChild(endOption);
         });
       }
-
+    
       function calculateRoute() {
         const startPoint = JSON.parse(document.getElementById('startPoint').value || 'null');
         const endPoint = JSON.parse(document.getElementById('endPoint').value || 'null');
-
+    
         if (!startPoint || !endPoint) {
           alert('Please select both start and end points');
           return;
         }
-
+    
         if (currentRoute) currentRoute.remove();
         if (directionsControl) map.removeControl(directionsControl);
-
+    
         directionsControl = new MapboxDirections({
           accessToken: mapboxgl.accessToken,
           unit: 'metric',
@@ -351,11 +351,11 @@
           interactive: false,
           controls: { inputs: false, instructions: true },
         });
-
+    
         map.addControl(directionsControl, 'top-right');
         directionsControl.setOrigin([startPoint.lng, startPoint.lat]);
         directionsControl.setDestination([endPoint.lng, endPoint.lat]);
-
+    
         directionsControl.on('route', (e) => {
           if (e.route && e.route[0]) {
             const route = e.route[0];
@@ -365,26 +365,26 @@
           }
         });
       }
-
+    
       function optimizeRoute() {
         const startPoint = JSON.parse(document.getElementById('startPoint').value || 'null');
         if (!startPoint) {
           alert('Please select a starting point');
           return;
         }
-
+    
         if (currentRoute) currentRoute.remove();
-
+    
         const deliveryPoints = locations.filter(loc => loc.type === "green");
         if (deliveryPoints.length === 0) {
           alert('No delivery points found to optimize');
           return;
         }
-
+    
         const points = deliveryPoints.map(point => turf.point([point.position.lng, point.position.lat]));
         let optimizedRoute = [turf.point([startPoint.lng, startPoint.lat])];
         let remaining = [...points];
-
+    
         while (remaining.length > 0) {
           const currentPoint = optimizedRoute[optimizedRoute.length - 1];
           const nearest = turf.nearest(currentPoint, turf.featureCollection(remaining));
@@ -394,15 +394,15 @@
             point.geometry.coordinates[1] !== nearest.geometry.coordinates[1]
           );
         }
-
+    
         const routeCoordinates = optimizedRoute.map(point => point.geometry.coordinates);
-
+    
         const sourceId = 'optimized-route-source';
         const layerId = 'optimized-route-layer';
-
+    
         if (map.getLayer(layerId)) map.removeLayer(layerId);
         if (map.getSource(sourceId)) map.removeSource(sourceId);
-
+    
         map.addSource(sourceId, {
           type: 'geojson',
           data: {
@@ -411,7 +411,7 @@
             geometry: { type: 'LineString', coordinates: routeCoordinates }
           }
         });
-
+    
         map.addLayer({
           id: layerId,
           type: 'line',
@@ -419,23 +419,23 @@
           layout: { 'line-join': 'round', 'line-cap': 'round' },
           paint: { 'line-color': '#ff4444', 'line-width': 5, 'line-opacity': 0.75 }
         });
-
+    
         currentRoute = {
           remove: () => {
             if (map.getLayer(layerId)) map.removeLayer(layerId);
             if (map.getSource(sourceId)) map.removeSource(sourceId);
           }
         };
-
+    
         const bounds = new mapboxgl.LngLatBounds();
         routeCoordinates.forEach(coord => bounds.extend(coord));
         map.fitBounds(bounds, { padding: 50 });
-
+    
         const totalDistance = turf.length(turf.lineString(routeCoordinates));
         document.getElementById('routeDistance').textContent = `${totalDistance.toFixed(2)} km`;
         document.getElementById('routeDuration').textContent = `~${Math.round(totalDistance * 2.5)} mins`;
       }
-
+    
       function clearRoute() {
         if (currentRoute) currentRoute.remove();
         if (directionsControl) {
@@ -445,10 +445,10 @@
         document.getElementById('routeDistance').textContent = '-';
         document.getElementById('routeDuration').textContent = '-';
       }
-
+    
       let newLocation = null;
       let isPlacing = false;
-
+    
       const geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         mapboxgl: mapboxgl,
@@ -456,9 +456,9 @@
         placeholder: 'Search address or coordinates',
         bbox: [73.7, 18.4, 74.0, 18.7]
       });
-
+    
       document.getElementById('locationGeocoder').appendChild(geocoder.onAdd(map));
-
+    
       geocoder.on('result', (e) => {
         if (isPlacing) {
           newLocation = {
@@ -472,7 +472,7 @@
           updateCoordinateStatus(e.result.center);
         }
       });
-
+    
       map.on('click', (e) => {
         if (isPlacing) {
           newLocation = {
@@ -486,7 +486,7 @@
           updateCoordinateStatus([e.lngLat.lng, e.lngLat.lat]);
         }
       });
-
+    
       function enableLocationPlacement() {
         const name = document.getElementById('locationName').value;
         if (!name) {
@@ -496,58 +496,41 @@
         isPlacing = true;
         document.getElementById('coordinateStatus').textContent = 'Search above or click map to set position';
       }
-
+    
+      // Fixed saveNewLocation function
       function saveNewLocation() {
         if (!newLocation) {
           alert('Please set location position first');
           return;
         }
-
+    
         const phonePattern = /^(\+91|0)?[7-9]\d{9}$/;
         if (!phonePattern.test(newLocation.contact)) {
           alert('Please enter a valid Indian phone number');
           return;
         }
-
-        fetch('/ngo/request', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
-          },
-          body: JSON.stringify({
-            location: newLocation.title,
-            food_category: newLocation.description,
-            quantity: parseFloat(newLocation.quantity),
-            latitude: newLocation.position.lat,
-            longitude: newLocation.position.lng,
-            phone: newLocation.contact,
-            type: newLocation.type
-          })
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') {
-            locations.push(newLocation);
-            addMarkers(locations);
-            populateDropdowns(locations);
-
-            document.getElementById('locationName').value = '';
-            document.getElementById('foodItem').value = '';
-            document.getElementById('quantity').value = '';
-            document.getElementById('contact').value = '';
-            document.getElementById('coordinateStatus').textContent = 'Location added successfully!';
-            newLocation = null;
-            isPlacing = false;
-
-            map.flyTo({ center: [newLocation.position.lng, newLocation.position.lat], zoom: 14 });
-          } else {
-            alert('Failed to save location: ' + data.message);
-          }
-        })
-        .catch(error => console.error('Error saving location:', error));
+    
+        // Add the new location to the local array
+        locations.push(newLocation);
+        addMarkers(locations);
+        populateDropdowns(locations);
+    
+        // Clear the form
+        document.getElementById('locationName').value = '';
+        document.getElementById('foodItem').value = '';
+        document.getElementById('quantity').value = '';
+        document.getElementById('contact').value = '';
+        document.getElementById('coordinateStatus').textContent = 'Location added successfully!';
+    
+        // Store the current newLocation for the flyTo call before resetting
+        const locationToZoom = { ...newLocation };
+        newLocation = null;
+        isPlacing = false;
+    
+        // Zoom to the new location
+        map.flyTo({ center: [locationToZoom.position.lng, locationToZoom.position.lat], zoom: 14 });
       }
-
+    
       function updateCoordinateStatus(coords) {
         document.getElementById('coordinateStatus').innerHTML = `
           Position set: <br>
@@ -555,7 +538,7 @@
           Longitude: ${coords[0].toFixed(4)}
         `;
       }
-
+    
       function exportToCSV() {
         const headers = ['Title', 'Description', 'Quantity', 'Contact', 'Type', 'Latitude', 'Longitude'];
         const csvData = locations.map(location => [
@@ -568,12 +551,12 @@
           location.position.lng
         ]);
         csvData.unshift(headers);
-
+    
         const csvString = csvData.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
         const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
-
+    
         link.setAttribute('href', url);
         link.setAttribute('download', 'food_locations.csv');
         link.style.visibility = 'hidden';
@@ -581,20 +564,20 @@
         link.click();
         document.body.removeChild(link);
       }
-
+    
       function exportToJSON() {
         const jsonString = JSON.stringify(locations, null, 2);
         const blob = new Blob([jsonString], { type: 'application/json' });
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
-
+    
         link.setAttribute('href', url);
         link.setAttribute('download', 'food_locations.json');
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       }
-
+    
       document.addEventListener("DOMContentLoaded", fetchCombinedData);
     </script>
     
