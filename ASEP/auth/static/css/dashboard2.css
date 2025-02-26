@@ -678,7 +678,7 @@ button {
 /* Control Panel Styles */
 #create_request {
   background: #ffffff;
-  width: 33em;
+  width: 50em;
   padding: 20px;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -741,13 +741,42 @@ button {
 #control_container {
   display: flex;
   justify-content: space-around;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  flex-direction: row;
   gap: 20px;
+  width: 100%; /* Take full width of parent */
+  overflow-x: auto; /* Allow horizontal scrolling on small screens */
+  padding: 10px 0; /* Add some vertical padding */
 }
 
 #map_and_data {
-  width: 33em;
-  padding: 20px;
-  margin-bottom: 20px;
-  margin-top: 30px;
+  width: 100%; /* Change from fixed em to percentage */
+  max-width: 33em; /* Keep maximum width similar to before */
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+  min-height: 400px;
+}
+
+/* Media queries for different screen sizes */
+@media screen and (max-width: 768px) {
+  #control_container {
+    flex-wrap: wrap; /* Allow wrapping on medium screens */
+  }
+  
+  #map_and_data {
+    max-width: 100%; /* Take full width on smaller screens */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  #control_container {
+    gap: 10px; /* Reduce gap on very small screens */
+  }
+  
+  #map_and_data {
+    min-height: 300px; /* Reduce minimum height on small screens */
+  }
 }
