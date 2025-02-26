@@ -4,10 +4,12 @@ from flask_sqlalchemy import SQLAlchemy
 from extensions import db
 from notifications import send_notification
 from Restaurant import DonationModel
-from geopy.geocoders import Nominatim  # Import geopy for location conversion
+from geopy.geocoders import Nominatim
+from flask_mail import Message, Mail
 
 # Initialize SQLAlchemy
 ngo_blueprint = Blueprint('ngo', __name__)
+mail = Mail()
 
 class RequestModel(db.Model):  
     id = db.Column(db.Integer, primary_key=True)
@@ -16,10 +18,10 @@ class RequestModel(db.Model):
     pick_up_date = db.Column(db.Date, nullable=False)
     preferred_time = db.Column(db.Time, nullable=False)
     additional_note = db.Column(db.Text, nullable=False)
-    phone_number = db.Column(db.String(15), nullable=False)  # New field
-    location = db.Column(db.String(255), nullable=False)  # New field
-    latitude = db.Column(db.Float, nullable=False)  # New field for latitude
-    longitude = db.Column(db.Float, nullable=False) # New field for longitude
+    phone_number = db.Column(db.String(15), nullable=False) 
+    location = db.Column(db.String(255), nullable=False) 
+    latitude = db.Column(db.Float, nullable=False) 
+    longitude = db.Column(db.Float, nullable=False) 
     status = db.Column(db.String(20), default='Pending')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -42,7 +44,6 @@ class RequestModel(db.Model):
 @ngo_blueprint.route('/request', methods=['GET', 'POST'])
 def handle_request():
     if request.method == 'GET':
-        # Fetch all requests from the database
         requests = RequestModel.query.order_by(RequestModel.created_at).all()
         return render_template('request.html', requests=[request.to_dict() for request in requests])
 
@@ -65,7 +66,7 @@ def handle_request():
             db.session.commit()
             return jsonify({"status": "success", "message": "Request status updated"})
 
-        # Validate required fields
+        # Validate required fields 
         required_fields = ["food_category", "quantity", "pick_up_date", "preferred_time", "phone_number", "location"]
         for field in required_fields:
             if field not in data or not data[field]:
@@ -77,7 +78,7 @@ def handle_request():
         if not location:
             return jsonify({"status": "error", "message": "Invalid location name. Try a different one!"}), 400
 
-        # Handle new request creation
+        # Create new request
         new_request = RequestModel(
             food_category=data["food_category"],
             quantity=float(data["quantity"]),
@@ -85,12 +86,31 @@ def handle_request():
             preferred_time=datetime.strptime(data["preferred_time"], "%H:%M").time(),
             phone_number=data["phone_number"],
             location=data["location"],
-            latitude=location.latitude,  # Store latitude
-            longitude=location.longitude, # Store longitude
+            latitude=location.latitude,
+            longitude=location.longitude,
             additional_note=data.get("additional_note", "")
         )
         db.session.add(new_request)
         db.session.commit()
+
+        # Generate notification
+        ngo_name = session.get('name', 'Unknown NGO')  # Use logged-in user's name or default
+        send_notification(
+            ngo_name=ngo_name,
+            food_type=data["food_category"],
+            quantity=data["quantity"],
+            additional_note=data.get("additional_note", "")
+        )
+
+        # Send email to the user if they exist in session
+        if 'email' in session:
+            user_email = session['email']
+            msg = Message(
+                subject="New Food Request Created",
+                recipients=[user_email],
+                body=f"Dear {ngo_name},\n\nYour request for {data['quantity']} kg of {data['food_category']} has been successfully created.\n\nDetails:\n- Pickup Date: {data['pick_up_date']}\n- Preferred Time: {data['preferred_time']}\n- Location: {data['location']}\n- Additional Note: {data.get('additional_note', 'None')}\n\nThank you for using FoodConnect!\n\nBest regards,\nFoodConnect Team"
+            )
+            mail.send(msg)
 
         return jsonify({
             "status": "success",

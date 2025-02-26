@@ -134,114 +134,68 @@
       </div>
     </div>
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const donationForm = document.getElementById("donationForm");
-    
-        donationForm.addEventListener("submit", function (event) {
-          event.preventDefault();
-          const formData = {
-            food_category: document.querySelector("select[name='food_category']").value,
-            quantity: document.querySelector("input[name='quantity']").value,
-            pick_up_date: document.querySelector("input[name='pick_up_date']").value,
-            preferred_time: document.querySelector("input[name='preferred_time']").value,
-            phone_number: document.querySelector("input[name='phone_number']").value,
-            location: document.querySelector("input[name='location']").value,
-            additional_note: document.querySelector("textarea[name='additional_note']").value,
-          };
-    
-          if (!formData.location || formData.location.trim() === "") {
-            alert("Please enter a valid location.");
-            return;
-          }
-    
-          console.log("Form data being sent:", formData);
-          fetch("http://127.0.0.1:5000/ngo/request", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').content,
-            },
-            body: JSON.stringify(formData),
-          })
-            .then((response) => {
-              if (!response.ok) {
-                return response.text().then((text) => {
-                  throw new Error(`HTTP error! Status: ${response.status} - ${text}`);
-                });
-              }
-              return response.json();
-            })
-            .then((data) => {
-              if (data.status === "success") {
-                alert(data.message);
-                window.location.href = "/ngo/request"; // Redirect to dashboard
-              } else {
-                alert("Error: " + data.message);
-                donationForm.reset(); // Reset form on error
-              }
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-              alert("Error submitting request: " + error.message);
-              donationForm.reset(); // Reset form on error
-            });
+  document.addEventListener("DOMContentLoaded", () => {
+    const donationForm = document.getElementById("donationForm");
+    const submitButton = donationForm.querySelector(".submit-btn");
+
+    donationForm.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      // Disable submit button and show loading state
+      submitButton.disabled = true;
+      submitButton.innerHTML = "Submitting...";
+
+      const formData = {
+        food_category: document.querySelector("select[name='food_category']").value,
+        quantity: document.querySelector("input[name='quantity']").value,
+        pick_up_date: document.querySelector("input[name='pick_up_date']").value,
+        preferred_time: document.querySelector("input[name='preferred_time']").value,
+        phone_number: document.querySelector("input[name='phone_number']").value,
+        location: document.querySelector("input[name='location']").value,
+        additional_note: document.querySelector("textarea[name='additional_note']").value,
+      };
+
+      if (!formData.location || formData.location.trim() === "" || !formData.phone_number || formData.phone_number.length !== 10) {
+        alert("Please enter a valid location and 10-digit phone number.");
+        submitButton.disabled = false;
+        submitButton.innerHTML = "Submit Request";
+        return;
+      }
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/ngo/request", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').content,
+          },
+          body: JSON.stringify(formData),
         });
-      });
-    </script>
+
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(`HTTP error! Status: ${response.status} - ${text}`);
+        }
+
+        const data = await response.json();
+        alert(data.message);
+        
+        if (data.status === "success") {
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error submitting request: " + error.message);
+      } finally {
+        // Re-enable submit button
+        submitButton.disabled = false;
+        submitButton.innerHTML = "Submit Request";
+      }
+    });
+  });
+</script>
     <script src={{url_for('static', filename='js/request.js')}}></script>
     <script src={{url_for('static', filename='js/sidebar.js')}}></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const donationForm = document.getElementById("donationForm");
-    
-        donationForm.addEventListener("submit", function (event) {
-            event.preventDefault();
-    
-            const formData = {
-                food_category: document.querySelector("select[name='food_category']").value,
-                quantity: document.querySelector("input[name='quantity']").value,
-                pick_up_date: document.querySelector("input[name='pick_up_date']").value,
-                preferred_time: document.querySelector("input[name='preferred_time']").value,
-                phone_number: document.querySelector("input[name='phone_number']").value,
-                location: document.querySelector("input[name='location']").value,
-                additional_note: document.querySelector("textarea[name='additional_note']").value,
-            };
-    
-            if (!formData.location || formData.location.trim() === "" || !formData.phone_number || formData.phone_number.length !== 10) {
-                alert("Please enter a valid location and 10-digit phone number.");
-                return;
-            }
-    
-            fetch("http://127.0.0.1:5000/ngo/request", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').content,
-                },
-                body: JSON.stringify(formData),
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        return response.text().then((text) => {
-                            throw new Error(`HTTP error! Status: ${response.status} - ${text}`);
-                        });
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    alert(data.message);
-                    if (data.status === "success") {
-                        window.location.reload();
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                    alert("Error submitting request: " + error.message);
-                });
-        });
-    });
-      
-    </script>
   </body>
 </html>
