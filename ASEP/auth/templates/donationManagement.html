@@ -8,6 +8,10 @@
   <title>FoodShare - Donation Management</title>
   <link rel="stylesheet" href={{url_for('static', filename='css/donationManagement.css' )}}>
   <link rel="stylesheet" href={{url_for('static', filename='css/sidebar.css' )}}>
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet" />
+  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" />
 </head>
 
 <body>
@@ -86,6 +90,18 @@
               <input type="time" id="pickupTime" name="pickup_time" required />
             </div>
           </div>
+          <div class="form-row">
+          <div class="form-group">
+            <label for="location">Pickup Location</label>
+            <div id="geocoder" class="geocoder"></div>
+            <input type="hidden" id="location" name="location" style="width: 100%;" required />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" maxlength="10" pattern="\d{10}" placeholder="Enter 10-digit phone number" required />
+          </div>
+        </div>
 
           <div class="form-group">
             <label for="instructions">Special Instructions</label>

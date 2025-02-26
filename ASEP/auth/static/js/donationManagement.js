@@ -1,4 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Initialize Mapbox Geocoder
+  mapboxgl.accessToken =
+    "pk.eyJ1IjoidGhlLWRlc3Ryb3llciIsImEiOiJjbTdkbWd1ZjIwMDJ3MmpxdXp3dWNpb3VlIn0.GtirZBfgEJOCgwsM9ZB0Zg";
+  const geocoder = new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken,
+    mapboxgl: mapboxgl,
+    placeholder: "Enter pickup location",
+  });
+
+  geocoder.addTo("#geocoder");
+
+  // Update hidden location input when a result is selected
+  geocoder.on("result", (e) => {
+    document.getElementById("location").value = e.result.place_name;
+  });
+
+  // Form submission
   document
     .getElementById("donationForm")
     .addEventListener("submit", function (event) {
@@ -11,6 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
         expiry_date: document.getElementById("expiryDate").value,
         pickup_time: document.getElementById("pickupTime").value,
         special_instructions: document.getElementById("instructions").value,
+        location: document.getElementById("location").value,
+        phone: document.getElementById("phone").value,
       };
 
       fetch("http://127.0.0.1:5000/Restaurant/donation", {
@@ -37,3 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+
+function clearForm() {
+  document.getElementById("donationForm").reset();
+  document.getElementById("location").value = "";
+  document.querySelector(".mapboxgl-ctrl-geocoder--input").value = "";
+}

@@ -3,6 +3,7 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from extensions import db
 from notifications import send_notification
+from Restaurant import DonationModel
 from geopy.geocoders import Nominatim  # Import geopy for location conversion
 
 # Initialize SQLAlchemy
@@ -102,17 +103,36 @@ def handle_request():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 400
     
-@ngo_blueprint.route('/requests_json', methods=['GET'])
-def get_requests_json():
-    requests = RequestModel.query.order_by(RequestModel.created_at).all()
-    formatted_requests = [
+@ngo_blueprint.route('/combined_data_json', methods=['GET'])
+def get_combined_data_json():
+    # Fetch NGO requests
+    ngo_requests = RequestModel.query.order_by(RequestModel.created_at).all()
+    ngo_formatted = [
         {
             "position": {"lat": req.latitude, "lng": req.longitude},
             "title": f"{req.location} Donation Request",
             "description": req.food_category,
             "quantity": f"{req.quantity} kg",
+            "contact": req.phone if hasattr(req, 'phone') else None,
             "type": "green"  # NGO requests are delivery points
         }
-        for req in requests
+        for req in ngo_requests if req.latitude and req.longitude
     ]
-    return jsonify(formatted_requests)
+
+    # Fetch Restaurant donations
+    restaurant_donations = DonationModel.query.order_by(DonationModel.created_at).all()
+    restaurant_formatted = [
+        {
+            "position": {"lat": donation.latitude, "lng": donation.longitude},
+            "title": f"{donation.location} Pickup Point",
+            "description": donation.food_type,
+            "quantity": f"{donation.quantity} {donation.unit}",
+            "contact": donation.phone,
+            "type": "red"  # Restaurant donations are pickup points
+        }
+        for donation in restaurant_donations if donation.latitude and donation.longitude
+    ]
+
+    # Combine both datasets
+    combined_data = ngo_formatted + restaurant_formatted
+    return jsonify(combined_data)

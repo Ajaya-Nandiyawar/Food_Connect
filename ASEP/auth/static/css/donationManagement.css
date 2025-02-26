@@ -360,3 +360,8 @@ td {
         padding: 1rem;
     }
 }
+
+.geocoder {
+    width: 100%;
+    margin-bottom: 10px;
+  }
