@@ -529,6 +529,7 @@ select {
 
 .stats-summary {
   margin-top: 1rem;
+  margin-bottom: 0.2rem;
 }
 
 .stat-row {
@@ -598,6 +599,7 @@ button {
   border-radius: 4px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1;
+  margin-bottom: 50px;
 }
 
 .filter-controls label {
@@ -677,8 +679,9 @@ button {
 
 /* Control Panel Styles */
 #create_request {
+  width: 10%;
   background: #ffffff;
-  width: 50em;
+  width: 100%;
   padding: 20px;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -694,10 +697,11 @@ button {
 
 #map_controls {
   background: #ffffff;
-  padding: 20px;
+  padding: 30px;
+  padding-bottom: 50px;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   margin-top: 30px;
 }
 
@@ -708,6 +712,7 @@ button {
 }
 
 #Route_Planning {
+  width: 100%;
   background: #ffffff;
   padding: 20px;
   border-radius: var(--border-radius);
@@ -728,8 +733,6 @@ button {
   padding: 1.5rem;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  margin-bottom: 1.5rem;
-  margin-top: 1.5rem;
 }
 
 .control-panel h3 {
@@ -741,21 +744,18 @@ button {
 #control_container {
   display: flex;
   justify-content: space-around;
-  flex-wrap: nowrap;
   flex-direction: row;
-  gap: 20px;
-  width: 100%; /* Take full width of parent */
-  overflow-x: auto; /* Allow horizontal scrolling on small screens */
+  gap: 10px; /* Reduce gap to prevent overflow */
   padding: 10px 0; /* Add some vertical padding */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 #map_and_data {
   width: 100%; /* Change from fixed em to percentage */
-  max-width: 33em; /* Keep maximum width similar to before */
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
   height: 100%;
   min-height: 400px;
 }
