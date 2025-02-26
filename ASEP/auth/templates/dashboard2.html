@@ -28,7 +28,6 @@
   <body>
   
     <div class="container">
-      
       <div class="sidebar" id="sidebar">
         <div class="logo">
             <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare">
@@ -57,11 +56,12 @@
             <div class="icon settings-icon" onclick="openSidebar()"></div>
             <span class="menu-text">Settings</span>
         </a>
-    </div>
+      </div>
 
       <!-- Main Content -->
       <main class="main-content">
         <!-- Stats Cards -->
+
         <div class="stats-grid">
           <div class="stat1">
             <p>Total Food Available</p>
@@ -85,80 +85,63 @@
           </div>
         </div>
 
-       <!-- Map and Food Items Section -->
-       <div class="map-section">
-        <h2>Food tracking</h2>
-        <div id="map" style="width: 100%; height: 500px; border-radius: 8px;"></div>
-      </div>
-      <!-- Replace the existing controls-container div with this improved version -->
-      <div class="controls-container">
-        <!-- Add this new control panel to your HTML (place it within .controls-container) -->
-<div class="control-panel">
-<h3>Create Request</h3>
-<div class="location-form">
-  <input 
-    type="text" 
-    id="locationName" 
-    placeholder="Location Name"
-    class="form-input"
-    required
-  >
-  <input 
-    type="text" 
-    id="foodItem" 
-    placeholder="Food Item Name"
-    class="form-input"
-    required
-  >
-  <input 
-    type="number" 
-    id="quantity" 
-    placeholder="Quantity (kg)"
-    class="form-input"
-    min="1"
-    required
-  >
-  <input 
-    type="tel" 
-    id="contact" 
-    placeholder="Contact Number (+91...)"
-    class="form-input"
-    pattern="^(\+91|0)?[7-9]\d{9}$"
-    required
-  >
-  <select id="locationType" class="form-select">
-    <option value="red">Food Pickup Point</option>
-    <option value="green">Food Delivery Point</option>
-  </select>
-  <div id="locationGeocoder" class="geocoder-container"></div>
-  <button onclick="enableLocationPlacement()" class="btn btn-secondary">
-    Set Location on Map
-  </button>
-  <div id="coordinateStatus" class="status-message"></div>
-  <button onclick="saveNewLocation()" class="btn btn-primary">
-    Save Location
-  </button>
-</div>
-</div>
-        <div class="control-panels-wrapper">
-          <!-- Map Controls Panel -->
-          <div class="control-panel">
-            <h3>Map Controls</h3>
-            <div class="filter-controls">
-              <label>
-                  <input type="checkbox" id="pickupFilter" checked onchange="filterMarkers('red', this.checked)">
-                  Food Pickup Points
-              </label>
-              <label>
-                  <input type="checkbox" id="deliveryFilter" checked onchange="filterMarkers('green', this.checked)">
-                  Food Delivery Points
-              </label>
+        <!-- Map and Food Items Section -->
+        <div class="map-section">
+          <h2>Food tracking</h2>
+          <div id="map" style="width: 100%; height: 500px; border-radius: 8px;"></div>
+        </div>
+        <div id="control_container">
+          <div id="create_request">
+            <h3>Create Request</h3>
+            <div class="location-form">
+              <input 
+                type="text" 
+                id="locationName" 
+                placeholder="Location Name"
+                class="form-input"
+                required
+              >
+              <input 
+                type="text" 
+                id="foodItem" 
+                placeholder="Food Item Name"
+                class="form-input"
+                required
+              >
+              <input 
+                type="number" 
+                id="quantity" 
+                placeholder="Quantity (kg)"
+                class="form-input"
+                min="1"
+                required
+              >
+              <input 
+                type="tel" 
+                id="contact" 
+                placeholder="Contact Number (+91...)"
+                class="form-input"
+                pattern="^(\+91|0)?[7-9]\d{9}$"
+                required
+              >
+              <select id="locationType" class="form-select">
+                <option value="red">Food Pickup Point</option>
+                <option value="green">Food Delivery Point</option>
+              </select>
+              <div id="locationGeocoder" class="geocoder-container"></div>
+              <button onclick="enableLocationPlacement()" class="btn btn-secondary">
+                Set Location on Map
+              </button>
+              <div id="coordinateStatus" class="status-message"></div>
+              <button onclick="saveNewLocation()" class="btn btn-primary">
+                Save Location
+              </button>
             </div>
-            
           </div>
-      
+
+         
           <!-- Route Planning Panel -->
-          <div class="control-panel">
+          <div id="Route_Planning">
             <h3>Route Planning</h3>
             <div class="route-selectors">
               <select id="startPoint">
@@ -168,39 +151,52 @@
                 <option value="">Select destination</option>
               </select>
             </div>
-            <div class="route-actions">
-              <button class="btn btn-primary" onclick="calculateRoute()">Calculate Route</button>
-              <button class="btn btn-secondary" onclick="optimizeRoute()">Optimize Route</button>
-              <button class="btn btn-danger" onclick="clearRoute()">Clear</button>
+            <div class="route-actions" style="display: flex; justify-content: space-between; gap: 10px; margin-top: 10px;">
+              <button class="calculate" style="flex: 1;" onclick="calculateRoute()">Calculate Route</button>
+              <button class="optimize" style="flex: 1;" onclick="optimizeRoute()">Optimize Route</button>
+              <button class="clear" style="flex: 1;" onclick="clearRoute()">Clear</button>
             </div>
             <div class="route-info">
               <p>Distance: <span id="routeDistance">-</span></p>
               <p>Duration: <span id="routeDuration">-</span></p>
             </div>
           </div>
-      
-          <!-- Data Export Panel -->
-          <div class="control-panel">
+           <!-- Map Controls Panel -->
+          <div id="map_controls">
+           <h3>Map Controls</h3>
+           <div class="filter-controls">
+             <label>
+                 <input type="checkbox" id="pickupFilter" checked onchange="filterMarkers('red', this.checked)">
+                 Food Pickup Points
+             </label>
+             <label>
+                 <input type="checkbox" id="deliveryFilter" checked onchange="filterMarkers('green', this.checked)">
+                 Food Delivery Points
+             </label>
+           </div> 
+         </div>
+           <!-- Data Export Panel -->
+           <div class="control-panel">
             <h3>Data Management</h3>
             <div class="export-actions">
               <button onclick="exportToCSV()" class="export">
                 <svg
-    stroke-linejoin="round"
-    stroke-linecap="round"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="1.5"
-    viewBox="0 0 24 24"
-    height="20"
-    width="20"
-    class="button__icon"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
-    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
-    <path d="M7 11l5 5l5 -5"></path>
-    <path d="M12 4l0 12"></path>
-  </svg>Export to CSV
+                  stroke-linejoin="round"
+                  stroke-linecap="round"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  height="20"
+                  width="20"
+                  class="button__icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
+                  <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+                  <path d="M7 11l5 5l5 -5"></path>
+                  <path d="M12 4l0 12"></path>
+                </svg>Export to CSV
               </button>
               <button onclick="exportToJSON()" class="export">
                 <svg
@@ -234,10 +230,8 @@
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
-    </main>
-  </div>
     <script src={{url_for('static', filename='js/dashboard2.js')}}></script>
     <script src={{url_for('static', filename='js/maps.js')}}></script>
     <script src={{url_for('static', filename='js/sidebar.js')}}></script>
