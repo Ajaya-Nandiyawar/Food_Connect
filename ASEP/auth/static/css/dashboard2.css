@@ -647,9 +647,15 @@ select {
   }
 }
 
-.filter-controls, .route-selectors, .export-actions {
+.filter-controls, .route-selectors {
   display: flex;
   flex-direction: column;
+  gap: 0.8rem;
+}
+
+.export-actions {
+  display: flex;
+  flex-direction: row;
   gap: 0.8rem;
 }
 
@@ -769,3 +775,27 @@ button:hover {
   font-size: 0.9rem;
   color: #666;
 }
+
+.export{
+    width: 50%;
+    line-height: 1;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+    padding: 0.5em 0.75em;
+    padding-right: 1em;
+    color: #fff;
+    border: 1px solid transparent;
+    font-weight: 700;
+    border-radius: 0.5em;
+    font-size: 0.875rem;
+    box-shadow: 0 0.5em 1em -0.3em hsla(200, 100%, 50%, 0.5);
+    transition: transform 0.3s;
+    background: linear-gradient(
+      90deg,
+      rgb(85, 170, 198) 0%,
+      rgb(48, 152, 217) 100%
+    );
+  }
