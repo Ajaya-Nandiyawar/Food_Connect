@@ -46,8 +46,7 @@ body {
   padding: 20px;
   border-radius: 13px;
   text-align: center;
-  width: 230px;
-  height: 120px;
+  width: 100%; /* Changed from fixed width to 100% */
   height: 100%;
 }
 
@@ -91,6 +90,30 @@ body {
 .stat2 p:nth-child(3) { color: #2ba371; }
 .stat3 p:nth-child(3) { color: #b99e17; }
 .stat4 p:nth-child(3) { color: #cd5252; }
+
+/* Media Queries for Responsiveness */
+@media screen and (max-width: 1200px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .stat1 h2, .stat2 h2, .stat3 h2, .stat4 h2 {
+    font-size: 22px;
+  }
+}
 
 
 /* Content Grid */
