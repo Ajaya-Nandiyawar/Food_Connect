@@ -3,41 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}"> <!-- Ensure CSRF token is included -->
     <title>FoodShare - Notifications</title>
     <link rel="stylesheet" href={{url_for('static', filename='css/notification.css')}}/>
     <link rel="stylesheet" href={{url_for('static', filename='css/sidebar.css')}}>
   </head>
   <body>
     <div class="container">
-      <!-- Sidebar -->
-      <!-- <div class="sidebar">
-        <div class="logo">
-          <div class="logo-icon"></div>
-          <span>FoodShare</span>
-        </div>
-        <nav>
-          <a href="#" class="nav-item">
-            <span class="icon">🏠</span>
-            Dashboard
-          </a>
-          <a href="#" class="nav-item active">
-            <span class="icon">🔔</span>
-            Alerts
-          </a>
-          <a href="#" class="nav-item">
-            <span class="icon">📊</span>
-            Stats
-          </a>
-          <a href="#" class="nav-item">
-            <span class="icon">📝</span>
-            Requests
-          </a>
-          <a href="#" class="nav-item">
-            <span class="icon">⚙️</span>
-            Settings
-          </a>
-        </nav>
-      </div> -->
       <div class="sidebar" id="sidebar">
         <div class="logo">
             <img src={{url_for('static',filename='img/logo.ico')}} alt="FoodShare">
@@ -66,14 +38,10 @@
             <div class="icon settings-icon" onclick="openSidebar()"></div>
             <span class="menu-text">Settings</span>
         </a>
-    </div>
+      </div>
 
-      <!-- Main Content -->
       <div class="main-content">
-        <!-- Alert Banner -->
         <div class="alert-banner">New Donation Scheduled</div>
-
-        <!-- Notifications Header -->
         <div class="notifications-header">
           <h1>Notifications</h1>
           <div class="header-actions">
@@ -86,71 +54,15 @@
           </div>
         </div>
 
-        <!-- Notifications Content -->
-        <div class="notifications-content">
+        <div class="notifications-content" id="notificationsContent">
           <div class="section">
-            <h2>Urgent Notifications</h2>
-            <div class="notification urgent">
-              <div class="notification-icon">⭕</div>
-              <div class="notification-content">
-                <div class="notification-header">
-                  <h3>Food Items Expiring Today</h3>
-                  <span class="time">2 hours ago</span>
-                </div>
-                <p>
-                  50kg of vegetables at Restaurant A will expire in 6 hours.
-                </p>
-                <a href="#" class="action-link">View Details</a>
-              </div>
-            </div>
-          </div>
-
-          <div class="section">
-            <h2>Today</h2>
-            <div class="notification info">
-              <div class="notification-icon">📅</div>
-              <div class="notification-content">
-                <div class="notification-header">
-                  <h3>New Donation Pickup Scheduled</h3>
-                  <span class="time">4 hours ago</span>
-                </div>
-                <p>
-                  Bakery B has scheduled a donation pickup for tomorrow at 9 AM.
-                </p>
-                <a href="#" class="action-link">View Schedule</a>
-              </div>
-            </div>
-
-            <div class="notification warning">
-              <div class="notification-icon">⚠️</div>
-              <div class="notification-content">
-                <div class="notification-header">
-                  <h3>Shortage Alert</h3>
-                  <span class="time">6 hours ago</span>
-                </div>
-                <p>Area X is running low on essential food supplies.</p>
-                <a href="#" class="action-link">Take Action</a>
-              </div>
-            </div>
-          </div>
-
-          <div class="section">
-            <h2>Earlier</h2>
-            <div class="notification default">
-              <div class="notification-icon">📄</div>
-              <div class="notification-content">
-                <div class="notification-header">
-                  <h3>Monthly Report Available</h3>
-                  <span class="time">2 days ago</span>
-                </div>
-                <p>Your food distribution report for last month is ready.</p>
-                <a href="#" class="action-link">View Report</a>
-              </div>
-            </div>
+            <h2>Recent Notifications</h2>
+            <!-- Notifications will be dynamically inserted here -->
           </div>
         </div>
       </div>
     </div>
   </body>
   <script src={{url_for('static', filename='js/sidebar.js')}}></script>
+  <script src={{url_for('static', filename='js/notification.js')}}></script>
 </html>

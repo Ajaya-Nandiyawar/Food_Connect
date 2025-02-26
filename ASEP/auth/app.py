@@ -34,9 +34,9 @@ s = URLSafeTimedSerializer(app.secret_key)
 
 # MySQL connection string
 db_user = "root"
-db_password = "Ajaya%405621"  # URL-encoded password (%40 represents @)
+db_password = "%40J%21nky%40ub%40le5"  # URL-encoded password (%40 represents @)
 db_host = "127.0.0.1"
-db_name = "FOODCONNECT"
+db_name = "registered"
 
 # Configuring database URI
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
@@ -45,9 +45,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tra
 
 # Register blueprint before app initialization (if using blueprints)
 app.register_blueprint(ngo_blueprint, url_prefix='/ngo')
-
+mail = Mail(app)
 app.register_blueprint(notifications_bp, url_prefix='/notifications')
-
 app.register_blueprint(restaurant_blueprint, url_prefix='/Restaurant')
 
 # Initialize SQLAlchemy with the app
