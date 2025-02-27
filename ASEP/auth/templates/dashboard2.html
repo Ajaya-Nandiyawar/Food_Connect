@@ -3,29 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f57c00" />
     <title>FoodShare Dashboard</title>
-    <link rel="icon" href="{{ url_for('static', filename='img/logo.ico') }}" type="logo" />
-    <link rel="stylesheet" href={{url_for('static', filename='css/dashboard2.css')}} />
-    <link rel="stylesheet" href={{url_for('static', filename='css/sidebar.css')}} />
-    <link
-      href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css"
-      rel="stylesheet"
-    />
+    
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.ico') }}" type="image/x-icon" />
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard2.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}" />
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css" />
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" />
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css" />
+
+    <!-- Scripts -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
-      type="text/css"
-    />
     <script src="{{ url_for('static', filename='js/mapbox-gl-geocoder.min.js') }}"></script>
-    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css">
     <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
-    <link 
-        rel="stylesheet" 
-        href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css"
-    />
-  </head>
+</head>
+
   <body>
   
     <div class="container">
@@ -120,9 +116,10 @@
               <input 
                 type="tel" 
                 id="contact" 
-                placeholder="Contact Number (+91...)"
+                placeholder="Contact Number"
                 class="form-input"
-                pattern="^(\+91|0)?[7-9]\d{9}$"
+                maxlength="10" 
+                pattern="\d{10}" 
                 required
               >
               <select id="locationType" class="form-select">
@@ -130,11 +127,14 @@
                 <option value="green">Food Delivery Point</option>
               </select>
               <div id="locationGeocoder" class="geocoder-container"></div>
-              <button onclick="enableLocationPlacement()" class="btn btn-secondary">
+              <button onclick="enableLocationPlacement()" class="set_location">
                 Set Location on Map
               </button>
               <div id="coordinateStatus" class="status-message"></div>
-              <button onclick="saveNewLocation()" class="btn btn-primary">
+              <button  onclick="saveNewLocation()" class="set_location"
+              
+              
+              >
                 <div class="center-body">
                   <div class="loader-shape-3"></div>
                 </div>
@@ -143,7 +143,7 @@
             </div>
           </div>
 
-         
+
           <!-- Route Planning Panel -->
           <div id="Route_Planning">
             <h3>Route Planning</h3>
@@ -156,9 +156,9 @@
               </select>
             </div>
             <div class="route-actions" style="display: flex; justify-content: space-between; gap: 10px; margin-top: 10px;">
-              <button class="calculate" style="flex: 1;" onclick="calculateRoute()">Calculate Route</button>
-              <button class="optimize" style="flex: 1;" onclick="optimizeRoute()">Optimize Route</button>
-              <button class="clear" style="flex: 1;" onclick="clearRoute()">Clear</button>
+              <button class="set_location" style="flex: 1;" onclick="calculateRoute()">Calculate Route</button>
+              <button class="optimize_op" style="flex: 1;" onclick="optimizeRoute()">Optimize Route</button>
+              <button class="clear_clear" style="flex: 1;" onclick="clearRoute()">Clear</button>
             </div>
             <div class="route-info">
               <p>Distance: <span id="routeDistance">-</span></p>
@@ -184,7 +184,7 @@
       </label>
       <span>Food Pickup Points</span>
     </div>
-    
+
     <div class="checkbox">
       <input type="checkbox" id="deliveryFilter" checked onchange="filterMarkers('green', this.checked)" />
       <label for="deliveryFilter" class="cbx">
@@ -205,7 +205,7 @@
            <div class="control-panel">
             <h3>Data Management</h3>
             <div class="export-actions">
-              <button onclick="exportToCSV()" class="export">
+              <button onclick="exportToCSV()" class="set_location">
                 <svg
                   stroke-linejoin="round"
                   stroke-linecap="round"
@@ -224,7 +224,7 @@
                   <path d="M12 4l0 12"></path>
                 </svg>Export to CSV
               </button>
-              <button onclick="exportToJSON()" class="export">
+              <button onclick="exportToJSON()" class="set_location">
                 <svg
                 stroke-linejoin="round"
                 stroke-linecap="round"

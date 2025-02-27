@@ -273,27 +273,32 @@ body {
 }
 
 .location-button {
-  display: inline-block;
-  background-color: #ff9100; /* Orange color for visibility */
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
-  padding: 8px 15px;
-  border: none;
-  border-radius: 5px;
-  text-decoration: none;
   cursor: pointer;
-  transition: background 0.3s ease-in-out;
+  align-items: center;
+  padding: 0.6em 1em;
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  border-radius: 0.5em;
+  font-size: 0.9rem;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  gap: 0.5em;
+  background: linear-gradient(90deg, #ff9100 0%, #ffb347 100%);
+  box-shadow: 0 4px 10px rgba(255, 145, 0, 0.4);
 }
 
-.location-button:hover {
-  background-color: #ff9900; /* Darker shade on hover */
+.calculate,.location-button:hover {
+  background: linear-gradient(90deg, #ff9100, #ff6d00);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(255, 145, 0, 0.5);
 }
 
 .location-button:active {
-  background-color: #ff9100; /* Even darker on click */
+  transform: translateY(1px);
+  box-shadow: 0 3px 7px rgba(255, 145, 0, 0.3);
 }
 
-.location-button i {
-  margin-right: 5px;
+.location-button:focus {
+  outline: 3px solid rgba(255, 145, 0, 0.4);
 }
