@@ -143,22 +143,9 @@ textarea {
   margin-top: 24px;
 }
 
-.cancel-btn {
-  padding: 10px 20px;
-  border: none;
-  background: white;
-  color: #374151;
-  cursor: pointer;
-}
 
-.submit-btn {
-  padding: 10px 20px;
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-}
+
+
 
 /* Active Requests Styles */
 .request-cards {
@@ -245,4 +232,71 @@ textarea {
 
 .suggestions-list li:hover {
   background: #f0f0f0;
+}
+
+/* Cancel Button CSS */
+
+.cancel {
+  cursor: pointer;
+  align-items: center;
+  padding: 0.6em 1em;
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  border-radius: 0.5em;
+  font-size: 0.9rem;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  gap: 0.5em;
+  background: linear-gradient(90deg, #c65555 0%, rgb(217, 48, 48) 100%);
+  box-shadow: 0 4px 10px rgba(243, 33, 33, 0.4);
+}
+
+.cancel:hover {
+  background: linear-gradient(90deg, #e51e1e, #d21919);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(243, 33, 33, 0.5);
+}
+
+.cancel:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 7px rgba(243, 33, 33, 0.3);
+}
+
+.cancel:focus {
+  outline: 3px solid rgba(243, 33, 33, 0.4);
+}
+
+/* Submit Button CSS */
+
+.submit {
+  cursor: pointer;
+  align-items: center;
+  padding: 0.6em 1em;
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  border-radius: 0.5em;
+  font-size: 0.9rem;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  gap: 0.5em;
+  background: linear-gradient(90deg, #55aac6 0%, rgb(48, 152, 217) 100%);
+  box-shadow: 0 4px 10px rgba(33, 150, 243, 0.4);
+}
+
+.calculate,
+.submit:hover {
+  background: linear-gradient(90deg, #1e88e5, #1976d2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(33, 150, 243, 0.5);
+}
+
+.submit:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 7px rgba(33, 150, 243, 0.3);
+}
+
+.submit:focus {
+  outline: 3px solid rgba(33, 150, 243, 0.4);
 }

@@ -365,3 +365,21 @@ td {
     width: 100%;
     margin-bottom: 10px;
   }
+
+
+.Create_Donation{
+    cursor: pointer;
+    align-items: center;
+    padding: 0.5em 0.75em;
+    padding-right: 1em;
+    color: #fff;
+    border: 1px solid transparent;
+    font-weight: 700;
+    border-radius: 0.5em;
+    font-size: 0.875rem;
+    transition: transform 0.3s;
+    background: linear-gradient(90deg, #55aac6 0%, rgb(48, 152, 217) 100%);
+}
+
+.Create_Donation:hover{
+    background: #2a6995;}
