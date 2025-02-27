@@ -1,27 +1,23 @@
 from flask import Blueprint, request, render_template, jsonify, session
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
-from extensions import db
+from extensions import db, mail
 from notifications import send_notification
-from Restaurant import DonationModel
+from flask_mail import Message
 from geopy.geocoders import Nominatim
-from flask_mail import Message, Mail
 
-# Initialize SQLAlchemy
 ngo_blueprint = Blueprint('ngo', __name__)
-mail = Mail()
 
-class RequestModel(db.Model):  
+class RequestModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     food_category = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Float, nullable=False)
     pick_up_date = db.Column(db.Date, nullable=False)
     preferred_time = db.Column(db.Time, nullable=False)
     additional_note = db.Column(db.Text, nullable=False)
-    phone_number = db.Column(db.String(15), nullable=False) 
-    location = db.Column(db.String(255), nullable=False) 
-    latitude = db.Column(db.Float, nullable=False) 
-    longitude = db.Column(db.Float, nullable=False) 
+    phone_number = db.Column(db.String(15), nullable=False)
+    location = db.Column(db.String(255), nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(20), default='Pending')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -33,10 +29,10 @@ class RequestModel(db.Model):
             'additional_note': self.additional_note,
             'pick_up_date': self.pick_up_date.strftime('%Y-%m-%d'),
             'preferred_time': self.preferred_time.strftime('%H:%M'),
-            'phone_number': self.phone_number,  # Include in response
-            'location': self.location,  # Include in response
-            'latitude': self.latitude,  # Include latitude
-            'longitude': self.longitude, # Include longitude
+            'phone_number': self.phone_number,
+            'location': self.location,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
             'status': self.status,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }
@@ -125,7 +121,7 @@ def handle_request():
     
 @ngo_blueprint.route('/combined_data_json', methods=['GET'])
 def get_combined_data_json():
-    # Fetch NGO requests
+    from Restaurant import DonationModel  # Move import here to avoid circular import
     ngo_requests = RequestModel.query.order_by(RequestModel.created_at).all()
     ngo_formatted = [
         {
@@ -133,13 +129,11 @@ def get_combined_data_json():
             "title": f"{req.location} Donation Request",
             "description": req.food_category,
             "quantity": f"{req.quantity} kg",
-            "contact": req.phone if hasattr(req, 'phone') else None,
-            "type": "green"  # NGO requests are delivery points
+            "contact": req.phone_number,
+            "type": "green"
         }
         for req in ngo_requests if req.latitude and req.longitude
     ]
-
-    # Fetch Restaurant donations
     restaurant_donations = DonationModel.query.order_by(DonationModel.created_at).all()
     restaurant_formatted = [
         {
@@ -148,11 +142,9 @@ def get_combined_data_json():
             "description": donation.food_type,
             "quantity": f"{donation.quantity} {donation.unit}",
             "contact": donation.phone,
-            "type": "red"  # Restaurant donations are pickup points
+            "type": "red"
         }
         for donation in restaurant_donations if donation.latitude and donation.longitude
     ]
-
-    # Combine both datasets
     combined_data = ngo_formatted + restaurant_formatted
     return jsonify(combined_data)

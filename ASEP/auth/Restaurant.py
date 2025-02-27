@@ -1,9 +1,13 @@
-from flask import Blueprint, request, render_template, jsonify
+from flask import Blueprint, request, render_template, jsonify, session
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-from extensions import db
+from extensions import db, mail, NGO
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
+from notifications import send_notification
+from flask_mail import Message
+
+
 
 restaurant_blueprint = Blueprint('restaurant', __name__)
 
@@ -19,10 +23,10 @@ class DonationModel(db.Model):
     special_instructions = db.Column(db.Text, nullable=True)
     status = db.Column(db.String(20), default='Pending')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    location = db.Column(db.String(255), nullable=False)  # New field for location
-    latitude = db.Column(db.Float, nullable=True)  # Store latitude
-    longitude = db.Column(db.Float, nullable=True)  # Store longitude
-    phone = db.Column(db.String(10), nullable=True)  # 10-digit phone number
+    location = db.Column(db.String(255), nullable=False)
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
+    phone = db.Column(db.String(10), nullable=True)
 
     def to_dict(self):
         return {
@@ -50,7 +54,7 @@ def get_donations_json():
             "title": f"{donation.location} Pickup Point",
             "description": donation.food_type,
             "quantity": f"{donation.quantity} {donation.unit}",
-            "type": "red"  # Restaurant donations are pickup points
+            "type": "red"
         }
         for donation in donations if donation.latitude and donation.longitude
     ]
@@ -79,12 +83,10 @@ def handle_donation():
                 if field not in data:
                     return jsonify({'status': 'error', 'message': f'Missing required field: {field}'}), 400
 
-            # Validate phone number (10 digits)
             phone = data['phone']
             if not (phone.isdigit() and len(phone) == 10):
                 return jsonify({'status': 'error', 'message': 'Phone number must be exactly 10 digits'}), 400
 
-            # Geocode location to lat/long
             try:
                 location_data = geolocator.geocode(data['location'], timeout=10)
                 if not location_data:
@@ -108,7 +110,25 @@ def handle_donation():
             )
             db.session.add(new_donation)
             db.session.commit()
-            
+
+            restaurant_name = session.get('name', 'Unknown Restaurant')
+            send_notification(
+                ngo_name=restaurant_name,
+                food_type=data['food_type'],
+                quantity=f"{data['quantity']} {data['unit']}",
+                additional_note=data.get('special_instructions', '')
+            )
+
+            ngos = NGO.query.all()
+            if ngos:
+                ngo_emails = [ngo.email for ngo in ngos]
+                msg = Message(
+                    subject="New Donation Available",
+                    recipients=ngo_emails,
+                    body=f"A new donation has been created by {restaurant_name}.\n\nDetails:\n- Food Type: {data['food_type']}\n- Quantity: {data['quantity']} {data['unit']}\n- Expiry Date: {data['expiry_date']}\n- Pickup Time: {data['pickup_time']}\n- Location: {data['location']}\n- Special Instructions: {data.get('special_instructions', 'None')}\n\nPlease log in to FoodConnect to review and respond.\n\nBest regards,\nFoodConnect Team"
+                )
+                mail.send(msg)
+
             return jsonify({
                 'status': 'success',
                 'message': 'Donation created successfully',

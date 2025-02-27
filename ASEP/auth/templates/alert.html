@@ -62,88 +62,14 @@
             </div>
 
             <div class="notifications-list" id="notificationsList">
-                <div class="notification-item unread">
-                    <div class="notification-icon request">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg>
-                    </div>
-                    <div class="notification-content">
-                        <div class="notification-header">
-                            <h3>New Food Request</h3>
-                        </div>
-                        <ul>
-                            {% for notification in notifications %}
-                            <li>
-                                <strong>{{ notification.message }}</strong><br>
-                                Food Type: {{ notification.food_type }}<br>
-                                Quantity: {{ notification.quantity }}<br>
-                                Note: {{ notification.additional_note }}<br>
-                                <span class="notification-time">{{ notification.created_at }}</span>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                        <div class="notification-actions">
-                            <a href="#" class="btn-link">View Request</a>
-                            <button class="btn-link" onclick="markAsRead(this)">Mark as read</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="notification-item">
-                    <div class="notification-icon success">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    </div>
-                    <div class="notification-content">
-                        <div class="notification-header">
-                            <h3>Donation Completed</h3>
-                            <span class="notification-time">2 hours ago</span>
-                        </div>
-                        <p>Your donation of 30 meals has been successfully delivered to Hope Foundation.</p>
-                        <div class="notification-actions">
-                            <a href="#" class="btn-link">View Details</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="notification-item">
-                    <div class="notification-icon system">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
-                    </div>
-                    <div class="notification-content">
-                        <div class="notification-header">
-                            <h3>System Update</h3>
-                            <span class="notification-time">1 day ago</span>
-                        </div>
-                        <p>New features have been added to improve your donation management experience.</p>
-                        <div class="notification-actions">
-                            <a href="#" class="btn-link">Learn More</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="notification-item">
-                    <div class="notification-icon reminder">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    </div>
-                    <div class="notification-content">
-                        <div class="notification-header">
-                            <h3>Donation Reminder</h3>
-                            <span class="notification-time">2 days ago</span>
-                        </div>
-                        <p>You have a scheduled donation pickup tomorrow at 2:00 PM.</p>
-                        <div class="notification-actions">
-                            <a href="#" class="btn-link">View Schedule</a>
-                        </div>
-                    </div>
-                </div>
+                <!-- Notifications will be dynamically inserted here -->
             </div>
 
             <div class="pagination">
-                <span class="pagination-info">Showing 4 of 24 notifications</span>
+                <span class="pagination-info">Showing notifications</span>
                 <div class="pagination-controls">
                     <button class="btn btn-link" disabled>Previous</button>
                     <button class="btn btn-page active">1</button>
-                    <button class="btn btn-page">2</button>
-                    <button class="btn btn-page">3</button>
                     <button class="btn btn-link">Next</button>
                 </div>
             </div>
@@ -152,28 +78,89 @@
     <script src={{url_for('static',filename='js/alert.js')}}></script>
     <script src={{url_for('static',filename='js/sidebar.js')}}></script>
     <script>
-        function showNotification(message) {
-            if (Notification.permission === "granted") {
-                new Notification("New Food Request", { body: message });
-            } else if (Notification.permission !== "denied") {
-                Notification.requestPermission().then(permission => {
-                    if (permission === "granted") {
-                        new Notification("New Food Request", { body: message });
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchNotifications();
+            setInterval(fetchNotifications, 10000); // Refresh every 10 seconds
+        });
+
+        function fetchNotifications() {
+            fetch('/notifications/api/notifications')
+                .then(response => {
+                    if (!response.ok) throw new Error('Fetch failed');
+                    return response.json();
+                })
+                .then(data => {
+                    const list = document.getElementById('notificationsList');
+                    list.innerHTML = ''; // Clear existing content
+
+                    if (data.length === 0) {
+                        list.innerHTML = '<p>No notifications available.</p>';
+                    } else {
+                        data.forEach(notif => {
+                            const div = document.createElement('div');
+                            div.className = 'notification-item unread';
+                            div.innerHTML = `
+                                <div class="notification-icon request">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg>
+                                </div>
+                                <div class="notification-content">
+                                    <div class="notification-header">
+                                        <h3>${notif.message}</h3>
+                                        <span class="notification-time">${new Date(notif.created_at).toLocaleString()}</span>
+                                    </div>
+                                    <p>Food Type: ${notif.food_type}, Quantity: ${notif.quantity}</p>
+                                    <p>Note: ${notif.additional_note || 'None'}</p>
+                                    <div class="notification-actions">
+                                        <button class="btn-link" onclick="deleteNotification(${notif.id})">Delete</button>
+                                    </div>
+                                </div>
+                            `;
+                            list.appendChild(div);
+                        });
                     }
-                });
+                })
+                .catch(error => console.error('Error fetching notifications:', error));
+        }
+
+        function deleteNotification(notificationId) {
+            if (confirm("Are you sure you want to delete this notification?")) {
+                fetch(`/notifications/api/notifications/delete/${notificationId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Delete failed');
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.status === 'success') {
+                            alert(data.message);
+                            fetchNotifications(); // Refresh list
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting notification:', error);
+                        alert('Failed to delete notification');
+                    });
             }
         }
 
-        // Fetch new notifications every 10 seconds
-        setInterval(() => {
-            fetch('/notifications/api/notifications')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        showNotification(data[0].message);
-                    }
-                });
-        }, 10000);       
+        function markAllAsRead() {
+            alert('Mark all as read functionality not implemented yet.');
+        }
+
+        function clearAll() {
+            alert('Clear all functionality not implemented yet.');
+        }
+
+        function filterNotifications() {
+            alert('Filter functionality not implemented yet.');
+        }
     </script>
 </body>
 </html>
