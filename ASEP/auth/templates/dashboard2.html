@@ -134,6 +134,9 @@
               </button>
               <div id="coordinateStatus" class="status-message"></div>
               <button onclick="saveNewLocation()" class="btn btn-primary">
+                <div class="center-body">
+                  <div class="loader-shape-3"></div>
+                </div>
                 Save Location
               </button>
             </div>
@@ -164,18 +167,39 @@
           <div id="map_and_data">
            <!-- Map Controls Panel -->
           <div id="map_controls">
-           <h3>Map Controls</h3>
-           <div class="filter-controls">
-             <label>
-                 <input type="checkbox" id="pickupFilter" checked onchange="filterMarkers('red', this.checked)">
-                 Food Pickup Points
-             </label>
-             <label>
-                 <input type="checkbox" id="deliveryFilter" checked onchange="filterMarkers('green', this.checked)">
-                 Food Delivery Points
-             </label>
-           </div> 
-         </div>
+  <h3>Map Controls</h3>
+  <div class="filter-controls">
+    <div class="checkbox">
+      <input type="checkbox" id="pickupFilter" checked onchange="filterMarkers('red', this.checked)" />
+      <label for="pickupFilter" class="cbx">
+        <div class="flip">
+          <div class="front"></div>
+          <div class="back">
+            <svg viewBox="0 0 16 14" height="12" width="12">
+              <path d="M2 8.5L6 12.5L14 1.5"></path>
+            </svg>
+          </div>
+        </div>
+      </label>
+      <span>Food Pickup Points</span>
+    </div>
+    
+    <div class="checkbox">
+      <input type="checkbox" id="deliveryFilter" checked onchange="filterMarkers('green', this.checked)" />
+      <label for="deliveryFilter" class="cbx">
+        <div class="flip">
+          <div class="front"></div>
+          <div class="back">
+            <svg viewBox="0 0 16 14" height="12" width="12">
+              <path d="M2 8.5L6 12.5L14 1.5"></path>
+            </svg>
+          </div>
+        </div>
+      </label>
+      <span>Food Delivery Points</span>
+    </div>
+  </div>
+</div>
            <!-- Data Export Panel -->
            <div class="control-panel">
             <h3>Data Management</h3>
