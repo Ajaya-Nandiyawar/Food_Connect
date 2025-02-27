@@ -62,3 +62,52 @@ function clearForm() {
   document.getElementById("location").value = "";
   document.querySelector(".mapboxgl-ctrl-geocoder--input").value = "";
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const donationForm = document.getElementById("donationForm");
+
+  donationForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const formData = {
+      food_type: document.getElementById("foodType").value,
+      quantity: document.getElementById("quantity").value,
+      unit: document.getElementById("unit").value,
+      expiry_date: document.getElementById("expiryDate").value,
+      pickup_time: document.getElementById("pickupTime").value,
+      location: document.getElementById("location").value,
+      phone: document.getElementById("phone").value,
+      special_instructions: document.getElementById("instructions").value,
+    };
+
+    fetch("/Restaurant/donation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": document.querySelector('meta[name="csrf-token"]')
+          .content,
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+      })
+      .then((data) => {
+        if (data.status === "success") {
+          alert(data.message);
+          window.location.reload(); // Refresh to show the new donation
+        } else {
+          alert("Error: " + data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Failed to create donation");
+      });
+  });
+});
+
+function clearForm() {
+  document.getElementById("donationForm").reset();
+}

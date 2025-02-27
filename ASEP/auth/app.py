@@ -3,25 +3,21 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 from flask_wtf import CSRFProtect
-from extensions import db
-from forms import ForgotPasswordForm, ResetPasswordForm,  SignupForm # Import the form class
-import bcrypt, os
+from extensions import db, mail, NGO, Restaurant  # Import from extensions
+from forms import ForgotPasswordForm, ResetPasswordForm, SignupForm, LoginForm
+import os
+import pyrebase
 from NGO import ngo_blueprint, RequestModel
 from Restaurant import restaurant_blueprint
-import pyrebase
 from notifications import notifications_bp
+import bcrypt
 
-
-
-
-
-# Initialize the Flask app
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Set a secret key for sessions
+app.secret_key = 'your_secret_key'
 
 csrf = CSRFProtect(app)
 
-
+# Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
@@ -29,152 +25,139 @@ app.config['MAIL_USERNAME'] = 'foodconnect5621@gmail.com'
 app.config['MAIL_PASSWORD'] = 'nqkl tveg zbys hqkr'
 app.config['MAIL_DEFAULT_SENDER'] = 'foodconnect5621@gmail.com'
 
-mail = Mail(app)
+mail.init_app(app)  # Initialize mail with app
 s = URLSafeTimedSerializer(app.secret_key)
 
-# MySQL connection string
+# MySQL configuration
 db_user = "root"
-db_password = "%40J%21nky%40ub%40le5"  # URL-encoded password (%40 represents @)
+db_password = "%40J%21nky%40ub%40le5"
 db_host = "127.0.0.1"
 db_name = "registered"
-
-# Configuring database URI
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-
-# Register blueprint before app initialization (if using blueprints)
+# Register blueprints
 app.register_blueprint(ngo_blueprint, url_prefix='/ngo')
-
 app.register_blueprint(notifications_bp, url_prefix='/notifications')
 app.register_blueprint(restaurant_blueprint, url_prefix='/Restaurant')
 
-# Initialize SQLAlchemy with the app
 db.init_app(app)
 
-# User Model
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)  # Store hashed password as a string
-    organization = db.Column(db.String(50), nullable=False)
-    
-    def __init__(self, name, email, password, organization):
-        self.name = name
-        self.organization = organization
-        self.email = email
-        # Hash password and decode it to store as string
-        self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-
-    def check_password(self, password):
-        # Encode stored password to bytes for comparison
-        return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
-
-# Create database tables manually using app context
 def create_tables():
     with app.app_context():
         db.create_all()
 
-# Call this function once before running the app
 create_tables()
 
-# Routes
+# Routes (unchanged except for model references)
 @app.route('/')
 def home():
-    return render_template('home page.html')  # Ensure file name matches template
+    return render_template('home page.html')
 
 @app.route('/about_us')
 def about_us():
-    return render_template('about_us.html')  # Ensure file name matches template
-
-from forms import LoginForm  # Import the form
+    return render_template('about_us.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
-        user = User.query.filter_by(email=email).first()
-        
-        if user and user.check_password(password):
-            session['name'] = user.name
-            session['email'] = user.email
-            session['organization'] = user.organization
-            
+        ngo = NGO.query.filter_by(email=email).first()
+        restaurant = Restaurant.query.filter_by(email=email).first()
+        if ngo and ngo.check_password(password):
+            session['name'] = ngo.name
+            session['email'] = ngo.email
+            session['organization'] = 'ngo'
             if session.get('first_time'):
-                if user.organization.lower() == 'ngo':
-                    return redirect('/N-guide')
-                elif user.organization.lower() == 'restaurant':
-                    return redirect('/R-guide')
-
-            if user.organization.lower() == 'ngo':
-                return redirect('/dashboard')
-            elif user.organization.lower() == 'restaurant':
-                return redirect('/restaurant_dashboard')
-
-        flash("Invalid email or password", "error")
-
+                return redirect('/N-guide')
+            return redirect('/dashboard')
+        elif restaurant and restaurant.check_password(password):
+            session['name'] = restaurant.name
+            session['email'] = restaurant.email
+            session['organization'] = 'restaurant'
+            if session.get('first_time'):
+                return redirect('/R-guide')
+            return redirect('/restaurant_dashboard')
+        else:
+            flash("Invalid email or password", "error")
     return render_template('login.html', form=form)
-
 
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
-    return redirect(url_for('login'))  
+    return redirect(url_for('login'))
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
-
-    if form.validate_on_submit():  # This will validate CSRF token too
+    if form.validate_on_submit():
         name = form.name.data
         email = form.email.data
         password = form.password.data
-        organization = form.organization.data
-
-        if User.query.filter_by(email=email).first():
+        organization = form.organization.data.lower()
+        if NGO.query.filter_by(email=email).first() or Restaurant.query.filter_by(email=email).first():
             flash('Email already registered', 'error')
             return redirect(url_for('signup'))
-
-        new_user = User(name=name, email=email, password=password, organization=organization)
+        if organization == 'ngo':
+            new_user = NGO(name=name, email=email, password=password)
+        elif organization == 'restaurant':
+            new_user = Restaurant(name=name, email=email, password=password)
+        else:
+            flash('Invalid organization type', 'error')
+            return redirect(url_for('signup'))
         db.session.add(new_user)
         db.session.commit()
-
         session['name'] = new_user.name
         session['email'] = new_user.email
-        session['organization'] = new_user.organization
+        session['organization'] = organization
         session['first_time'] = True
-
-        return redirect(url_for('login'))  # Redirect to login page after successful signup
-
+        return redirect(url_for('login'))
     return render_template('signup.html', form=form)
+
 
 @app.route('/dashboard')
 def dashboard():
-    if 'name' in session and 'email' in session and 'organization' in session:
-        api_key = 'AIzaSyA083VfuQXN3YIRY_uMmjldA8VhjIat5FE'  # Replace with your actual API key
-        return render_template('dashboard2.html', name=session['name'], organization=session['organization'], api_key=api_key) 
-    return redirect('/login')
+    if 'name' not in session or 'email' not in session or 'organization' not in session:
+        return redirect('/login')
+    if session['organization'] != 'ngo':
+        return redirect('/login')  # Restrict to NGOs only
+    api_key = 'AIzaSyA083VfuQXN3YIRY_uMmjldA8VhjIat5FE'
+    return render_template('dashboard2.html', name=session['name'], organization=session['organization'], api_key=api_key)
+
+@app.route('/restaurant_dashboard')
+def restaurant_dashboard():
+    if 'name' not in session or 'email' not in session or 'organization' not in session:
+        return redirect('/login')
+    if session['organization'] != 'restaurant':
+        return redirect('/login')  # Restrict to Restaurants only
+    requests = RequestModel.query.order_by(RequestModel.created_at).all()
+    return render_template('home.html', requests=requests)
+
 
 @app.route('/profile', methods=['GET'])
 def profile():
-    if "email" not in session:
-        return redirect("/login")  # Ensure the user is logged in
+    if "email" not in session or "organization" not in session:
+        return redirect("/login")
 
-    # Check if the user exists in the database (for normal registration users)
-    user = User.query.filter_by(email=session["email"]).first()
+    organization = session["organization"].lower()
+    email = session["email"]
 
-    if user:
-        return render_template("settings.html", name=user.name, email=user.email)
+    if organization == 'ngo':
+        user = NGO.query.filter_by(email=email).first()
+        if user:
+            return render_template("settings.html", name=user.name, email=user.email)
+        else:
+            return redirect("/login")
+    elif organization == 'restaurant':
+        return redirect(url_for('restaurant_settings'))  # Redirect to Restaurant-specific route
 
-    # If user is logged in via Firebase, use session data
-    if "name" in session:
+    # Fallback for Firebase or invalid cases
+    if "name" in session and organization == 'ngo':
         return render_template("settings.html", name=session["name"], email=session["email"])
 
-    return redirect("/login")  # If no valid session exists, redirect to login
+    return redirect("/login")
 
 
 @app.route('/notifications')
@@ -194,11 +177,6 @@ def ngo_guide():
 def restaurant_guide():
     session.pop('first_time', None)
     return render_template('Restaurant.html')
-
-@app.route('/restaurant_dashboard')
-def restaurant_dashboard():
-    requests = RequestModel.query.order_by(RequestModel.created_at).all()
-    return render_template('home.html', requests=requests)
 
 @app.route('/restaurant_alerts')
 def restaurant_alerts():
@@ -235,10 +213,21 @@ def update_request_status(request_id):
     return jsonify({"success": True, "message": "Request status updated successfully"}), 200
 
 
-
-@app.route('/restaurant_settings')
+@app.route('/restaurant_settings', methods=['GET'])
 def restaurant_settings():
-    return render_template('settings_rest.html')
+    if "email" not in session or "organization" not in session or session["organization"].lower() != 'restaurant':
+        return redirect("/login")
+
+    email = session["email"]
+    user = Restaurant.query.filter_by(email=email).first()
+    if user:
+        return render_template("settings_rest.html", name=user.name, email=user.email)
+
+    # Fallback for Firebase
+    if "name" in session and session["organization"].lower() == 'restaurant':
+        return render_template("settings_rest.html", name=session["name"], email=session["email"])
+
+    return redirect("/login")
 
 firebase_config = {
     "apiKey": "AIzaSyBbW25iCUlAwslI_2zdoiIavEQe_Uiz_wo",
@@ -281,24 +270,31 @@ def firebase_login():
             print("❌ Token verification failed")
             return jsonify({"success": False, "message": "Token verification failed"}), 401
 
-        user = User.query.filter_by(email=user_email).first()
-        if not user:
+        # Check both NGO and Restaurant tables
+        ngo = NGO.query.filter_by(email=user_email).first()
+        restaurant = Restaurant.query.filter_by(email=user_email).first()
+
+        if not ngo and not restaurant:
+            # New user: Redirect to select organization type
             session["email"] = user_email
             session["name"] = name
             print("🔄 New user, redirecting to select_type")
             return jsonify({"success": True, "redirect_url": url_for('select_type')})
 
-        # Existing user logic
-        session["email"] = user.email
-        session["name"] = user.name
-        session["organization"] = user.organization
-        print("🏠 Existing user, determining redirect...")
-        if user.organization.lower() == 'ngo':
+        # Existing user: Determine organization and redirect
+        if ngo:
+            session["email"] = ngo.email
+            session["name"] = ngo.name
+            session["organization"] = "ngo"
             redirect_url = url_for('dashboard')
-        elif user.organization.lower() == 'restaurant':
+            print("🏠 Existing NGO user, redirecting to dashboard")
+        elif restaurant:
+            session["email"] = restaurant.email
+            session["name"] = restaurant.name
+            session["organization"] = "restaurant"
             redirect_url = url_for('restaurant_dashboard')
-        else:
-            redirect_url = url_for('dashboard')
+            print("🏠 Existing Restaurant user, redirecting to restaurant_dashboard")
+
         return jsonify({"success": True, "redirect_url": redirect_url})
 
     except Exception as e:
@@ -314,25 +310,26 @@ def user_type():
 
 @app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
-    form = ForgotPasswordForm()
+    form = ForgotPasswordForm()  # Initialize the form
+
     if form.validate_on_submit():
         email = form.email.data
-        user = User.query.filter_by(email=email).first()
+        # Check both tables
+        user = NGO.query.filter_by(email=email).first() or Restaurant.query.filter_by(email=email).first()
+
         if not user:
             flash('Email does not exist', 'error')
-            return jsonify({'success': False, 'message': 'Email does not exist'}), 400
+            return redirect(url_for('forgot_password'))
 
         token = s.dumps(email, salt='password-reset')
         reset_url = url_for('reset_password', token=token, _external=True)
 
         msg = Message('Password Reset Request', recipients=[email])
         msg.body = f'To reset your password, visit the following link: {reset_url}\n\nThis link will expire in 30 minutes.'
-        try:
-            mail.send(msg)
-            flash('Password reset link has been sent to your email', 'success')
-            return jsonify({'success': True, 'message': 'Password reset link has been sent to your email'}), 200
-        except Exception as e:
-            return jsonify({'success': False, 'message': f'Failed to send email: {str(e)}'}), 500
+        mail.send(msg)
+
+        flash('Password reset link has been sent to your email', 'success')
+        return redirect(url_for('login'))
 
     return render_template('Forgot_Pass.html', form=form)
 
@@ -343,7 +340,7 @@ def reset_password(token):
     form = ResetPasswordForm()  # Create form instance
 
     try:
-        email = s.loads(token, salt='password-reset', max_age=1800)
+        email = s.loads(token, salt='password-reset', max_age=1800)  # Decode token to get email
     except:
         flash('Invalid or expired token', 'error')
         return redirect(url_for('forgot_password'))
@@ -351,11 +348,20 @@ def reset_password(token):
     if form.validate_on_submit():
         new_password = form.new_password.data  # Get validated password
         
-        user = User.query.filter_by(email=email).first()
-        if not user:
+        # Check both NGO and Restaurant tables
+        ngo = NGO.query.filter_by(email=email).first()
+        restaurant = Restaurant.query.filter_by(email=email).first()
+
+        # Determine which user to update
+        if ngo:
+            user = ngo
+        elif restaurant:
+            user = restaurant
+        else:
             flash('User not found', 'error')
             return redirect(url_for('forgot_password'))
 
+        # Update the password
         hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         user.password = hashed_password
         db.session.commit()

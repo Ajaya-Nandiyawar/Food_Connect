@@ -77,35 +77,76 @@ function cancelEditAboutUs() {
 document.addEventListener("DOMContentLoaded", function () {
   const locationSpan = document.getElementById("userLocation");
   const locationLink = document.getElementById("locationLink");
+  let watchId;
+  let lastApiCall = 0;
+  const API_COOLDOWN = 5000; // 5 seconds between API calls
+
+  function updateLocation(position) {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      const accuracy = Math.round(position.coords.accuracy);
+      const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+      
+      // Always update coordinates and map link
+      locationLink.href = googleMapsUrl;
+      locationLink.style.display = "inline";
+
+      // Check if enough time has passed since last API call
+      const now = Date.now();
+      if (now - lastApiCall >= API_COOLDOWN) {
+          locationSpan.textContent = "Updating address...";
+          
+          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+              .then(response => {
+                  if (!response.ok) throw new Error('Network response was not ok');
+                  return response.json();
+              })
+              .then(data => {
+                  locationSpan.textContent = `${data.display_name} (Accuracy: ${accuracy}m)`;
+                  lastApiCall = now;
+              })
+              .catch(error => {
+                  locationSpan.textContent = `${lat.toFixed(6)}, ${lon.toFixed(6)} (Accuracy: ${accuracy}m)`;
+              });
+      }
+  }
+
+  function handleError(error) {
+      switch(error.code) {
+          case error.PERMISSION_DENIED:
+              locationSpan.textContent = "Location access denied. Please enable location services.";
+              break;
+          case error.POSITION_UNAVAILABLE:
+              locationSpan.textContent = "Location information unavailable.";
+              break;
+          case error.TIMEOUT:
+              locationSpan.textContent = "Location request timed out.";
+              break;
+          default:
+              locationSpan.textContent = "An unknown error occurred.";
+      }
+      locationLink.style.display = "none";
+  }
 
   if (navigator.geolocation) {
-    navigator.geolocation.watchPosition(
-      function (position) {
-        let lat = position.coords.latitude;
-        let lon = position.coords.longitude;
-        let googleMapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+      const options = {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+      };
 
-        // Update UI
-        locationSpan.textContent = `Fetching location...`;
-        fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            locationSpan.textContent = data.display_name || "Unknown Location";
-            locationLink.href = googleMapsUrl; // Set link
-            locationLink.style.display = "inline"; // Show link
-          })
-          .catch(() => {
-            locationSpan.textContent = "Location Unavailable";
-          });
-      },
-      function (error) {
-        locationSpan.textContent = "Location Permission Denied";
-      },
-      { enableHighAccuracy: true }
-    );
+      // Get initial position
+      navigator.geolocation.getCurrentPosition(updateLocation, handleError, options);
+
+      // Start watching position
+      watchId = navigator.geolocation.watchPosition(updateLocation, handleError, options);
+
+      // Cleanup when page is unloaded
+      window.addEventListener('beforeunload', () => {
+          if (watchId) navigator.geolocation.clearWatch(watchId);
+      });
   } else {
-    locationSpan.textContent = "Geolocation Not Supported";
+      locationSpan.textContent = "Geolocation is not supported by this browser.";
+      locationLink.style.display = "none";
   }
 });
