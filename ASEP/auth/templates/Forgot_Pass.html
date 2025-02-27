@@ -3,6 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='img/logo.ico') }}"
+      type="logo"
+    />
     <title>Forgot Password</title>
     <style>
       * {
@@ -74,39 +79,90 @@
         border-color: #ff6b00;
       }
 
-      button {
-        background-color: #ff6b00;
-        color: white;
-        padding: 0.8rem;
+      .button {
+        position: relative;
         border: none;
-        border-radius: 5px;
-        font-size: 1rem;
+        background: transparent;
+        padding: 0;
+        outline: none;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        font-family: sans-serif;
       }
 
-      button:hover {
-        background-color: #e65100;
+      /* Shadow layer */
+      .button .shadow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 8px;
+        transform: translateY(2px);
+        transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
       }
 
-      .message {
-        text-align: center;
-        margin-top: 1rem;
-        padding: 0.8rem;
-        border-radius: 5px;
-        display: none;
+      /* Edge layer */
+      .button .edge {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+        background: linear-gradient(
+          to left,
+          hsl(25, 94%, 36%) 0%,
+          hsl(36, 100%, 40%) 8%,
+          hsl(36, 100%, 40%) 92%,
+          hsl(25, 94%, 36%) 100%
+        );
       }
 
-      .success {
-        background-color: #fff3e0;
-        color: #e65100;
-        border: 1px solid #ffe0b2;
+      /* Front layer */
+      .button .front {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 28px;
+        font-size: 1.25rem;
+        color: white;
+        background: linear-gradient(
+          to right,
+          hsl(25, 94%, 46%) 0%,
+          /* Deep orange */ hsl(36, 100%, 50%) 50%,
+          /* Bright orange */ hsl(25, 94%, 46%) 100% /* Deep orange */
+        );
+        border-radius: 8px;
+        transform: translateY(-4px);
+        transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
       }
 
-      .error {
-        background-color: #fbe9e7;
-        color: #d84315;
-        border: 1px solid #ffccbc;
+      /* Hover and active states */
+      .button:hover .shadow {
+        transform: translateY(4px);
+        transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+      }
+
+      .button:hover .front {
+        transform: translateY(-6px);
+        transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+      }
+
+      .button:active .shadow {
+        transform: translateY(1px);
+        transition: transform 34ms;
+      }
+
+      .button:active .front {
+        transform: translateY(-2px);
+        transition: transform 34ms;
+      }
+
+      /* Disable text selection */
+      .button .front span {
+        user-select: none;
       }
 
       .loading {
@@ -123,6 +179,7 @@
         border-radius: 50%;
         animation: spin 1s linear infinite;
         margin: 0 auto;
+        display: inline-block;
       }
 
       @keyframes spin {
@@ -132,6 +189,26 @@
         100% {
           transform: rotate(360deg);
         }
+      }
+
+      .message {
+        text-align: center;
+        margin-top: 1rem;
+        padding: 0.8rem;
+        border-radius: 5px;
+        display: none;
+      }
+
+      .success {
+        background-color: #d4edda; /* Light green background */
+        color: #155724; /* Dark green text */
+        border: 1px solid #c3e6cb; /* Green border */
+      }
+
+      .error {
+        background-color: #f8d7da; /* Light red background */
+        color: #721c24; /* Dark red text */
+        border: 1px solid #f5c6cb; /* Red border */
       }
     </style>
   </head>
@@ -153,19 +230,22 @@
           <label for="email">Email Address</label>
           {{ form.email(class="form-control", placeholder="Enter your email") }}
         </div>
-        {{ form.submit(class="btn btn-primary", type='submit') }}
+        <!-- From Uiverse.io by zymantas-katinas -->
+        <button class="button" type="submit" id="submit">
+          <span class="shadow"></span>
+          <span class="edge"></span>
+          <div class="front">
+            <span>Submit</span>
+          </div>
+        </button>
       </form>
 
-      <div class="loading">
+      <div class="loading" style="display: none">
         <div class="spinner"></div>
+        <p>Sending reset link...</p>
       </div>
 
       <div id="message" class="message"></div>
-
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, message in messages %}
-      <div class="message {{ category }}">{{ message }}</div>
-      {% endfor %} {% endif %} {% endwith %}
     </div>
 
     <script>
@@ -176,20 +256,48 @@
 
           let csrfToken = document.querySelector(
             "input[name='csrf_token']"
-          ).value; // Get CSRF token
+          ).value;
           let email = document.getElementById("email").value;
+          const loading = document.querySelector(".loading");
+          const message = document.getElementById("message");
 
-          fetch("{{ url_for('forgot_password') }}", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              "X-CSRFToken": csrfToken, // Include CSRF token
-            },
-            body: new URLSearchParams({ email: email }),
-          })
-            .then((response) => response.text())
-            .then((data) => alert(data))
-            .catch((error) => console.error("Error:", error));
+          // Show loader
+          loading.style.display = "block";
+          message.style.display = "none"; // Hide any previous message
+
+          try {
+            const response = await fetch("{{ url_for('forgot_password') }}", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": csrfToken,
+              },
+              body: new URLSearchParams({ email: email }),
+            });
+
+            const data = await response.text();
+
+            if (!response.ok) {
+              throw new Error(
+                data || "An error occurred while sending the reset link"
+              );
+            }
+
+            // On success, show green success message
+            message.className = "message success";
+            message.textContent =
+              "Password reset link has been sent to your email!";
+            message.style.display = "block";
+          } catch (error) {
+            // On error, show red error message
+            message.className = "message error";
+            message.textContent =
+              error.message || "Failed to send reset link. Please try again.";
+            message.style.display = "block";
+          } finally {
+            // Hide loader
+            loading.style.display = "none";
+          }
         });
     </script>
   </body>
