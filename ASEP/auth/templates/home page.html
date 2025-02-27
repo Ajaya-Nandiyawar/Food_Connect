@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Food Connect</title>
     <link rel="icon" href="{{ url_for('static', filename='img/logo.ico') }}" type="logo" />
-    <link rel="stylesheet" href={{ url_for('static', filename='css/home page.css') }} />
-    <link rel="stylesheet" href={{ url_for('static', filename='css/partner.css') }} />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home page.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/partner.css') }}" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -16,7 +16,7 @@
   <body>
     <header>
       <div id="together">
-        <img id="food_connect" src={{url_for('static', filename='img/logo.ico')}} alt="logo" />
+        <img id="food_connect" src="{{url_for('static', filename='img/logo.ico')}}" alt="logo" />
         <div class="logo">
           Food
           <b style="background: linear-gradient(to right, #f57c00, #ffcc00); -webkit-background-clip: text; background-clip: text; color: transparent;">Connect</b>
@@ -29,12 +29,10 @@
       </div>
       <nav class="nav-bar">
         <ul>
-          <li><a href="#" class="active">Home</a></li>
+          <li><a href="{{url_for('home')}}" class="active">Home</a></li>
           <li><a href="{{url_for('about_us')}}">About</a></li>
-          <!-- <li><a href="contact.html" target="_blank">Contact</a></li> -->
-          <li><a href={{url_for('login')}} >Login </a></li>
-          <li><a href={{url_for('signup')}} >Join Us</a></li>
-          <!-- <li><a href="profile.php">Profile</a></li> -->
+          <li><a href="{{url_for('login')}}" >Login </a></li>
+          <li><a href="{{url_for('signup')}}" >Join Us</a></li>
         </ul>
       </nav>
     </header>

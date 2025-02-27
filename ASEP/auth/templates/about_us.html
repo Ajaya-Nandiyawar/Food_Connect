@@ -6,136 +6,607 @@
     <title>About Us - Food Connect</title>
     <link rel="icon" href="{{ url_for('static', filename='img/logo.ico') }}" type="logo" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/about_us.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home page.css') }}" />
+    <!-- Adding Font Awesome and Poppins font from the first footer -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Embedding the CSS from the first footer's style section */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .footer {
+            background: linear-gradient(to right, #2c3e50, #1a2a38);
+            color: #fff;
+            padding: 50px 20px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(to right, #ff7e1d, #ff5722);
+        }
+
+        .footer-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M0 20L20 0h10L0 30v-10zm10 0L30 0h10L10 30v-10z'/%3E%3C/g%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section {
+            flex: 1 1 300px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo {
+            font-size: 32px;
+            font-weight: 700;
+            margin-right: 10px;
+            color: #fff;
+        }
+
+        .footer-logo span {
+            color: #ff7e1d;
+        }
+
+        .footer-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background-color: #ff7e1d;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .about-us-text {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .impact-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: rgba(255, 126, 29, 0.1);
+            border-left: 3px solid #ff7e1d;
+            padding: 10px 15px;
+            border-radius: 5px;
+            flex: 1 1 100px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ff7e1d;
+        }
+
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 50px;
+            background-color: #ff7e1d;
+        }
+
+        .contact-info {
+            list-style: none;
+        }
+
+        .contact-info li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .contact-info li:last-child {
+            margin-bottom: 0;
+        }
+
+        .contact-icon {
+            width: 36px;
+            height: 36px;
+            background-color: rgba(255, 126, 29, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .contact-text {
+            flex: 1;
+        }
+
+        .contact-text a {
+            color: #ff7e1d;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-text a:hover {
+            color: #fff;
+        }
+
+        .socials-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background-color: #ff7e1d;
+            transform: translateY(-5px);
+        }
+
+        .social-icon {
+            width: 20px;
+            height: 20px;
+            fill: #fff;
+        }
+
+        .newsletter-form {
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 50px;
+            border: none;
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .submit-btn {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background-color: #ff7e1d;
+            color: #fff;
+            border: none;
+            outline: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #e06c17;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .footer-nav-list {
+            display: flex;
+            flex-wrap: wrap;
+            list-style: none;
+            justify-content: center;
+        }
+
+        .footer-nav-item {
+            margin: 0 15px;
+        }
+
+        .footer-nav-link {
+            color: #fff;
+            text-decoration: none;
+            position: relative;
+            padding-bottom: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-nav-link:hover {
+            color: #ff7e1d;
+        }
+
+        .footer-nav-link::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #ff7e1d;
+            transition: width 0.3s ease;
+        }
+
+        .footer-nav-link:hover::after {
+            width: 100%;
+        }
+
+        .footer-bottom {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .footer-bag {
+            display: flex;
+            gap: 15px;
+        }
+
+        .footer-badge {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .badge-icon {
+            margin-right: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .footer-bag {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Food Connect</h1>
-        <p>Your gateway to delicious connections</p>
+  <header>
+    <div id="together">
+      <img id="food_connect" src="{{url_for('static', filename='img/logo.ico')}}" alt="logo" />
+      <div class="logo">
+        Food
+        <b style="background: linear-gradient(to right, #f57c00, #ffcc00); -webkit-background-clip: text; background-clip: text; color: transparent;">Connect</b>
+      </div>
     </div>
-
-    <div class="container">
-        <!-- About Us Section -->
-        <div class="section">
-            <h2 class="section-header">About Us</h2>
-            <p class="section-text">
-                At FOOD CONNECT, we are on a mission to reduce food waste and fight hunger by connecting surplus food with those in need.
-                 We believe that no good food should go to waste, and that by redistributing excess food, we can make a positive impact on
-                  both the environment and society.
-            </p>
-        </div>
-
-        <!-- Mission Section -->
-        <div class="section">
-            <h2 class="section-header">Our Mission</h2>
-            <p class="section-text">
-                At Food Connect, our mission is simple: to unite food lovers, creators, and enthusiasts in an inclusive platform 
-                that inspires collaboration, discovery, and the joy of cooking and eating.
-            </p>
-        </div>
-
-        <div class="section">
-            <h2 class="section-header">Our vision</h2>
-            <p class="section-text">
-                We envision a world where food is shared, not thrown away. Every day, millions of tons of perfectly edible food end
-                 up in landfills, contributing to environmental degradation. At the same time, millions of people worldwide go hungry.
-                 FOOD CONNECT works to close this gap by creating a seamless platform where surplus food can be donated to those who need it most.
-                  Our goal is to make sure every meal is put to its best use.
-                 </p>
-        </div>
-
-        <div class="section">
-            <h2 class="section-header">How it Works</h2>
-            <p class="section-text">
-                Our platform makes it easy for individuals, businesses, restaurants, and organizations to donate surplus food. 
-                Whether you have leftover ingredients, unsold meals, or surplus packaged items, we provide an efficient way for
-                 you to pass it on to local food banks, shelters, and other nonprofit organizations that help feed the hungry.
-
-            </p>
-            <p class="section-text">
-                1. Donors: Simply sign up, list the surplus food available, and specify pick-up or drop-off options.
-
-            </p>
-            <p class="section-text">
-                2. Recipients: Local charities and food organizations access our platform to receive food donations, ensuring it reaches those in need quickly.
-                </p>
-
-            <p class="section-text">
-             3. Community Impact: Every donation helps fight hunger, supports sustainability, and reduces the carbon footprint caused by food waste.
-            </p>
-        </div>
-
-        <!-- Contact Information Section -->
-        <div class="section">
-            <h2 class="section-header">Contact Us</h2>
-            <p class="section-text">
-                Email: Foodconnect5621@gmail.com
-            </p>
-            <p class="section-text">
-                phone: (+91) 807 335 123
-            </p>
-            <p class="section-text">
-              <b> Address:</b><address style="color: #7f8c8d;">VISHWAKARMA INSTITUTE OF TECHNOLOGY VIT, Upper Indira Nagar, Bibwewadi, Pune, Maharashtra 411037
-                </address> 
-                </p>
-        </div>
+    <div class="hamburger">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
     </div>
-    <footer class="footer">
-        <div class="footer-left col-md-4 col-sm-6">
-          <p class="about">
-            <span> About us</span>We are committed to revolutionizing how you
-            manage your food. From meal planning to waste reduction, our platform
-            ensures that you save money, time, and the planet, one bite at a time.
-          </p>
+    <nav class="nav-bar">
+      <ul>
+        <li><a href="{{url_for('home')}}" >Home</a></li>
+        <li><a href="{{url_for('about_us')}}" class="active">About</a></li>
+        <li><a href="{{url_for('login')}}" >Login </a></li>
+        <li><a href="{{url_for('signup')}}" >Join Us</a></li>
+      </ul>
+    </nav>
+  </header>
+  <!-- Hero Section -->
+  <section id="home" class="hero bg-image text-white text-center d-flex justify-content-center align-items-center">
+    <div class="text-content">
+      <h1>About Us</h1>
+      <p> At FOOD CONNECT, we are on a mission to reduce food waste and fight hunger by connecting surplus food with those in need.
+          We believe that no good food should go to waste, and that by redistributing excess food, we can make a positive impact on
+           both the environment and society.</p>
+    </div>
+  </section>
+  <div class="banner-container">
+    <div class="banner-text">Sustainable Development Goals</div>
+    <div class="sdg-icons">
+      <img src="{{ url_for('static', filename='img/icon1.jpg') }}" alt="No Poverty">
+      <img src="{{ url_for('static', filename='img/icon2.jpg') }}" alt="Zero Hunger">
+      <img src="{{ url_for('static', filename='img/icon3.jpg') }}" alt="Good Health and Well-being">
+      <img src="{{ url_for('static', filename='img/icon4.jpg') }}" alt="Gender Equality">
+    </div>
+  </div>
+
+  <section class="purpose-section">
+    <div class="purpose-container">
+      <div class="purpose-content">
+        <h2>Our Purpose</h2>
+        <p>
+          At Food Connect, our purpose is to bridge the gap between surplus food and those in need. 
+          Every day, tons of edible food go to waste, while millions face hunger. Our goal is to create a 
+          seamless platform for food donation, ensuring that no meal goes to waste.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="middle" class="middle bg-image text-white text-center d-flex justify-content-center align-items-center"></section>
+
+  <div class="charity-section">
+    <h2>We are a non-profit Charity & NGO Organization</h2>
+    <div class="box-container">
+      <div class="box">
+        <img src="{{ url_for('static', filename='img/image2.webp') }}" alt="Donation">
+        <h3>NGO</h3>
+        <p>Join us to Fight Hunger </p>
+      </div>
+      <div class="box">
+        <img src="{{ url_for('static', filename='img/image3.jpg') }}" alt="Volunteer">
+        <h3>Restaurant</h3>
+        <p>Join us to make a change</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="welcome-section">
+    <div class="purpose-content">
+      <h2>How it Works</h2>
+      <p>
+        Our platform makes it easy for individuals, businesses, restaurants, and organizations to donate surplus food. 
+        Whether you have leftover ingredients, unsold meals, or surplus packaged items, we provide an efficient way for
+        you to pass it on to local food banks, shelters, and other nonprofit organizations that help feed the hungry.
+      </p>
+    </div>
+  </div>
+
+  <div class="mission-container">
+    <h2 style="color: white;">Join our mission</h2>
+    <p>Together, we can create a world without food waste.</p>
+    <div class="buttons">
+      <button class="partner-btn"><a href="{{ url_for('signup') }}" style="color: #333;"> Partner With Us →</a></button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-pattern"></div>
+    <div class="footer-container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <div class="logo-container">
+            <div class="footer-icon">
+              <i class="fas fa-heart fa-lg" style="color: #fff;"></i>
+            </div>
+            <div class="footer-logo">Food <span>Connect</span></div>
+          </div>
+          <p class="about-us-text">We are committed to revolutionizing how you manage your food. From meal planning to waste reduction, our platform ensures that you save money, time, and the planet, one bite at a time.</p>
+          <div class="impact-stats">
+            <div class="stat-item">
+              <div class="stat-number">10K+</div>
+              <div class="stat-text">Meals Shared</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">5k+</div>
+              <div class="stat-text">Lives Impacted</div>
+            </div>
+          </div>
         </div>
-        <div class="footer-center col-md-4 col-sm-6">
-          <div>
-            <p><span> Contact</span></p>
-          </div>
-          <div>
-            <p>(+91) 807 335 123</p>
-          </div>
-          <div>
-            <i
-              class="fa fa-envelope"
-              style="font-size: 17px; line-height: 38px; color: white"
-            ></i>
-            <p>
-              <a href="mailto:Foodconnect5621@gmail.com">
-                Foodconnect5621@gmail.com</a
-              >
-            </p>
-          </div>
-  
-          <div class="sociallist">
-            <h3><u>Socials</u></h3>
-            <a target="_blank" href="#">
-              <img
-                src={{url_for('static',filename='img/icon.png')}}
-                width="25"
-                height="25"
-                alt="LinkedIn Icon"
-              />
+
+        <div class="footer-section">
+          <h3 class="section-title">Connect With Us</h3>
+          <ul class="contact-info">
+            <li>
+              <div class="contact-icon">
+                <i class="fas fa-phone" style="color: #ff7e1d;"></i>
+              </div>
+              <div class="contact-text">
+                <a href="tel:+918073351623">(+91) 807 335 123</a>
+              </div>
+            </li>
+            <li>
+              <div class="contact-icon">
+                <i class="fas fa-envelope" style="color: #ff7e1d;"></i>
+              </div>
+              <div class="contact-text">
+                <a href="mailto:Foodconnect5621@gmail.com">Foodconnect5621@gmail.com</a>
+              </div>
+            </li>
+            <li>
+              <div class="contact-icon">
+                <i class="fas fa-map-marker-alt" style="color: #ff7e1d;"></i>
+              </div>
+              <div class="contact-text">
+                666, Upper Indira Nagar, Bibwewadi, Pune, Maharashtra 411037
+              </div>
+            </li>
+          </ul>
+          <h3 class="section-title" style="margin-top: 30px;">Follow Us</h3>
+          <div class="socials-container">
+            <a href="#" class="social-link">
+              <i class="fab fa-facebook-f" style="color: #fff;"></i>
             </a>
-            <a target="_blank" href="#">
-              <img
-                src={{url_for('static',filename='img/icon1.png')}}
-                width="25"
-                height="25"
-                alt="Instagram Icon"
-              />
+            <a href="#" class="social-link">
+              <i class="fab fa-instagram" style="color: #fff;"></i>
+            </a>
+            <a href="#" class="social-link">
+              <i class="fab fa-twitter" style="color: #fff;"></i>
             </a>
           </div>
         </div>
-        <div class="footer-right col-md-4 col-sm-6">
-          <h2>Food<span> Connect</span></h2>
-  
-          <p class="menu">
-            <a href="#"> Home</a> | <a href="/ASEP/auth/templates/signup.html">Join us</a> |
-            <a href="profile.php"> Profile</a> |
-            <a href="/ASEP/auth/static/about_us.html"> About us</a>
-          </p>
-          <p class="name">Food Connect &copy 2024</p>
+
+        <div class="footer-section">
+          <h3 class="section-title">Get Involved</h3>
+          <p>Join our community and help us make a difference. Subscribe to our newsletter for updates and opportunities.</p>
+          <form class="newsletter-form">
+            <input type="email" class="form-input" placeholder="Your email address">
+            <button type="submit" class="submit-btn">Subscribe</button>
+          </form>
+          <div class="footer-bag" style="margin-top: 20px;">
+            <div class="footer-badge">
+              <i class="fas fa-hand-holding-heart badge-icon" style="color: #ff7e1d;"></i>
+              <span>Volunteer</span>
+            </div>
+            <div class="footer-badge">
+              <i class="fas fa-donate badge-icon" style="color: #ff7e1d;"></i>
+              <span>Donate</span>
+            </div>
+          </div>
         </div>
-      </footer>
+      </div>
+
+      <div class="footer-nav">
+        <ul class="footer-nav-list">
+          <li class="footer-nav-item">
+            <a href="{{ url_for('home') }}" class="footer-nav-link">Home</a>
+          </li>
+          <li class="footer-nav-item">
+            <a href="{{ url_for('about_us') }}" class="footer-nav-link">About Us</a>
+          </li>
+          <li class="footer-nav-item">
+            <a href="{{ url_for('signup') }}" class="footer-nav-link">Join Us</a>
+          </li>
+          <li class="footer-nav-item">
+            <a href="{{ url_for('login') }}" class="footer-nav-link">Login</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="copyright">
+          <p>Food Connect © 2024 | Making the world better, one meal at a time</p>
+        </div>
+        <div class="footer-bag">
+          <div class="footer-badge">
+            <i class="fas fa-shield-alt badge-icon" style="color: #ff7e1d;"></i>
+            <span>Safe & Secure</span>
+          </div>
+          <div class="footer-badge">
+            <i class="fas fa-leaf badge-icon" style="color: #ff7e1d;"></i>
+            <span>Eco-Friendly</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{url_for('static', filename='js/home page.js')}}"></script>
+  <script src="{{url_for('static', filename='js/partner.js')}}"></script>
+  <!-- Adding the JavaScript from the first footer -->
+  <script>
+    // Animation for stats counters
+    document.addEventListener('DOMContentLoaded', function() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+              const value = stat.textContent;
+              let startValue = 0;
+              const endValue = parseInt(value.match(/\d+/)[0]);
+              const duration = 2000;
+              const step = Math.floor(endValue / (duration / 50));
+              
+              const counter = setInterval(function() {
+                startValue += step;
+                if (startValue >= endValue) {  // Fixed condition
+                  stat.textContent = endValue + '+';
+                  clearInterval(counter);
+                } else {
+                  stat.textContent = startValue + '+';
+                }
+              }, 50);
+            });
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+
+      const statsSection = document.querySelector('.impact-stats');
+      if (statsSection) {
+        observer.observe(statsSection);
+      }
+    });
+
+    // Form submission animation
+    const form = document.querySelector('.newsletter-form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const button = this.querySelector('.submit-btn');
+        const input = this.querySelector('.form-input');
+        
+        if (input.value.trim() !== '') {
+          button.textContent = 'Thanks!';
+          button.style.backgroundColor = '#4CAF50';
+          input.value = '';
+          
+          setTimeout(() => {
+            button.textContent = 'Subscribe';
+            button.style.backgroundColor = '#ff7e1d';
+          }, 2000);
+        }
+      });
+    }
+  </script>
 </body>
 </html>
