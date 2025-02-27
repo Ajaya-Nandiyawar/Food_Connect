@@ -332,10 +332,10 @@ select {
 
 .route-actions {
   display: flex;
+  flex-direction: column;
   padding: 10px;
   margin: 10px;
 }
-
 
 /* Route Controls */
 .route-controls {
