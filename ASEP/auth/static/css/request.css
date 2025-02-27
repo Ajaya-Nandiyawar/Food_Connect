@@ -236,7 +236,7 @@ textarea {
 
 /* Cancel Button CSS */
 
-.cancel {
+.cancel-btn {
   cursor: pointer;
   align-items: center;
   padding: 0.6em 1em;
@@ -252,24 +252,24 @@ textarea {
   box-shadow: 0 4px 10px rgba(243, 33, 33, 0.4);
 }
 
-.cancel:hover {
+.cancel-btn:hover {
   background: linear-gradient(90deg, #e51e1e, #d21919);
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(243, 33, 33, 0.5);
 }
 
-.cancel:active {
+.cancel-btn:active {
   transform: translateY(1px);
   box-shadow: 0 3px 7px rgba(243, 33, 33, 0.3);
 }
 
-.cancel:focus {
+.cancel-btn:focus {
   outline: 3px solid rgba(243, 33, 33, 0.4);
 }
 
 /* Submit Button CSS */
 
-.submit {
+.submit-btn {
   cursor: pointer;
   align-items: center;
   padding: 0.6em 1em;
@@ -286,17 +286,17 @@ textarea {
 }
 
 .calculate,
-.submit:hover {
+.submit-btn:hover {
   background: linear-gradient(90deg, #1e88e5, #1976d2);
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(33, 150, 243, 0.5);
 }
 
-.submit:active {
+.submit-btn:active {
   transform: translateY(1px);
   box-shadow: 0 3px 7px rgba(33, 150, 243, 0.3);
 }
 
-.submit:focus {
+.submit-btn:focus {
   outline: 3px solid rgba(33, 150, 243, 0.4);
 }
