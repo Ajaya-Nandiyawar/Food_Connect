@@ -34,9 +34,9 @@ s = URLSafeTimedSerializer(app.secret_key)
 
 # MySQL connection string
 db_user = "root"
-db_password = "Rishi%400211"  # URL-encoded password (%40 represents @)
+db_password = "%40J%21nky%40ub%40le5"  # URL-encoded password (%40 represents @)
 db_host = "127.0.0.1"
-db_name = "food_sharing"
+db_name = "registered"
 
 # Configuring database URI
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
@@ -45,7 +45,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tra
 
 # Register blueprint before app initialization (if using blueprints)
 app.register_blueprint(ngo_blueprint, url_prefix='/ngo')
-mail = Mail(app)
+
 app.register_blueprint(notifications_bp, url_prefix='/notifications')
 app.register_blueprint(restaurant_blueprint, url_prefix='/Restaurant')
 
@@ -256,88 +256,83 @@ auth = firebase.auth()
 
 @app.route('/firebase-login', methods=['POST'])
 def firebase_login():
-    print("🔍 Received request at /firebase-login")  # Debugging
-
-    # Check if request is JSON
+    print("🔍 Received request at /firebase-login")
     if not request.is_json:
         print("❌ Request is not JSON")
         return jsonify({"success": False, "message": "Request must be JSON"}), 400
 
     data = request.get_json()
-    print("📨 Received data:", data)  # Debugging
-
+    print("📨 Received data:", data)
     if not data or "idToken" not in data:
         print("❌ Missing idToken in request")
         return jsonify({"success": False, "message": "Missing idToken"}), 400  
 
     email = data.get("email")
     name = data.get("name")
-
     if not email:
         print("❌ Invalid email")
         return jsonify({"success": False, "message": "Invalid email"}), 400
 
     try:
-        decoded_token = auth.verify_id_token(data["idToken"])  # Verify Firebase token
+        decoded_token = auth.verify_id_token(data["idToken"])
         user_email = decoded_token.get("email")
         print("✅ Firebase Token Verified for:", user_email)
-
         if not user_email:
             print("❌ Token verification failed")
             return jsonify({"success": False, "message": "Token verification failed"}), 401
 
         user = User.query.filter_by(email=user_email).first()
-
         if not user:
             session["email"] = user_email
             session["name"] = name
             print("🔄 New user, redirecting to select_type")
             return jsonify({"success": True, "redirect_url": url_for('select_type')})
 
+        # Existing user logic
         session["email"] = user.email
         session["name"] = user.name
-        print("🏠 Existing user, redirecting to dashboard")
-        return jsonify({"success": True, "redirect_url": url_for('dashboard')})
+        session["organization"] = user.organization
+        print("🏠 Existing user, determining redirect...")
+        if user.organization.lower() == 'ngo':
+            redirect_url = url_for('dashboard')
+        elif user.organization.lower() == 'restaurant':
+            redirect_url = url_for('restaurant_dashboard')
+        else:
+            redirect_url = url_for('dashboard')
+        return jsonify({"success": True, "redirect_url": redirect_url})
 
     except Exception as e:
         print("🔥 Error in Firebase verification:", str(e))
-        return jsonify({"success": False, "message": str(e)}), 401
-
-    
-@app.after_request
-def set_response_headers(response):
-    response.headers["Cross-Origin-Opener-Policy"] = "same-origin-allow-popups"
-    return response
-
+        return jsonify({"success": False, "message": f"Firebase error: {str(e)}"}), 401
 
 @app.route('/select_type')
 def user_type():
     if "email" not in session:
         return redirect("/login")
-    return render_template("dash.html", name=session.get("name", "User"))    
+    return render_template("dash.html", name=session.get("name", "User")) 
 
 
 @app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
-    form = ForgotPasswordForm()  # Initialize the form
-
+    form = ForgotPasswordForm()
     if form.validate_on_submit():
         email = form.email.data
         user = User.query.filter_by(email=email).first()
-
         if not user:
             flash('Email does not exist', 'error')
-            return redirect(url_for('forgot_password'))
+            return jsonify({'success': False, 'message': 'Email does not exist'}), 400
 
         token = s.dumps(email, salt='password-reset')
         reset_url = url_for('reset_password', token=token, _external=True)
 
         msg = Message('Password Reset Request', recipients=[email])
         msg.body = f'To reset your password, visit the following link: {reset_url}\n\nThis link will expire in 30 minutes.'
-        mail.send(msg)
-
-        flash('Password reset link has been sent to your email', 'success')
-        return redirect(url_for('login'))
+        try:
+            mail.send(msg)
+            flash('Password reset link has been sent to your email', 'success')
+            return jsonify({'success': True, 'message': 'Password reset link has been sent to your email'}), 200
+        except Exception as e:
+            return jsonify({'success': False, 'message': f'Failed to send email: {str(e)}'}), 500
 
     return render_template('Forgot_Pass.html', form=form)
 
