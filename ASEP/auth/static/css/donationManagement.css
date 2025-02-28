@@ -434,3 +434,55 @@ td {
   .clear_clear:focus {
     outline: 3px solid rgba(243, 33, 33, 0.4);
   }
+
+  .action-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+  }
+  .edit-btn {
+    background-color: #007bff;
+    color: white;
+  }
+  .edit-btn:hover {
+    background-color: #0056b3;
+  }
+  .cancel-btn {
+    background-color: #dc3545;
+    color: white;
+  }
+  .cancel-btn:hover {
+    background-color: #b02a37;
+  }
+
+  .action-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+  }
+  .edit-btn {
+    background-color: #007bff;
+    color: white;
+  }
+  .edit-btn:hover {
+    background-color: #0056b3;
+  }
+  .cancel-btn {
+    background-color: #dc3545;
+    color: white;
+  }
+  .cancel-btn:hover {
+    background-color: #b02a37;
+  }
+  .status.pending {
+    background-color: #ffcc00;
+    color: #333;
+  }
+  .status.cancelled {
+    background-color: #6c757d;
+    color: white;
+  }

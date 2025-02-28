@@ -135,17 +135,26 @@
                 <th>Actions</th>
               </tr>
             </thead>
+            <!-- In donationManagement.html, inside <tbody> -->
             <tbody id="activeDonationsTable">
               {% for donation in donations %}
-              <tr>
+              <tr data-id="{{ donation.id }}"
+                  data-food-type="{{ donation.food_type }}"
+                  data-quantity="{{ donation.quantity }}"
+                  data-unit="{{ donation.unit }}"
+                  data-expiry-date="{{ donation.expiry_date }}"
+                  data-pickup-time="{{ donation.pickup_time }}"
+                  data-location="{{ donation.location }}"
+                  data-phone="{{ donation.phone }}"
+                  data-instructions="{{ donation.special_instructions }}">
                 <td>{{ donation.id }}</td>
                 <td>{{ donation.food_type }}</td>
-                <td>{{ donation.quantity }}</td>
+                <td>{{ donation.quantity }} {{ donation.unit }}</td>
                 <td>{{ donation.pickup_time }}</td>
-                <td><span class="status pending">{{ donation.status }}</span></td>
+                <td><span class="status {{ donation.status|lower }}">{{ donation.status }}</span></td>
                 <td class="actions">
-                  <a href="#" class="action-link edit">Edit</a>
-                  <a href="#" class="action-link cancel">Cancel</a>
+                  <button class="action-btn edit-btn" data-id="{{ donation.id }}">Edit</button>
+                  <button class="action-btn cancel-btn" data-id="{{ donation.id }}">Cancel</button>
                 </td>
               </tr>
               {% endfor %}
@@ -188,8 +197,8 @@
       </div>
     </main>
   </div>
-  <script src={{url_for('static',filename='js/donationManagement.js' )}}></script>
-  <script src={{url_for('static',filename='js/sidebar.js' )}}></script>
+  <script src="{{url_for('static',filename='js/donationManagement.js' )}}"></script>
+  <script src="{{url_for('static',filename='js/sidebar.js' )}}"></script>
   
 </body>
 

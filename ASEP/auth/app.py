@@ -7,6 +7,7 @@ from extensions import db, mail, NGO, Restaurant  # Import from extensions
 from forms import ForgotPasswordForm, ResetPasswordForm, SignupForm, LoginForm
 import os
 import pyrebase
+import json
 from NGO import ngo_blueprint, RequestModel
 from Restaurant import restaurant_blueprint
 from notifications import notifications_bp
@@ -15,10 +16,18 @@ import firebase_admin
 from firebase_admin import auth as admin_auth
 from firebase_admin import credentials
 from functools import wraps
+from dotenv import load_dotenv
+from threading import Timer
 
-cred_path = os.path.join(os.path.dirname(__file__), 'serviceAccountKey.json')
-cred = credentials.Certificate(cred_path)
-firebase_admin.initialize_app(cred)
+
+load_dotenv()
+
+service_account_json = os.getenv('SERVICE_ACCOUNT_KEY')
+if service_account_json:
+    cred = credentials.Certificate(json.loads(service_account_json))
+    firebase_admin.initialize_app(cred)
+else:
+    raise ValueError("SERVICE_ACCOUNT_KEY not found in .env file")
 
 def no_cache(f):
     @wraps(f)
@@ -31,26 +40,25 @@ def no_cache(f):
     return decorated_function
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = 'a39a0170b3e0428abcd1941ee87bedc93d5a9a286ee5c773'
 
 csrf = CSRFProtect(app)
 
-# Mail configuration
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'foodconnect5621@gmail.com'
-app.config['MAIL_PASSWORD'] = 'nqkl tveg zbys hqkr'
-app.config['MAIL_DEFAULT_SENDER'] = 'foodconnect5621@gmail.com'
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
 
 mail.init_app(app)  # Initialize mail with app
 s = URLSafeTimedSerializer(app.secret_key)
 
-# MySQL connection string
-db_user = "root"
-db_password = "%40J%21nky%40ub%40le5"  # URL-encoded password (%40 represents @)
-db_host = "127.0.0.1"
-db_name = "registered"
+# MySQL configuration
+db_user = os.getenv('DB_USER')
+db_password = os.getenv('DB_PASSWORD')
+db_host = os.getenv('DB_HOST')
+db_name = os.getenv('DB_NAME')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -147,7 +155,7 @@ def dashboard():
         return redirect('/login')
     if session['organization'] != 'ngo':
         return redirect('/login')  # Restrict to NGOs only
-    api_key = 'AIzaSyA083VfuQXN3YIRY_uMmjldA8VhjIat5FE'
+    api_key = os.getenv('GOOGLE_MAPS_API_KEY')
     return render_template('dashboard2.html', name=session['name'], organization=session['organization'], api_key=api_key)
 
 @app.route('/restaurant_dashboard')
@@ -215,27 +223,31 @@ def restaurant_requests():
 
 @app.route('/update_request_status/<int:request_id>', methods=['POST'])
 def update_request_status(request_id):
-    """Update the status of a food request."""
-    
-    # Ensure the request contains JSON
     if request.content_type != 'application/json':
         return jsonify({"success": False, "message": "Content-Type must be application/json"}), 415
     
     data = request.get_json()
-    
     if not data or "status" not in data:
         return jsonify({"success": False, "message": "Invalid or missing JSON data"}), 400
     
-    # Retrieve the request entry from the database
     request_entry = RequestModel.query.get(request_id)
-    
     if not request_entry:
         return jsonify({"success": False, "message": "Request not found"}), 404
 
-    # Update status
     request_entry.status = data["status"]
     db.session.commit()
-    
+
+    if data["status"] == "Accepted":
+        def remove_request():
+            with app.app_context():
+                req = RequestModel.query.get(request_id)
+                if req and req.status == "Accepted":
+                    db.session.delete(req)
+                    db.session.commit()
+                    print(f"Request {request_id} removed after 30 minutes.")
+
+        Timer(1800, remove_request).start()  # 1800 seconds = 30 minutes
+
     return jsonify({"success": True, "message": "Request status updated successfully"}), 200
 
 
@@ -257,14 +269,14 @@ def restaurant_settings():
     return redirect("/login")
 
 firebase_config = {
-    "apiKey": "AIzaSyBbW25iCUlAwslI_2zdoiIavEQe_Uiz_wo",
-    "authDomain": "foodconnect-4e64e.firebaseapp.com",
-    "projectId": "foodconnect-4e64e",
-    "databaseURL": "https://foodconnect-4e64e-default-rtdb.firebaseio.com",
-    "storageBucket": "foodconnect-4e64e.firebasestorage.app",
-    "messagingSenderId": "574910241302",
-    "appId": "1:574910241302:web:970aaa182b7d7f23387337",
-    "measurementId": "G-KJ4QPSNTYY",
+    "apiKey": os.getenv('FIREBASE_API_KEY'),
+    "authDomain": os.getenv('FIREBASE_AUTH_DOMAIN'),
+    "projectId": os.getenv('FIREBASE_PROJECT_ID'),
+    "databaseURL": os.getenv('FIREBASE_DATABASE_URL'),
+    "storageBucket": os.getenv('FIREBASE_STORAGE_BUCKET'),
+    "messagingSenderId": os.getenv('FIREBASE_MESSAGING_SENDER_ID'),
+    "appId": os.getenv('FIREBASE_APP_ID'),
+    "measurementId": os.getenv('FIREBASE_MEASUREMENT_ID'),
 }
 
 firebase = pyrebase.initialize_app(firebase_config)

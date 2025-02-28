@@ -15,9 +15,14 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("location").value = e.result.place_name;
   });
 
-  // Form submission handling with prevention of multiple submissions
+  // Form submission handling for create and update
   const donationForm = document.getElementById("donationForm");
+  const submitButton = document.querySelector(".Create_Donation");
+  const editButtons = document.querySelectorAll(".edit-btn");
+  const cancelButtons = document.querySelectorAll(".cancel-btn");
   let isSubmitting = false;
+  let isEditing = false;
+  let currentDonationId = null;
 
   donationForm.addEventListener("submit", async function (event) {
     event.preventDefault();
@@ -26,10 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isSubmitting) return;
     isSubmitting = true;
 
-    // Get submit button and show loading state
-    const submitButton = document.querySelector(".Create_Donation");
     submitButton.disabled = true;
-    submitButton.textContent = "Submitting...";
+    submitButton.textContent = isEditing ? "Updating..." : "Submitting...";
 
     const formData = {
       food_type: document.getElementById("foodType").value,
@@ -43,8 +46,12 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const response = await fetch("/Restaurant/donation", {
-        method: "POST",
+      const url = isEditing
+        ? `/Restaurant/donation/${currentDonationId}`
+        : "/Restaurant/donation";
+      const method = isEditing ? "PUT" : "POST";
+      const response = await fetch(url, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
           "X-CSRFToken": document.querySelector('meta[name="csrf-token"]')
@@ -57,19 +64,111 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (response.ok && data.status === "success") {
         alert(data.message);
-        window.location.reload();
+        window.location.reload(); // Reload to refresh the table
       } else {
-        throw new Error(data.message || "Failed to create donation");
+        throw new Error(
+          data.message ||
+            `Failed to ${isEditing ? "update" : "create"} donation`
+        );
       }
     } catch (error) {
       console.error("Error:", error);
-      alert(error.message || "Failed to submit donation");
+      alert(
+        error.message || `Failed to ${isEditing ? "update" : "submit"} donation`
+      );
     } finally {
-      // Reset submission state and button
       isSubmitting = false;
       submitButton.disabled = false;
-      submitButton.textContent = "Create Donation";
+      submitButton.textContent = isEditing
+        ? "Update Donation"
+        : "Create Donation";
+      if (isEditing) {
+        isEditing = false;
+        currentDonationId = null;
+        clearForm();
+      }
     }
+  });
+
+  // Edit button handling
+  editButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const donationId = button.getAttribute("data-id");
+      const row = button.closest("tr");
+      const status = row.querySelector(".status").textContent;
+
+      if (status !== "Pending") {
+        alert("Can only edit pending donations.");
+        return;
+      }
+
+      // Pre-fill form with donation data from data attributes
+      document.getElementById("foodType").value =
+        row.getAttribute("data-food-type");
+      document.getElementById("quantity").value =
+        row.getAttribute("data-quantity");
+      document.getElementById("unit").value = row.getAttribute("data-unit");
+      document.getElementById("expiryDate").value = row
+        .getAttribute("data-expiry-date")
+        .replace(" ", "T");
+      document.getElementById("pickupTime").value =
+        row.getAttribute("data-pickup-time");
+      document.getElementById("location").value =
+        row.getAttribute("data-location");
+      document.getElementById("phone").value = row.getAttribute("data-phone");
+      document.getElementById("instructions").value =
+        row.getAttribute("data-instructions") || "";
+
+      submitButton.textContent = "Update Donation";
+      isEditing = true;
+      currentDonationId = donationId;
+    });
+  });
+
+  // Cancel button handling
+  cancelButtons.forEach((button) => {
+    button.addEventListener("click", async () => {
+      const donationId = button.getAttribute("data-id");
+      const row = button.closest("tr");
+      const status = row.querySelector(".status").textContent;
+
+      if (status !== "Pending") {
+        alert("Can only cancel pending donations.");
+        return;
+      }
+
+      if (!confirm("Are you sure you want to cancel this donation?")) return;
+
+      try {
+        const response = await fetch(
+          `/Restaurant/donation/${donationId}/cancel`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": document.querySelector('meta[name="csrf-token"]')
+                .content,
+            },
+            body: JSON.stringify({}),
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.ok && data.status === "success") {
+          row.querySelector(".status").textContent = "Cancelled";
+          row.querySelector(".status").className = "status cancelled";
+          button.disabled = true;
+          button.textContent = "Cancelled";
+          alert("Donation cancelled successfully!");
+        } else {
+          throw new Error(data.message || "Failed to cancel donation");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert(error.message || "Failed to cancel donation");
+      }
+    });
   });
 });
 

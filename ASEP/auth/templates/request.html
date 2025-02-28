@@ -192,6 +192,16 @@
         submitButton.disabled = false;
         submitButton.innerHTML = "Submit Request";
       }
+      setInterval(() => {
+        fetch("/ngo/request")
+          .then(response => response.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            document.querySelector(".request-cards").innerHTML = doc.querySelector(".request-cards").innerHTML;
+          })
+          .catch(error => console.error("Error refreshing requests:", error));
+      }, 60000);
     });
   });
 </script>
