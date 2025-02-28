@@ -36,7 +36,7 @@ s = URLSafeTimedSerializer(app.secret_key)
 
 # MySQL configuration
 db_user = "root"
-db_password = "%40J%21nky%40ub%40le5"
+db_password = "Ajaya%405621"
 db_host = "127.0.0.1"
 db_name = "registered"
 
