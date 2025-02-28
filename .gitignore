@@ -1,14 +1,16 @@
 # Firebase configuration
 serviceAccountKey.json
 **/serviceAccountKey.json
+
+# Environment files
 .env
+.env/
 
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 venv/
-.env/
 
 # IDE
 .vscode/

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>FoodShare - NGO Food Requests</title>
     <link rel="icon" href="{{ url_for('static', filename='img/logo.ico') }}" type="logo" />
     <link rel="stylesheet" href={{url_for('static', filename='css/NGO Food Requests.css')}} />
@@ -73,15 +74,15 @@
                 <div class="request-card">
                     <div class="request-header">
                         <div>
-                            <h3>{{ name }}</h3>
+                            <h3>{{ ngo_name }}</h3>
                             <span class="request-id">Request ID: {{ request.id }}</span>
                         </div>
-                        <span class="status pending">{{ request.status }}</span>
+                        <span class="status {{ request.status|lower }}">{{ request.status }}</span>
                     </div>
                     <div class="request-details">
                         <div class="detail-item">
                             <i class="material-icons">schedule</i>
-                            <span>Requested: 2 hours ago</span>
+                            <span>Requested: {{ request.created_at }}</span>
                         </div>
                         <div class="detail-item">
                             <i class="material-icons">group</i>

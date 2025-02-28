@@ -633,6 +633,29 @@
     
       document.addEventListener("DOMContentLoaded", fetchCombinedData);
     </script>
-    
+    <script>
+      function fetchCombinedData() {
+        fetch("/ngo/combined_data_json")
+          .then(response => {
+            if (!response.ok) throw new Error("Failed to fetch combined data");
+            return response.json();
+          })
+          .then(data => {
+            locations = data.filter(loc => {
+              if (loc.status === "Accepted") {
+                const timeSinceAccepted = new Date() - new Date(loc.created_at);
+                return timeSinceAccepted < 1800000; // Keep if less than 30 mins since acceptance
+              }
+              return true; // Keep all non-accepted requests
+            });
+            addMarkers(locations);
+            populateDropdowns(locations);
+          })
+          .catch(error => console.error("Error fetching combined data:", error));
+      }
+      
+      // Refresh every 60 seconds
+      setInterval(fetchCombinedData, 60000);
+    </script>
   </body>
 </html>

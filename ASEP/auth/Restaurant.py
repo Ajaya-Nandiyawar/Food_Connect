@@ -140,3 +140,73 @@ def handle_donation():
         except Exception as e:
             db.session.rollback()
             return jsonify({'status': 'error', 'message': str(e)}), 500
+        
+        
+
+@restaurant_blueprint.route('/donation/<int:donation_id>', methods=['PUT'])
+def update_donation(donation_id):
+    if request.content_type != "application/json":
+        return jsonify({"status": "error", "message": "Content-Type must be application/json"}), 415
+
+    data = request.get_json()
+    if not data:
+        return jsonify({"status": "error", "message": "Invalid JSON data"}), 400
+
+    donation = DonationModel.query.get(donation_id)
+    if not donation:
+        return jsonify({"status": "error", "message": "Donation not found"}), 404
+
+    if donation.status != "Pending":
+        return jsonify({"status": "error", "message": "Can only edit pending donations"}), 400
+
+    try:
+        # Update fields if provided
+        donation.food_type = data.get("food_type", donation.food_type)
+        donation.quantity = float(data.get("quantity", donation.quantity))
+        donation.unit = data.get("unit", donation.unit)
+        donation.expiry_date = datetime.strptime(data.get("expiry_date", donation.expiry_date.strftime('%Y-%m-%dT%H:%M')), '%Y-%m-%dT%H:%M')
+        donation.pickup_time = datetime.strptime(data.get("pickup_time", donation.pickup_time.strftime('%H:%M')), '%H:%M').time()
+        donation.special_instructions = data.get("special_instructions", donation.special_instructions)
+        donation.location = data.get("location", donation.location)
+        donation.phone = data.get("phone", donation.phone)
+
+        # Re-geocode location if it changed
+        if "location" in data and data["location"] != donation.location:
+            try:
+                location_data = geolocator.geocode(data["location"], timeout=10)
+                if not location_data:
+                    return jsonify({"status": "error", "message": "Invalid location"}), 400
+                donation.latitude = location_data.latitude
+                donation.longitude = location_data.longitude
+            except GeocoderTimedOut:
+                return jsonify({"status": "error", "message": "Geocoding timed out"}), 503
+
+        # Validate phone if provided
+        if "phone" in data:
+            if not (data["phone"].isdigit() and len(data["phone"]) == 10):
+                return jsonify({"status": "error", "message": "Phone number must be exactly 10 digits"}), 400
+
+        db.session.commit()
+        return jsonify({"status": "success", "message": "Donation updated successfully", "donation": donation.to_dict()}), 200
+
+    except ValueError as ve:
+        return jsonify({"status": "error", "message": "Invalid date format"}), 400
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@restaurant_blueprint.route('/donation/<int:donation_id>/cancel', methods=['POST'])
+def cancel_donation(donation_id):
+    if request.content_type != "application/json":
+        return jsonify({"status": "error", "message": "Content-Type must be application/json"}), 415
+
+    donation = DonationModel.query.get(donation_id)
+    if not donation:
+        return jsonify({"status": "error", "message": "Donation not found"}), 404
+
+    if donation.status != "Pending":
+        return jsonify({"status": "error", "message": "Can only cancel pending donations"}), 400
+
+    donation.status = "Cancelled"
+    db.session.commit()
+    return jsonify({"status": "success", "message": "Donation cancelled successfully", "donation": donation.to_dict()}), 200        

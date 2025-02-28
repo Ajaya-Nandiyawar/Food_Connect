@@ -1,128 +1,74 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Handle status changes
-  const statusFilter = document.getElementById("status-filter");
-  const foodTypeFilter = document.getElementById("food-type-filter");
-  const dateFilter = document.getElementById("date-filter");
-  const applyFiltersBtn = document.querySelector(".apply-filters");
+  const acceptButtons = document.querySelectorAll(".accept-btn");
 
-  // Filter functionality
-  applyFiltersBtn.addEventListener("click", () => {
-    const filters = {
-      status: statusFilter.value,
-      foodType: foodTypeFilter.value,
-      date: dateFilter.value,
-    };
-    console.log("Applied filters:", filters);
-    // Here you would typically make an API call to fetch filtered results
-  });
+  acceptButtons.forEach(button => {
+    button.addEventListener("click", async () => {
+      const requestId = button.getAttribute("data-id");
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-  // Handle request actions
-  document.querySelectorAll(".primary-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const card = e.target.closest(".request-card");
-      const requestId = card.querySelector(".request-id").textContent;
+      try {
+        const response = await fetch(`/update_request_status/${requestId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+          },
+          body: JSON.stringify({ status: "Accepted" }),
+        });
 
-      if (btn.classList.contains("completed")) {
-        console.log(`Marking request ${requestId} as completed`);
-        // Add completion logic here
-      } else {
-        console.log(`Accepting request ${requestId}`);
-        // Add acceptance logic here
-      }
-    });
-  });
+        const data = await response.json();
+        if (data.success) {
+          const card = button.closest(".request-card");
+          const statusSpan = card.querySelector(".status");
+          statusSpan.textContent = "Accepted";
+          statusSpan.className = "status accepted"; // Matches template logic
+          button.disabled = true;
+          button.textContent = "Accepted";
 
-  // Handle view details
-  document.querySelectorAll(".secondary-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const card = e.target.closest(".request-card");
-      const requestId = card.querySelector(".request-id").textContent;
-      console.log(`Viewing details for request ${requestId}`);
-      // Add view details logic here
-    });
-  });
+          setTimeout(() => {
+            card.remove();
+          }, 1800000); // 30 minutes
 
-  // Handle pagination
-  document.querySelectorAll(".page-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      if (!btn.classList.contains("active")) {
-        document.querySelector(".page-btn.active")?.classList.remove("active");
-        if (!["Previous", "Next"].includes(btn.textContent)) {
-          btn.classList.add("active");
+          alert("Request accepted successfully!");
+        } else {
+          alert("Failed to accept request: " + data.message);
         }
-        console.log(`Navigating to page: ${btn.textContent}`);
-        // Add pagination logic here
+      } catch (error) {
+        console.error("Error accepting request:", error);
+        alert("An error occurred while accepting the request.");
       }
-    });
-  });
-
-  // Handle navigation
-  document.querySelectorAll(".nav-links li").forEach((item) => {
-    item.addEventListener("click", (e) => {
-      document
-        .querySelector(".nav-links li.active")
-        ?.classList.remove("active");
-      item.classList.add("active");
-      console.log(`Navigating to: ${item.textContent.trim()}`);
-      // Add navigation logic here
-    });
   });
 });
 
-export function setupCounter(element) {
-  let counter = 0;
-  const setCounter = (count) => {
-    counter = count;
-    element.innerHTML = `count is ${counter}`;
-  };
-  element.addEventListener("click", () => setCounter(counter + 1));
-  setCounter(0);
-}
+  // Optional: Add filter functionality (for status, food type, date)
+  const applyFiltersBtn = document.querySelector(".apply-filters");
+  applyFiltersBtn.addEventListener("click", () => {
+    const statusFilter = document
+      .getElementById("status-filter")
+      .value.toLowerCase();
+    const foodTypeFilter = document
+      .getElementById("food-type-filter")
+      .value.toLowerCase();
+    const dateFilter = document.getElementById("date-filter").value;
 
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("JavaScript Loaded!");
+    document.querySelectorAll(".request-card").forEach((card) => {
+      const status = card.querySelector(".status").textContent.toLowerCase();
+      const foodType = card
+        .querySelector(".requirements li:first-child")
+        .textContent.toLowerCase()
+        .replace("food type: ", "");
+      const pickupDate = card
+        .querySelector(".requirements li:nth-child(3)")
+        .textContent.replace("Pickup Date:", "")
+        .trim();
 
-  document.querySelectorAll(".accept-btn").forEach((button) => {
-    button.addEventListener("click", function () {
-      const requestId = this.getAttribute("data-id");
-      console.log("Accepting request Request ID:", requestId);
+      const statusMatch = statusFilter === "all" || status === statusFilter;
+      const foodTypeMatch =
+        foodTypeFilter === "all" || foodType.includes(foodTypeFilter);
+      const dateMatch = !dateFilter || pickupDate === dateFilter;
 
-      fetch("/ngo/request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ request_id: requestId, status: "Accepted" }),
-      })
-        .then((response) => {
-          console.log("Raw Response:", response); // Check if the response is received
-          return response.json();
-        })
-        .then((data) => {
-          console.log("Server Response:", data); // Debugging
-
-          if (data.status === "success") {
-            console.log(
-              `Status updated to Accepted for Request ID: ${requestId}`
-            ); // Debugging
-            const statusElement =
-              this.closest(".request-card").querySelector(".status");
-
-            if (statusElement) {
-              statusElement.innerText = "Accepted";
-              statusElement.classList.remove("pending");
-              statusElement.classList.add("accepted");
-              console.log("UI updated successfully.");
-            } else {
-              console.error("Status element not found.");
-            }
-          } else {
-            console.error("Error from server:", data.message);
-            alert("Failed to update request status: " + data.message);
-          }
-        })
-        .catch((error) => {
-          console.error("Fetch error:", error);
-          alert("Failed to connect to the server. Check console for details.");
-        });
+      card.style.display =
+        statusMatch && foodTypeMatch && dateMatch ? "block" : "none";
     });
   });
 });
