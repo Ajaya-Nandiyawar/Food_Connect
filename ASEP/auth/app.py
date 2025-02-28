@@ -14,9 +14,21 @@ import bcrypt
 import firebase_admin
 from firebase_admin import auth as admin_auth
 from firebase_admin import credentials
+from functools import wraps
 
-cred = credentials.ApplicationDefault()
+cred_path = os.path.join(os.path.dirname(__file__), 'serviceAccountKey.json')
+cred = credentials.Certificate(cred_path)
 firebase_admin.initialize_app(cred)
+
+def no_cache(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        resp = make_response(f(*args, **kwargs))
+        resp.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, private, max-age=0'
+        resp.headers['Pragma'] = 'no-cache'
+        resp.headers['Expires'] = '0'
+        return resp
+    return decorated_function
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -34,12 +46,11 @@ app.config['MAIL_DEFAULT_SENDER'] = 'foodconnect5621@gmail.com'
 mail.init_app(app)  # Initialize mail with app
 s = URLSafeTimedSerializer(app.secret_key)
 
-# MySQL configuration
+# MySQL connection string
 db_user = "root"
-db_password = "Ajaya%405621"
+db_password = "%40J%21nky%40ub%40le5"  # URL-encoded password (%40 represents @)
 db_host = "127.0.0.1"
 db_name = "registered"
-
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -97,6 +108,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
+    session.clear()
     return redirect(url_for('login'))
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -128,7 +140,9 @@ def signup():
 
 
 @app.route('/dashboard')
+@no_cache
 def dashboard():
+    
     if 'name' not in session or 'email' not in session or 'organization' not in session:
         return redirect('/login')
     if session['organization'] != 'ngo':
@@ -137,6 +151,7 @@ def dashboard():
     return render_template('dashboard2.html', name=session['name'], organization=session['organization'], api_key=api_key)
 
 @app.route('/restaurant_dashboard')
+@no_cache
 def restaurant_dashboard():
     if 'name' not in session or 'email' not in session or 'organization' not in session:
         return redirect('/login')
@@ -147,6 +162,7 @@ def restaurant_dashboard():
 
 
 @app.route('/profile', methods=['GET'])
+@no_cache
 def profile():
     if "email" not in session or "organization" not in session:
         return redirect("/login")
@@ -224,6 +240,7 @@ def update_request_status(request_id):
 
 
 @app.route('/restaurant_settings', methods=['GET'])
+@no_cache
 def restaurant_settings():
     if "email" not in session or "organization" not in session or session["organization"].lower() != 'restaurant':
         return redirect("/login")

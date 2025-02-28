@@ -15,59 +15,21 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("location").value = e.result.place_name;
   });
 
-  // Form submission
-  document
-    .getElementById("donationForm")
-    .addEventListener("submit", function (event) {
-      event.preventDefault();
-
-      const formData = {
-        food_type: document.getElementById("foodType").value,
-        quantity: document.getElementById("quantity").value,
-        unit: document.getElementById("unit").value,
-        expiry_date: document.getElementById("expiryDate").value,
-        pickup_time: document.getElementById("pickupTime").value,
-        special_instructions: document.getElementById("instructions").value,
-        location: document.getElementById("location").value,
-        phone: document.getElementById("phone").value,
-      };
-
-      fetch("http://127.0.0.1:5000/Restaurant/donation", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": document.querySelector('meta[name="csrf-token"]')
-            .content,
-        },
-        body: JSON.stringify(formData),
-      })
-        .then((response) => {
-          if (!response.ok)
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          return response.json();
-        })
-        .then((data) => {
-          alert(data.message);
-          if (data.status === "success") window.location.reload();
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          alert("Failed to submit donation. Check console for details.");
-        });
-    });
-});
-
-function clearForm() {
-  document.getElementById("donationForm").reset();
-  document.getElementById("location").value = "";
-  document.querySelector(".mapboxgl-ctrl-geocoder--input").value = "";
-}
-
-document.addEventListener("DOMContentLoaded", () => {
+  // Form submission handling with prevention of multiple submissions
   const donationForm = document.getElementById("donationForm");
+  let isSubmitting = false;
 
-  donationForm.addEventListener("submit", function (event) {
+  donationForm.addEventListener("submit", async function (event) {
     event.preventDefault();
+
+    // Prevent multiple submissions
+    if (isSubmitting) return;
+    isSubmitting = true;
+
+    // Get submit button and show loading state
+    const submitButton = document.querySelector(".Create_Donation");
+    submitButton.disabled = true;
+    submitButton.textContent = "Submitting...";
 
     const formData = {
       food_type: document.getElementById("foodType").value,
@@ -80,34 +42,44 @@ document.addEventListener("DOMContentLoaded", () => {
       special_instructions: document.getElementById("instructions").value,
     };
 
-    fetch("/Restaurant/donation", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": document.querySelector('meta[name="csrf-token"]')
-          .content,
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error("Network response was not ok");
-        return response.json();
-      })
-      .then((data) => {
-        if (data.status === "success") {
-          alert(data.message);
-          window.location.reload(); // Refresh to show the new donation
-        } else {
-          alert("Error: " + data.message);
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        alert("Failed to create donation");
+    try {
+      const response = await fetch("/Restaurant/donation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": document.querySelector('meta[name="csrf-token"]')
+            .content,
+        },
+        body: JSON.stringify(formData),
       });
+
+      const data = await response.json();
+
+      if (response.ok && data.status === "success") {
+        alert(data.message);
+        window.location.reload();
+      } else {
+        throw new Error(data.message || "Failed to create donation");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert(error.message || "Failed to submit donation");
+    } finally {
+      // Reset submission state and button
+      isSubmitting = false;
+      submitButton.disabled = false;
+      submitButton.textContent = "Create Donation";
+    }
   });
 });
 
 function clearForm() {
   document.getElementById("donationForm").reset();
+  document.getElementById("location").value = "";
+  const geocoderInput = document.querySelector(
+    ".mapboxgl-ctrl-geocoder--input"
+  );
+  if (geocoderInput) {
+    geocoderInput.value = "";
+  }
 }
