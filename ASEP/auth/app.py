@@ -1,8 +1,8 @@
-from flask import Flask, request, session, render_template, redirect, url_for, jsonify, flash
+from flask import Flask, request, session, render_template, redirect, url_for, jsonify, flash, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
-from flask_wtf import CSRFProtect
+from flask_wtf.csrf import CSRFProtect
 from extensions import db, mail, NGO, Restaurant  # Import from extensions
 from forms import ForgotPasswordForm, ResetPasswordForm, SignupForm, LoginForm
 import os
@@ -11,6 +11,12 @@ from NGO import ngo_blueprint, RequestModel
 from Restaurant import restaurant_blueprint
 from notifications import notifications_bp
 import bcrypt
+import firebase_admin
+from firebase_admin import auth as admin_auth
+from firebase_admin import credentials
+
+cred = credentials.ApplicationDefault()
+firebase_admin.initialize_app(cred)
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -33,6 +39,8 @@ db_user = "root"
 db_password = "%40J%21nky%40ub%40le5"
 db_host = "127.0.0.1"
 db_name = "registered"
+
+
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -82,7 +90,9 @@ def login():
             return redirect('/restaurant_dashboard')
         else:
             flash("Invalid email or password", "error")
-    return render_template('login.html', form=form)
+    response = make_response(render_template('login.html', form=form))
+    response.headers['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups'
+    return response
 
 @app.route('/logout')
 def logout():
@@ -244,61 +254,46 @@ firebase = pyrebase.initialize_app(firebase_config)
 auth = firebase.auth()
 
 @app.route('/firebase-login', methods=['POST'])
+@csrf.exempt  # Exempt from CSRF to allow token submission
 def firebase_login():
-    print("🔍 Received request at /firebase-login")
     if not request.is_json:
-        print("❌ Request is not JSON")
         return jsonify({"success": False, "message": "Request must be JSON"}), 400
 
     data = request.get_json()
-    print("📨 Received data:", data)
     if not data or "idToken" not in data:
-        print("❌ Missing idToken in request")
-        return jsonify({"success": False, "message": "Missing idToken"}), 400  
-
-    email = data.get("email")
-    name = data.get("name")
-    if not email:
-        print("❌ Invalid email")
-        return jsonify({"success": False, "message": "Invalid email"}), 400
+        return jsonify({"success": False, "message": "Missing idToken"}), 400
 
     try:
-        decoded_token = auth.verify_id_token(data["idToken"])
+        # Verify the ID token using Firebase Admin SDK
+        decoded_token = admin_auth.verify_id_token(data["idToken"])
         user_email = decoded_token.get("email")
-        print("✅ Firebase Token Verified for:", user_email)
         if not user_email:
-            print("❌ Token verification failed")
-            return jsonify({"success": False, "message": "Token verification failed"}), 401
+            return jsonify({"success": False, "message": "Invalid token"}), 401
 
-        # Check both NGO and Restaurant tables
-        ngo = NGO.query.filter_by(email=user_email).first()
-        restaurant = Restaurant.query.filter_by(email=user_email).first()
+        # Example logic: Check user in database (adjust as per your app)
+        # Replace with your actual NGO and Restaurant models
+        ngo = NGO.query.filter_by(email=user_email).first() if 'NGO' in globals() else None
+        restaurant = Restaurant.query.filter_by(email=user_email).first() if 'Restaurant' in globals() else None
 
         if not ngo and not restaurant:
-            # New user: Redirect to select organization type
             session["email"] = user_email
-            session["name"] = name
-            print("🔄 New user, redirecting to select_type")
-            return jsonify({"success": True, "redirect_url": url_for('select_type')})
+            session["name"] = data.get("name", "User")
+            return jsonify({"success": True, "redirect_url": url_for('user_type')})
 
-        # Existing user: Determine organization and redirect
         if ngo:
             session["email"] = ngo.email
             session["name"] = ngo.name
             session["organization"] = "ngo"
             redirect_url = url_for('dashboard')
-            print("🏠 Existing NGO user, redirecting to dashboard")
-        elif restaurant:
+        else:  # restaurant
             session["email"] = restaurant.email
             session["name"] = restaurant.name
             session["organization"] = "restaurant"
             redirect_url = url_for('restaurant_dashboard')
-            print("🏠 Existing Restaurant user, redirecting to restaurant_dashboard")
 
         return jsonify({"success": True, "redirect_url": redirect_url})
 
     except Exception as e:
-        print("🔥 Error in Firebase verification:", str(e))
         return jsonify({"success": False, "message": f"Firebase error: {str(e)}"}), 401
 
 @app.route('/select_type')

@@ -1,0 +1,19 @@
+# Firebase configuration
+serviceAccountKey.json
+**/serviceAccountKey.json
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env/
+
+# IDE
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
