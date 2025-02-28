@@ -1183,6 +1183,7 @@ h2 {
   bottom: 20px;      /* Added position from bottom */
   right: 20px;       /* Added position from right */
   display: none;     /* Hidden by default */
+  z-index: 99999;
 }
 
 .svgIcon {
