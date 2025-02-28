@@ -36,7 +36,26 @@
       </nav>
     </header>
 
-    <section class="banner" style="background-image: url('{{ url_for('static', filename='img/donation.png') }}')"></section>
+    <section class="hero">
+      <div class="slide1 active">
+        <img
+          src="{{url_for('static', filename='img/donation.png')}}"
+          alt="Sunrise over farm field"
+          height="610px"/>
+      </div>
+      <div class="slide1">
+        <img
+          src="{{url_for('static', filename='img/donate2.png')}}"
+          alt="Wheat field"/>
+      </div>
+      <div class="slide1">
+        <img
+          src="{{url_for('static', filename='img/3.png')}}"
+          alt="Green farm"/>
+      </div>
+      <div class="slider-nav"></div>
+    </section>
+
     <div class="content">
       <center>
         <p style="font-size: 23px">
@@ -45,36 +64,44 @@
         </p>
       </center>
     </div>
+
+
     <div class="photo">
-      <br />
-      <div id="box">
-        <p>
-          Your support enables Enhance A Village, Inc. to differentiates itself
-          by not getting immersed in the "hamster wheel" of requesting funds,
-          doing the work, and justifying more funding. EAV’s metric of success
-          is to become redundant when the village has successfully demonstrated
-          independence from the organization’s assistance and be a thriving
-          community. EAV can then move on elsewhere to make an impact and
-          alleviate poverty from your donations and volunteering efforts.
+      <div class="container">
+        <div class="image-container">
+            <img src="{{url_for('static', filename='img/image1.jpg')}}" alt="Food Donation" class="bg-image">
+        </div>
+        
+        <div class="content1">
+            <h2>Food Connect</h2>
+            <p1>Food Connect is a platform dedicated to reducing food waste and fighting hunger by creating a bridge between restaurants with surplus fresh food
+               and NGOs that distribute it to people in need. Every day, large amounts of perfectly good food go to waste, while many individuals and families struggle 
+               with food insecurity. Our mission is to ensure that no meal is wasted when it can be used to feed someone in need. By streamlining the donation process,
+                we make it easy for restaurants to contribute their excess food while helping NGOs access fresh, nutritious meals for the communities they serve. </p1>
+            
+            <div class="vision-mission">
+                <div class="vision">
+                    <h3>Our Vision</h3>
+                    <p1>At Food Connect, our mission is simple: to unite food lovers, creators, and enthusiasts in an inclusive platform 
+                that inspires collaboration, discovery, and the joy of cooking and eating.</p1>
+                </div>
+                <div class="mission">
+                    <h3>Our Mission</h3>
+                    <p1> We envision a world where food is shared, not thrown away. Every day, millions of tons of perfectly edible food end
+                      up in landfills, contributing to environmental degradation. At the same time, millions of people worldwide go hungry.</p1>
+                </div>
+            </div>
+            <button class="read-more"><a href="about_us.html" style="color: white;"> Read More </a> </button>
+        </div>
+    </div>
+  
+
+        <p class="heading">Our Works</p>
+        <br/>
+        <p style="font-size: 28px; text-align: center">
+          "Look what we can do together."
         </p>
-      </div>
-      <div id="box">
-        <p>
-          Your support enables Enhance A Village, Inc. to differentiates itself
-          by not getting immersed in the "hamster wheel" of requesting funds,
-          doing the work, and justifying more funding. EAV’s metric of success
-          is to become redundant when the village has successfully demonstrated
-          independence from the organization’s assistance and be a thriving
-          community. EAV can then move on elsewhere to make an impact and
-          alleviate poverty from your donations and volunteering efforts.
-        </p>
-      </div>
-      <p class="heading">Our Works</p>
-      <br />
-      <p style="font-size: 28px; text-align: center">
-        "Look what we can do together."
-      </p>
-      <br />
+        <br/>
       <div class="wrapper">
         <div class="box"><img src="{{url_for('static',filename='img/p1.jpeg')}}" alt="" /></div>
         <div class="box"><img src="{{url_for('static',filename='img/p4.jpeg')}}" alt="" /></div>
@@ -85,18 +112,11 @@
         theexcess/leftover food from donors such as hotels, restaurants,
         marriage halls, etc and distribute to the needy people .
       </p> -->
-      <br />
+      <br/>
     </div>
     <section class="ngo-section">
       <div class="section-header">
         <h2>NGO Partners Making a Difference</h2>
-        <div class="filters">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="children">Children</button>
-          <button class="filter-btn" data-filter="elderly">Elderly</button>
-          <button class="filter-btn" data-filter="community">Community</button>
-          <button class="filter-btn" data-filter="education">Education</button>
-        </div>
       </div>
 
       <div class="ngo-stats">
