@@ -126,3 +126,23 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+// Get the button element
+const scrollToTopButton = document.querySelector('.scroll-to-top-button');
+
+// Show/hide button based on scroll position
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 100) { // Show button after scrolling 100px
+    scrollToTopButton.style.display = 'flex';
+  } else {
+    scrollToTopButton.style.display = 'none';
+  }
+});
+
+// Smooth scroll to top when button is clicked
+scrollToTopButton.addEventListener('click', () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
