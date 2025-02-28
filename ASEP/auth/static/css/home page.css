@@ -45,6 +45,123 @@ header {
   font-size: 28px;
   color: var(--navfont);
 }
+
+/*slider*/
+.hero {
+  position: relative;
+  height: 610px;
+  overflow: hidden;
+}
+
+.slide1 {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.slide1.active {
+  opacity: 1;
+}
+
+.slide1 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Slider navigation */
+.slider-nav {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.slider-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  padding: 5px 5px;
+}
+
+.slider-dot.active {
+  background: white;
+}
+
+/* about */
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  gap: 40px;
+  position: relative;
+}
+
+.image-container {
+  position: relative;
+  width: 550px;
+  /* height: 400vh; */
+}
+
+.bg-image {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.content1 {
+  max-width: 600px;
+}
+
+h2 {
+  color: #f57c00;
+}
+
+p1 {
+  color: black;
+  line-height: 1.6;
+}
+
+.vision-mission {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.vision, .mission {
+  flex: 1;
+  padding: 15px;
+  border-left: 3px solid green;
+}
+
+.vision h3, .mission h3 {
+  color: #f57c00;
+  margin: 0;
+}
+
+.read-more {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #f57c00;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.read-more:hover {
+  background-color: #333;
+}
+/* aboit */
+
 .hamburger {
   display: none;
 }
