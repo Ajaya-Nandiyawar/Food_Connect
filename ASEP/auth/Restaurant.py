@@ -6,6 +6,7 @@ from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 from notifications import send_notification
 from flask_mail import Message
+import cloudinary.uploader
 
 
 
@@ -27,6 +28,7 @@ class DonationModel(db.Model):
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
     phone = db.Column(db.String(10), nullable=True)
+    image_url = db.Column(db.String(255), nullable=True)
 
     def to_dict(self):
         return {
@@ -42,7 +44,8 @@ class DonationModel(db.Model):
             'location': self.location,
             'latitude': self.latitude,
             'longitude': self.longitude,
-            'phone': self.phone
+            'phone': self.phone,
+            'image_url': self.image_url
         }
 
 @restaurant_blueprint.route('/donations_json', methods=['GET'])
@@ -74,21 +77,26 @@ def handle_donation():
     
     if request.method == 'POST':
         try:
-            data = request.get_json()
-            if not data:
-                return jsonify({'status': 'error', 'message': 'Invalid JSON data'}), 400
+            # Handle form data instead of JSON for file uploads
+            food_type = request.form.get('food_type')
+            quantity = request.form.get('quantity')
+            unit = request.form.get('unit')
+            expiry_date = request.form.get('expiry_date')
+            pickup_time = request.form.get('pickup_time')
+            special_instructions = request.form.get('special_instructions', '')
+            location = request.form.get('location')
+            phone = request.form.get('phone')
 
             required_fields = ['food_type', 'quantity', 'unit', 'expiry_date', 'pickup_time', 'location', 'phone']
             for field in required_fields:
-                if field not in data:
+                if not request.form.get(field):
                     return jsonify({'status': 'error', 'message': f'Missing required field: {field}'}), 400
 
-            phone = data['phone']
             if not (phone.isdigit() and len(phone) == 10):
                 return jsonify({'status': 'error', 'message': 'Phone number must be exactly 10 digits'}), 400
 
             try:
-                location_data = geolocator.geocode(data['location'], timeout=10)
+                location_data = geolocator.geocode(location, timeout=10)
                 if not location_data:
                     return jsonify({'status': 'error', 'message': 'Invalid location'}), 400
                 latitude = location_data.latitude
@@ -96,17 +104,26 @@ def handle_donation():
             except GeocoderTimedOut:
                 return jsonify({'status': 'error', 'message': 'Geocoding timed out'}), 503
 
+            # Handle image upload
+            image_url = None
+            if 'food_image' in request.files:
+                food_image = request.files['food_image']
+                if food_image.filename != '':
+                    upload_result = cloudinary.uploader.upload(food_image, folder="food_donations")
+                    image_url = upload_result['secure_url']
+
             new_donation = DonationModel(
-                food_type=data['food_type'],
-                quantity=float(data['quantity']),
-                unit=data['unit'],
-                expiry_date=datetime.strptime(data['expiry_date'], '%Y-%m-%dT%H:%M'),
-                pickup_time=datetime.strptime(data['pickup_time'], '%H:%M').time(),
-                special_instructions=data.get('special_instructions', ''),
-                location=data['location'],
+                food_type=food_type,
+                quantity=float(quantity),
+                unit=unit,
+                expiry_date=datetime.strptime(expiry_date, '%Y-%m-%dT%H:%M'),
+                pickup_time=datetime.strptime(pickup_time, '%H:%M').time(),
+                special_instructions=special_instructions,
+                location=location,
                 latitude=latitude,
                 longitude=longitude,
-                phone=phone
+                phone=phone,
+                image_url=image_url  # Save the image URL
             )
             db.session.add(new_donation)
             db.session.commit()
@@ -114,9 +131,9 @@ def handle_donation():
             restaurant_name = session.get('name', 'Unknown Restaurant')
             send_notification(
                 ngo_name=restaurant_name,
-                food_type=data['food_type'],
-                quantity=f"{data['quantity']} {data['unit']}",
-                additional_note=data.get('special_instructions', '')
+                food_type=food_type,
+                quantity=f"{quantity} {unit}",
+                additional_note=special_instructions
             )
 
             ngos = NGO.query.all()
@@ -125,7 +142,7 @@ def handle_donation():
                 msg = Message(
                     subject="New Donation Available",
                     recipients=ngo_emails,
-                    body=f"A new donation has been created by {restaurant_name}.\n\nDetails:\n- Food Type: {data['food_type']}\n- Quantity: {data['quantity']} {data['unit']}\n- Expiry Date: {data['expiry_date']}\n- Pickup Time: {data['pickup_time']}\n- Location: {data['location']}\n- Special Instructions: {data.get('special_instructions', 'None')}\n\nPlease log in to FoodConnect to review and respond.\n\nBest regards,\nFoodConnect Team"
+                    body=f"A new donation has been created by {restaurant_name}.\n\nDetails:\n- Food Type: {food_type}\n- Quantity: {quantity} {unit}\n- Expiry Date: {expiry_date}\n- Pickup Time: {pickup_time}\n- Location: {location}\n- Special Instructions: {special_instructions or 'None'}\n- Image: {image_url or 'Not provided'}\n\nPlease log in to FoodConnect to review and respond.\n\nBest regards,\nFoodConnect Team"
                 )
                 mail.send(msg)
 
@@ -145,13 +162,6 @@ def handle_donation():
 
 @restaurant_blueprint.route('/donation/<int:donation_id>', methods=['PUT'])
 def update_donation(donation_id):
-    if request.content_type != "application/json":
-        return jsonify({"status": "error", "message": "Content-Type must be application/json"}), 415
-
-    data = request.get_json()
-    if not data:
-        return jsonify({"status": "error", "message": "Invalid JSON data"}), 400
-
     donation = DonationModel.query.get(donation_id)
     if not donation:
         return jsonify({"status": "error", "message": "Donation not found"}), 404
@@ -160,20 +170,31 @@ def update_donation(donation_id):
         return jsonify({"status": "error", "message": "Can only edit pending donations"}), 400
 
     try:
-        # Update fields if provided
-        donation.food_type = data.get("food_type", donation.food_type)
-        donation.quantity = float(data.get("quantity", donation.quantity))
-        donation.unit = data.get("unit", donation.unit)
-        donation.expiry_date = datetime.strptime(data.get("expiry_date", donation.expiry_date.strftime('%Y-%m-%dT%H:%M')), '%Y-%m-%dT%H:%M')
-        donation.pickup_time = datetime.strptime(data.get("pickup_time", donation.pickup_time.strftime('%H:%M')), '%H:%M').time()
-        donation.special_instructions = data.get("special_instructions", donation.special_instructions)
-        donation.location = data.get("location", donation.location)
-        donation.phone = data.get("phone", donation.phone)
+        if 'multipart/form-data' in request.content_type:
+            donation.food_type = request.form.get("food_type", donation.food_type)
+            donation.quantity = float(request.form.get("quantity", donation.quantity))
+            donation.unit = request.form.get("unit", donation.unit)
+            donation.expiry_date = datetime.strptime(
+                request.form.get("expiry_date", donation.expiry_date.strftime('%Y-%m-%dT%H:%M')),
+                '%Y-%m-%dT%H:%M'
+            )
+            donation.pickup_time = datetime.strptime(
+                request.form.get("pickup_time", donation.pickup_time.strftime('%H:%M')),
+                '%H:%M'
+            ).time()
+            donation.special_instructions = request.form.get("special_instructions", donation.special_instructions)
+            donation.location = request.form.get("location", donation.location)
+            donation.phone = request.form.get("phone", donation.phone)
 
-        # Re-geocode location if it changed
-        if "location" in data and data["location"] != donation.location:
+            if 'food_image' in request.files and request.files['food_image'].filename != '':
+                upload_result = cloudinary.uploader.upload(request.files['food_image'], folder="food_donations")
+                donation.image_url = upload_result['secure_url']
+        else:
+            return jsonify({"status": "error", "message": "Content-Type must be multipart/form-data"}), 415
+
+        if donation.location != DonationModel.query.get(donation_id).location:
             try:
-                location_data = geolocator.geocode(data["location"], timeout=10)
+                location_data = geolocator.geocode(donation.location, timeout=10)
                 if not location_data:
                     return jsonify({"status": "error", "message": "Invalid location"}), 400
                 donation.latitude = location_data.latitude
@@ -181,10 +202,8 @@ def update_donation(donation_id):
             except GeocoderTimedOut:
                 return jsonify({"status": "error", "message": "Geocoding timed out"}), 503
 
-        # Validate phone if provided
-        if "phone" in data:
-            if not (data["phone"].isdigit() and len(data["phone"]) == 10):
-                return jsonify({"status": "error", "message": "Phone number must be exactly 10 digits"}), 400
+        if donation.phone and not (donation.phone.isdigit() and len(donation.phone) == 10):
+            return jsonify({"status": "error", "message": "Phone number must be exactly 10 digits"}), 400
 
         db.session.commit()
         return jsonify({"status": "success", "message": "Donation updated successfully", "donation": donation.to_dict()}), 200

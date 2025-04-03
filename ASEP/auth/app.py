@@ -18,7 +18,8 @@ from firebase_admin import credentials
 from functools import wraps
 from dotenv import load_dotenv
 from threading import Timer
-
+import cloudinary, cloudinary.uploader, cloudinary.api
+from cloudinary.utils import cloudinary_url
 
 load_dotenv()
 
@@ -41,6 +42,12 @@ def no_cache(f):
 
 app = Flask(__name__)
 app.secret_key = 'a39a0170b3e0428abcd1941ee87bedc93d5a9a286ee5c773'
+
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
 
 csrf = CSRFProtect(app)
 

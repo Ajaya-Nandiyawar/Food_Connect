@@ -34,30 +34,22 @@ document.addEventListener("DOMContentLoaded", () => {
     submitButton.disabled = true;
     submitButton.textContent = isEditing ? "Updating..." : "Submitting...";
 
-    const formData = {
-      food_type: document.getElementById("foodType").value,
-      quantity: document.getElementById("quantity").value,
-      unit: document.getElementById("unit").value,
-      expiry_date: document.getElementById("expiryDate").value,
-      pickup_time: document.getElementById("pickupTime").value,
-      location: document.getElementById("location").value,
-      phone: document.getElementById("phone").value,
-      special_instructions: document.getElementById("instructions").value,
-    };
+    // Use FormData to collect all form fields, including files
+    const formData = new FormData(donationForm);
 
     try {
       const url = isEditing
         ? `/Restaurant/donation/${currentDonationId}`
         : "/Restaurant/donation";
       const method = isEditing ? "PUT" : "POST";
+
       const response = await fetch(url, {
         method: method,
+        body: formData, // Send as multipart/form-data
         headers: {
-          "Content-Type": "application/json",
           "X-CSRFToken": document.querySelector('meta[name="csrf-token"]')
             .content,
         },
-        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
@@ -107,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
         row.getAttribute("data-food-type");
       document.getElementById("quantity").value =
         row.getAttribute("data-quantity");
-      document.getElementById("unit").value = row.getAttribute("data-unit");
+      document.getAttribute("data-unit").value = row.getAttribute("data-unit");
       document.getElementById("expiryDate").value = row
         .getAttribute("data-expiry-date")
         .replace(" ", "T");
@@ -118,6 +110,13 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("phone").value = row.getAttribute("data-phone");
       document.getElementById("instructions").value =
         row.getAttribute("data-instructions") || "";
+
+      // Optional: Display current image if it exists (you could add an <img> tag dynamically)
+      const imageUrl = row.querySelector(".view-photo-btn")?.href;
+      if (imageUrl) {
+        console.log("Current image URL:", imageUrl);
+        // You could add a preview here, e.g., append an <img> tag to the form
+      }
 
       submitButton.textContent = "Update Donation";
       isEditing = true;
@@ -170,6 +169,23 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
+
+  // Scroll-to-top button functionality
+  const scrollToTopButton = document.querySelector(".scroll-to-top-button");
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 100) {
+      scrollToTopButton.style.display = "flex";
+    } else {
+      scrollToTopButton.style.display = "none";
+    }
+  });
+
+  scrollToTopButton.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  });
 });
 
 function clearForm() {
@@ -182,23 +198,3 @@ function clearForm() {
     geocoderInput.value = "";
   }
 }
-
-// Get the button element
-const scrollToTopButton = document.querySelector('.scroll-to-top-button');
-
-// Show/hide button based on scroll position
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 100) { // Show button after scrolling 100px
-    scrollToTopButton.style.display = 'flex';
-  } else {
-    scrollToTopButton.style.display = 'none';
-  }
-});
-
-// Smooth scroll to top when button is clicked
-scrollToTopButton.addEventListener('click', () => {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-});

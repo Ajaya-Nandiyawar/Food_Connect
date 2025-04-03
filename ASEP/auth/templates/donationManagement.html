@@ -57,11 +57,13 @@
 
       <div class="donation-form-container">
         <h2>Create New Donation</h2>
-        <form id="donationForm" action="/Restaurant/donation" method="POST" class="donation-form">
+        <form id="donationForm" action="/Restaurant/donation" method="POST" class="donation-form" enctype="multipart/form-data">
+          <!-- Existing Fields -->
           <div class="form-row">
             <div class="form-group">
               <label for="foodType">Food Type</label>
               <select id="foodType" name="food_type" required>
+                <option value="" disabled selected>Select Food Type</option>
                 <option value="Cooked Meals">Cooked Meals</option>
                 <option value="Raw Materials">Raw Materials</option>
                 <option value="Packaged Food">Packaged Food</option>
@@ -80,7 +82,14 @@
               </div>
             </div>
           </div>
-
+      
+          <!-- Add Image Upload Field -->
+          <div class="form-group">
+            <label for="foodImage">Food Image (Optional)</label>
+            <input type="file" id="foodImage" name="food_image" accept="image/*" />
+          </div>
+      
+          <!-- Other Existing Fields -->
           <div class="form-row">
             <div class="form-group">
               <label for="expiryDate">Expiry/Best Before</label>
@@ -92,31 +101,25 @@
             </div>
           </div>
           <div class="form-row">
-          <div class="form-group">
-            <label for="location">Pickup Location</label>
-            <div id="geocoder" class="geocoder"></div>
-            <input type="hidden" id="location" name="location" style="width: 100%;" required />
+            <div class="form-group">
+              <label for="location">Pickup Location</label>
+              <div id="geocoder" class="geocoder"></div>
+              <input type="hidden" id="location" name="location" style="width: 100%;" required />
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" maxlength="10" pattern="\d{10}" placeholder="Enter 10-digit phone number" required />
+            </div>
           </div>
-
-          <div class="form-group">
-            <label for="phone">Phone Number</label>
-            <input type="tel" id="phone" name="phone" maxlength="10" pattern="\d{10}" placeholder="Enter 10-digit phone number" required />
-          </div>
-        </div>
-
+      
           <div class="form-group">
             <label for="instructions">Special Instructions</label>
-            <textarea id="instructions" name="special_instructions" rows="4"
-              placeholder="Add any special handling instructions or notes"></textarea>
+            <textarea id="instructions" name="special_instructions" rows="4" placeholder="Add any special handling instructions or notes"></textarea>
           </div>
-
+      
           <div class="form-actions">
-            <button type="button" class="clear_clear" onclick="clearForm()">
-              Clear Form
-            </button>
-            <button type="submit" class="Create_Donation">
-              Create Donation
-            </button>
+            <button type="button" class="clear_clear" onclick="clearForm()">Clear Form</button>
+            <button type="submit" class="Create_Donation">Create Donation</button>
           </div>
         </form>
       </div>
@@ -136,29 +139,32 @@
               </tr>
             </thead>
             <!-- In donationManagement.html, inside <tbody> -->
-            <tbody id="activeDonationsTable">
-              {% for donation in donations %}
-              <tr data-id="{{ donation.id }}"
-                  data-food-type="{{ donation.food_type }}"
-                  data-quantity="{{ donation.quantity }}"
-                  data-unit="{{ donation.unit }}"
-                  data-expiry-date="{{ donation.expiry_date }}"
-                  data-pickup-time="{{ donation.pickup_time }}"
-                  data-location="{{ donation.location }}"
-                  data-phone="{{ donation.phone }}"
-                  data-instructions="{{ donation.special_instructions }}">
-                <td>{{ donation.id }}</td>
-                <td>{{ donation.food_type }}</td>
-                <td>{{ donation.quantity }} {{ donation.unit }}</td>
-                <td>{{ donation.pickup_time }}</td>
-                <td><span class="status {{ donation.status|lower }}">{{ donation.status }}</span></td>
-                <td class="actions">
-                  <button class="action-btn edit-btn" data-id="{{ donation.id }}">Edit</button>
-                  <button class="action-btn cancel-btn" data-id="{{ donation.id }}">Cancel</button>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
+              <tbody id="activeDonationsTable">
+                {% for donation in donations %}
+                <tr data-id="{{ donation.id }}"
+                    data-food-type="{{ donation.food_type }}"
+                    data-quantity="{{ donation.quantity }}"
+                    data-unit="{{ donation.unit }}"
+                    data-expiry-date="{{ donation.expiry_date }}"
+                    data-pickup-time="{{ donation.pickup_time }}"
+                    data-location="{{ donation.location }}"
+                    data-phone="{{ donation.phone }}"
+                    data-instructions="{{ donation.special_instructions }}">
+                  <td>{{ donation.id }}</td>
+                  <td>{{ donation.food_type }}</td>
+                  <td>{{ donation.quantity }} {{ donation.unit }}</td>
+                  <td>{{ donation.pickup_time }}</td>
+                  <td><span class="status {{ donation.status|lower }}">{{ donation.status }}</span></td>
+                  <td class="actions">
+                    <button class="action-btn edit-btn" data-id="{{ donation.id }}">Edit</button>
+                    <button class="action-btn cancel-btn" data-id="{{ donation.id }}">Cancel</button>
+                    {% if donation.image_url %}
+                    <a href="{{ donation.image_url }}" target="_blank" class="action-btn view-photo-btn">View Photo</a>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
           </table>
         </div>
       </div>
