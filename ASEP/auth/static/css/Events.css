@@ -1,0 +1,197 @@
+:root {
+  --primary: #FF6B35;
+  --primary-dark: #E85826;
+  --secondary: #4CAF50;
+  --background: #F7F9FC;
+  --text: #2D3748;
+  --success: #66BB6A;
+  --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #f5f6fa;
+  color: var(--text-primary);
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.ngo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+  
+.ngo-section {
+  padding: 2rem 5% 25px;
+  background-color: var(--background);
+  width: 100%;
+  max-width: 1014px;
+  margin: 0 auto;
+}
+    
+.ngo-section h2 {
+  text-align: center;
+  color: var(--text);
+  margin-bottom: 3rem;
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.ngo-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+  margin-bottom: 25px;
+}
+
+.ngo-image {
+  height: 220px;
+  overflow: hidden;
+}
+
+.ngo-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+ 
+.ngo-card:hover .ngo-image img {
+  transform: scale(1.05);
+}
+  
+.ngo-info {
+  padding: 1.5rem;
+}
+
+.ngo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+ .ngo-header h3 {
+  font-size: 1.5rem;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.impact {
+  color: var(--success);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(102, 187, 106, 0.1);
+  border-radius: 20px;
+}
+
+.focus-area, .location {
+  color: #64748B;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.time {
+  color: #64748B;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.calendar {
+  color: #64748B;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.capacity-info {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  background: var(--background);
+  border-radius: 12px;
+}
+
+.capacity-info h4 {
+  color: var(--secondary);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+  
+.partner-btn {
+  width: 100%;
+  padding: 1rem;
+  background: var(--secondary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.partner-btn:hover {
+  background: #388E3C;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
+  .ngo-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .ngo-section {
+    padding: 6rem 4% 3rem;
+  }
+}
+:root {
+  --primary: #7C3AED;
+  --primary-dark: #6D28D9;
+  --secondary: #10B981;
+  --accent: #F59E0B;
+  --background: #F8FAFC;
+  --text: #1E293B;
+  --success: #059669;
+  --gradient-start: #7C3AED;
+  --gradient-end: #10B981;
+}
+  
+.ngo-section {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
+}
+  
+.ngo-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(124, 58, 237, 0.1);
+}
+  
+.impact {
+  background: linear-gradient(to right, #f57c00, #ffcc00);
+  color: white;
+}
+  
+.partner-btn {
+  background: linear-gradient(90deg, #ff7e00, #ff9a2f);
+}
+  
+.partner-btn:hover {
+  background: linear-gradient(135deg, #f57b01, #e68a00);
+  box-shadow: 0 4px 12px rgba(255, 126, 0, 0.2);
+}
+.partner-btn:active {
+  transform: translateY(0);
+}
