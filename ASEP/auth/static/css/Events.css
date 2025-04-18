@@ -29,16 +29,12 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 2.5rem;
-  max-width: 1400px;
-  margin: 0 auto;
 }
   
 .ngo-section {
   padding: 2rem 5% 25px;
   background-color: var(--background);
   width: 100%;
-  max-width: 1014px;
-  margin: 0 auto;
 }
     
 .ngo-section h2 {
