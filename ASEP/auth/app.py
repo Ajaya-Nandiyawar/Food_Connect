@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 from flask_wtf.csrf import CSRFProtect
-from extensions import db, mail, NGO, Restaurant  # Import from extensions
+from extensions import db, mail, NGO, Restaurant, Volunteer  # Import from extensions
 from forms import ForgotPasswordForm, ResetPasswordForm, SignupForm, LoginForm
 import os
 import pyrebase
@@ -122,6 +122,7 @@ def login():
         password = form.password.data
         ngo = NGO.query.filter_by(email=email).first()
         restaurant = Restaurant.query.filter_by(email=email).first()
+        volunteer = Volunteer.query.filter_by(email=email).first()
         if ngo and ngo.check_password(password):
             session['name'] = ngo.name
             session['email'] = ngo.email
@@ -136,6 +137,13 @@ def login():
             if session.get('first_time'):
                 return redirect('/R-guide')
             return redirect('/restaurant_dashboard')
+        elif volunteer and volunteer.check_password(password):
+            session['name'] = volunteer.name
+            session['email'] = volunteer.email
+            session['organization'] = 'volunteer'
+            # if session.get('first_time'):
+            #     return redirect('/V-guide')
+            return redirect('/volunteer_dashboard')
         else:
             flash("Invalid email or password", "error")
     response = make_response(render_template('login.html', form=form))
@@ -163,6 +171,8 @@ def signup():
             new_user = NGO(name=name, email=email, password=password)
         elif organization == 'restaurant':
             new_user = Restaurant(name=name, email=email, password=password)
+        elif organization == 'volunteer':
+            new_user = Volunteer(name=name, email=email, password=password)
         else:
             flash('Invalid organization type', 'error')
             return redirect(url_for('signup'))
@@ -196,6 +206,15 @@ def restaurant_dashboard():
         return redirect('/login')  # Restrict to Restaurants only
     requests = RequestModel.query.order_by(RequestModel.created_at).all()
     return render_template('home.html', requests=requests)
+
+@app.route('/volunteer_dashboard')
+@no_cache
+def volunteer_dashboard():
+    if 'name' not in session or 'email' not in session or 'organization' not in session:
+        return redirect('/login')
+    if session['organization'] != 'volunteer':
+        return redirect('/login')
+    return render_template('Volunteer_dashboard.html', name=session['name'], organization=session['organization'])
 
 
 @app.route('/profile', methods=['GET'])
@@ -423,6 +442,11 @@ def reset_password(token):
         return redirect(url_for('login'))
 
     return render_template('reset_pass.html', form=form, token=token)
+
+
+@app.route('/events')
+def events():
+    return render_template('Events.html')
 
 
 # Run the app

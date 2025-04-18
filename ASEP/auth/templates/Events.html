@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NGO</title>
-    <link rel="stylesheet" href="Events.css">
-    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/Events.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
     <link rel="icon" href="img/logo.ico" type="logo" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -18,29 +18,29 @@
   <div class="container">
     <div class="sidebar" id="sidebar">
       <div class="logo">
-          <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare">
+          <img src="{{url_for('static', filename='img/logo.ico')}}" alt="FoodShare">
           <h1>Food<b style="background: linear-gradient(to right, #f57c00, #ffcc00); -webkit-background-clip: text; background-clip: text; color: transparent;">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <button class="toggle-btn" id="toggleBtn">X</button>
       </div>
       <div class="menu">
-      <a href={{url_for('dashboard')}} class="menu-item" >
+      <a href="{{url_for('volunteer_dashboard')}}" class="menu-item" >
           <div class="icon dashboard-icon" onclick="openSidebar()"></div>
           <span class="menu-text">Dashboard</span>
       </a>
       </div>
-      <a href={{url_for('notifications')}} class="menu-item">
+      <a href="#" class="menu-item">
           <div class="icon alert-icon" onclick="openSidebar()"></div>
           <span class="menu-text">Notifications</span>
       </a>
-      <a href={{url_for('Events')}} class="menu-item active">
+      <a href="{{url_for('events')}}" class="menu-item active">
           <div class="icon request-icon" onclick="openSidebar()"></div>
           <span class="menu-text">Events</span>
       </a>
-      <a href={{url_for('stat')}} class="menu-item">
+      <a href="#" class="menu-item">
           <div class="icon stats-icon" onclick="openSidebar()"></div>
           <span class="menu-text">Stats</span>
       </a>
-      <a href={{url_for('profile')}} class="menu-item">
+      <a href="#" class="menu-item">
           <div class="icon settings-icon" onclick="openSidebar()"></div>
           <span class="menu-text">Settings</span>
       </a>
@@ -158,6 +158,6 @@
         </div>
       </section>
   </div>
-      <script src="Events.js"></script>
+      <script src="{{ url_for('static', filename='js/Events.js') }}"></script>
 </body>
 </html>

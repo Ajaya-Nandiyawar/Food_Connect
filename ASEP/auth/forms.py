@@ -25,7 +25,7 @@ class SignupForm(FlaskForm):
     
     organization = SelectField(
         'Organization', 
-        choices=[('Select Organization', 'Select Organization'),('NGO', 'NGO'), ('Restaurant', 'Restaurant')], 
+        choices=[('Select Organization', 'Select Organization'),('NGO', 'NGO'), ('Restaurant', 'Restaurant'), ('Volunteer', 'Volunteer')], 
         validators=[DataRequired()]
     )
     
