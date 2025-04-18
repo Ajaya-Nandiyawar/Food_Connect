@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NGO Volunteer Certificate Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .vol-cert-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        @media (min-width: 1024px) {
+            .vol-cert-container {
+                flex-direction: row;
+                align-items: flex-start;
+                gap: 50px;
+            }
+        }
+        
+        /* Form Styles */
+        #vol-cert-form {
+            background-color: white;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        #vol-cert-form h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: #2196F3;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .vol-form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #444;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 14px;
+        }
+        
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+        }
+        
+        .vol-cert-btn {
+            margin-top: 25px;
+            text-align: center;
+        }
+        
+        button {
+            background-color: #2196F3;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #0d8aed;
+        }
+        
+        #vol-cert-download {
+            background-color: #4CAF50;
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+        }
+        
+        #vol-cert-download:hover {
+            background-color: #3d9c40;
+        }
+        
+        /* Certificate Styles */
+        #vol-cert-document {
+            background-color: white;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 20px solid #f8f8f8;
+            border-radius: 10px;
+        }
+        
+        .vol-cert-logo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        #vol-ngo-logo {
+            height: 90px;
+            width: auto;
+        }
+        
+        .vol-cert-details {
+            font-size: 12px;
+            color: #777;
+            text-align: right;
+        }
+        
+        .vol-cert-details div {
+            margin-bottom: 5px;
+        }
+        
+        .vol-cert-content {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .vol-cert-content h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: #444;
+            font-size: 20px;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+        }
+        
+        .vol-cert-content h1 {
+            font-family: 'Poppins', sans-serif;
+            color: #111;
+            font-size: 32px;
+            margin-bottom: 20px;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.2;
+        }
+        
+        .vol-cert-content h4 {
+            font-weight: normal;
+            color: #555;
+            font-size: 16px;
+        }
+        
+        .vol-cert-content b {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .vol-cert-recipient {
+            text-align: center;
+            margin-top: 60px;
+            position: relative;
+        }
+        
+        .vol-cert-recipient h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 42px;
+            margin-bottom: 30px;
+            color: #2196F3;
+        }
+        
+        .vol-cert-recipient h4 {
+            font-weight: normal;
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        
+        .vol-cert-recipient b {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .vol-cert-signatures {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 50px;
+        }
+        
+        .vol-signature-box {
+            text-align: center;
+            width: 40%;
+        }
+        
+        .vol-signature-line {
+            width: 100%;
+            height: 1px;
+            background-color: #222;
+            margin-bottom: 10px;
+        }
+        
+        .vol-signature-name {
+            font-weight: 600;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .vol-signature-title {
+            font-size: 14px;
+            color: #777;
+        }
+        
+        .vol-cert-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            opacity: 0.03;
+            font-size: 150px;
+            font-weight: bold;
+            white-space: nowrap;
+            color: #000;
+            pointer-events: none;
+        }
+        
+        .vol-cert-border {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            border: 1px solid #ddd;
+        }
+        
+        .vol-cert-border::before, .vol-cert-border::after {
+            content: '';
+            position: absolute;
+            width: calc(100% - 40px);
+            height: calc(100% - 40px);
+            top: 20px;
+            left: 20px;
+            border: 3px solid #f0f0f0;
+        }
+        
+        .vol-cert-border::after {
+            width: calc(100% - 60px);
+            height: calc(100% - 60px);
+            top: 30px;
+            left: 30px;
+            border: 1px solid #eaeaea;
+        }
+        
+        .vol-cert-stamp {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 100px;
+            height: 100px;
+            background-image: url("/api/placeholder/100/100");
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.7;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #vol-cert-document {
+                padding: 20px;
+                border-width: 10px;
+            }
+            
+            .vol-cert-content h1 {
+                font-size: 24px;
+            }
+            
+            .vol-cert-recipient h1 {
+                font-size: 28px;
+            }
+            
+            .vol-cert-signatures {
+                padding: 0 20px;
+            }
+            
+            .vol-cert-watermark {
+                font-size: 80px;
+            }
+            
+            body {
+                padding: 20px 10px;
+            }
+        }
+        
+        /* Mobile device alert */
+        #vol-mobile-alert {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffeb3b;
+            color: #333;
+            text-align: center;
+            padding: 10px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="vol-mobile-alert">This site works best on a desktop or laptop.</div>
+
+    <div class="vol-cert-container">
+        <form id="vol-cert-form">
+            <h2>Volunteer Certificate Generator</h2>
+            <div class="vol-form-group">
+                <label for="vol-fname">First Name:</label>
+                <input type="text" name="fname" id="vol-fname" required />
+            </div>
+            
+            <div class="vol-form-group">
+                <label for="vol-lname">Last Name:</label>
+                <input type="text" name="lname" id="vol-lname" required />
+            </div>
+            
+            <div class="vol-form-group">
+                <label for="vol-task">Volunteer Task:</label>
+                <input type="text" name="task" id="vol-task" required />
+            </div>
+            
+            <div class="vol-form-group">
+                <label for="vol-date">Date of Completion:</label>
+                <input type="date" name="date" id="vol-date" required />
+            </div>
+            
+            <div class="vol-form-group">
+                <label for="vol-hours">Hours Served:</label>
+                <input type="number" name="hours" id="vol-hours" min="1" required />
+            </div>
+            
+            <div class="vol-form-group">
+                <label for="vol-supervisor">Supervisor Name:</label>
+                <input type="text" name="supervisor" id="vol-supervisor" required />
+            </div>
+            
+            <div class="vol-form-group">
+                <label for="vol-role">Supervisor Title:</label>
+                <input type="text" name="role" id="vol-role" required value="Program Director" />
+            </div>
+            
+            <div class="vol-form-group">
+                <label for="vol-org">Organization Name:</label>
+                <input type="text" name="org" id="vol-org" required value="Community Helpers NGO" />
+            </div>
+            
+            <div class="vol-cert-btn">
+                <button id="vol-cert-generate" type="submit">Generate Certificate</button>
+            </div>
+        </form>
+
+        <div>
+            <div id="vol-cert-document">
+                <div class="vol-cert-border"></div>
+                <div class="vol-cert-watermark">CERTIFIED</div>
+                
+                <div class="vol-cert-logo">
+                    <img id="vol-ngo-logo" src="../static/img/logo_png.png" alt="NGO Logo" />
+                    <div class="vol-cert-details">
+                        <div class="vol-cert-no">Certificate No: VCR-<span id="vol-cert-no">2025042001</span></div>
+                        <div class="vol-cert-url">Verification URL: <span id="vol-cert-url">ngo.org/verify/</span></div>
+                        <div class="vol-cert-date">Issue Date: <span id="vol-issue-date">April 19, 2025</span></div>
+                    </div>
+                </div>
+                
+                <div class="vol-cert-content">
+                    <h3>CERTIFICATE OF VOLUNTEER SERVICE</h3>
+                    <h1 id="vol-service-name">Community Food Distribution Program</h1>
+                    <h4>Organization:   <b id="vol-org-name">Community Helpers NGO</b></h4>
+                </div>
+                
+                <div class="vol-cert-recipient">
+                    <h1 id="vol-volunteer-name">Sarah Johnson</h1>
+                    <h4>Completion Date:  <b id="vol-completion-date">April 15, 2025</b></h4>
+                    <h4>Hours Served:  <b id="vol-service-hours">8 hours</b></h4>
+                </div>
+                
+                <div class="vol-cert-signatures">
+                    <div class="vol-signature-box">
+                        <div class="vol-signature-line"></div>
+                        <div class="vol-signature-name" id="vol-supervisor-name">David Wilson</div>
+                        <div class="vol-signature-title" id="vol-supervisor-title">Program Director</div>
+                    </div>
+                    
+                    <div class="vol-signature-box">
+                        <div class="vol-signature-line"></div>
+                        <div class="vol-signature-name">Maria Garcia</div>
+                        <div class="vol-signature-title">Executive Director</div>
+                    </div>
+                </div>
+                
+                <div class="vol-cert-stamp"></div>
+            </div>
+            
+            <button id="vol-cert-download">Download Certificate</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        // Check if the site is opened on a mobile device
+        function isMobileDevice() {
+            return (
+                typeof window.orientation !== "undefined" ||
+                navigator.userAgent.indexOf("IEMobile") !== -1
+            );
+        }
+
+        // Show alert if the site is opened on a mobile device
+        if (isMobileDevice()) {
+            document.getElementById("vol-mobile-alert").style.display = "block";
+        }
+        
+        // Generate random certificate number
+        function generateCertificateNumber() {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const random = Math.floor(Math.random() * 9000) + 1000;
+            return `${year}${month}${day}${random}`;
+        }
+        
+        // Format date to readable format
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+        
+        // Get current date
+        function getCurrentDate() {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date().toLocaleDateString('en-US', options);
+        }
+        
+        // Generate certificate based on form input
+        document.getElementById("vol-cert-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const firstName = document.getElementById("vol-fname").value;
+            const lastName = document.getElementById("vol-lname").value;
+            const task = document.getElementById("vol-task").value;
+            const date = document.getElementById("vol-date").value;
+            const hours = document.getElementById("vol-hours").value;
+            const supervisor = document.getElementById("vol-supervisor").value;
+            const role = document.getElementById("vol-role").value;
+            const org = document.getElementById("vol-org").value;
+            
+            // Update certificate
+            document.getElementById("vol-volunteer-name").textContent = `${firstName} ${lastName}`;
+            document.getElementById("vol-service-name").textContent = task;
+            document.getElementById("vol-completion-date").textContent = formatDate(date);
+            document.getElementById("vol-service-hours").textContent = `${hours} hours`;
+            document.getElementById("vol-supervisor-name").textContent = supervisor;
+            document.getElementById("vol-supervisor-title").textContent = role;
+            document.getElementById("vol-org-name").textContent = org;
+            
+            // Set certificate details
+            const certNo = generateCertificateNumber();
+            document.getElementById("vol-cert-no").textContent = certNo;
+            document.getElementById("vol-cert-url").textContent = `ngo.org/verify/${certNo}`;
+            document.getElementById("vol-issue-date").textContent = getCurrentDate();
+            
+            // Scroll to certificate
+            document.getElementById("vol-cert-document").scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Download certificate as PDF
+        document.getElementById("vol-cert-download").addEventListener("click", function() {
+            const element = document.getElementById("vol-cert-document");
+            const options = {
+                margin: 0,
+                filename: 'volunteer_certificate.pdf',
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            };
+            
+            html2pdf().set(options).from(element).save();
+        });
+    </script>
+</body>
+</html>

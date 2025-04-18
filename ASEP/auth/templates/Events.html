@@ -18,27 +18,31 @@
   <div class="container">
     <div class="sidebar" id="sidebar">
       <div class="logo">
-          <img src="{{url_for('static', filename='img/logo.ico')}}" alt="FoodShare">
-          <h1>Food<b style="background: linear-gradient(to right, #f57c00, #ffcc00); -webkit-background-clip: text; background-clip: text; color: transparent;">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare">
+          <h1>Food<b style="background: linear-gradient(to right, #f57c00, #ffcc00); -webkit-background-clip: text; background-clip: text; color: transparent;">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <button class="toggle-btn" id="toggleBtn">X</button>
       </div>
       <div class="menu">
-      <a href="{{url_for('volunteer_dashboard')}}" class="menu-item" >
+      <a href="{{url_for('volunteer_dashboard')}}" class="menu-item " >
           <div class="icon dashboard-icon" onclick="openSidebar()"></div>
           <span class="menu-text">Dashboard</span>
       </a>
       </div>
+      <a href="{{url_for('achievements')}}" class="menu-item" >
+        <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+        <span class="menu-text">Achievements</span>
+      </a>
+      <a href="{{url_for('events')}}" class="menu-item active">
+        <div class="icon request-icon" onclick="openSidebar()"></div>
+        <span class="menu-text">Events</span>
+      </a>
       <a href="#" class="menu-item">
           <div class="icon alert-icon" onclick="openSidebar()"></div>
           <span class="menu-text">Notifications</span>
       </a>
-      <a href="{{url_for('events')}}" class="menu-item active">
-          <div class="icon request-icon" onclick="openSidebar()"></div>
-          <span class="menu-text">Events</span>
-      </a>
       <a href="#" class="menu-item">
           <div class="icon stats-icon" onclick="openSidebar()"></div>
-          <span class="menu-text">Stats</span>
+          <span class="menu-text">Donate</span>
       </a>
       <a href="#" class="menu-item">
           <div class="icon settings-icon" onclick="openSidebar()"></div>

@@ -268,6 +268,10 @@ def restaurant_guide():
 def restaurant_alerts():
     return render_template('alert.html')
 
+@app.route('/achievements')
+def achievements():
+    return render_template('achievements.html')
+
 @app.route('/restaurant_requests')
 def restaurant_requests():
     requests = RequestModel.query.order_by(RequestModel.created_at).all()
