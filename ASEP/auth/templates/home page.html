@@ -40,18 +40,21 @@
       <div class="slide1 active">
         <img
           src="{{url_for('static', filename='img/donation.png')}}"
-          alt="Sunrise over farm field"
-          height="610px"/>
+          alt="..."
+          height="610px
+          loading="lazy"/>
       </div>
       <div class="slide1">
         <img
           src="{{url_for('static', filename='img/donate2.png')}}"
-          alt="Wheat field"/>
+          alt="..."
+          loading="lazy"/>
       </div>
       <div class="slide1">
         <img
           src="{{url_for('static', filename='img/3.png')}}"
-          alt="Green farm"/>
+          alt="..."
+          loading="lazy"/>
       </div>
       <div class="slider-nav"></div>
     </section>
@@ -68,7 +71,7 @@
     <div class="photo">
       <div class="container">
         <div class="image-container">
-            <img src="{{url_for('static', filename='img/image1.jpg')}}" alt="Food Donation" class="bg-image">
+            <img src="{{url_for('static', filename='img/image1.jpg')}}" loading="lazy alt="Food Donation" class="bg-image">
         </div>
         
         <div class="content1">
@@ -101,9 +104,9 @@
         </p>
         <br/>
       <div class="wrapper">
-        <div class="box"><img src="{{url_for('static',filename='img/p1.jpeg')}}" alt="" /></div>
-        <div class="box"><img src="{{url_for('static',filename='img/p4.jpeg')}}" alt="" /></div>
-        <div class="box"><img src="{{url_for('static',filename='img/p3.jpeg')}}" alt="" /></div>
+        <div class="box"><img src="{{url_for('static',filename='img/p1.jpeg')}}" loading="lazy" alt="..." /></div>
+        <div class="box"><img src="{{url_for('static',filename='img/p4.jpeg')}}" loading="lazy" alt="..." /></div>
+        <div class="box"><img src="{{url_for('static',filename='img/p3.jpeg')}}" loading="lazy" alt="..." /></div>
       </div>
       <!-- <p style="font-size: 19px">
         The basic concept of this project Food Waste Management is to collect
@@ -155,8 +158,9 @@
         "Your donate will be immediately collected and sent to needy people "
       </p>
       <img
-        src={{url_for('static',filename='img/delivery.gif')}}
-        alt=""
+        src="{{url_for('static',filename='img/delivery.gif')}}"
+        loading="lazy"
+        alt="..."
         style="margin-left: auto; margin-right: auto"
       />
     </div>
