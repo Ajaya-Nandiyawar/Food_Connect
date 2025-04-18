@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics Overview</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.ico') }}" type="logo" />
+    <link rel="stylesheet" href={{url_for('static', filename='css/sidebar.css')}}>
+    <link rel="stylesheet" href={{url_for('static', filename='css/approval.css')}}>
+    
+</head>
+<body>
+        <div class="sidebar" id="sidebar">
+          <div class="logo">
+              <img src={{url_for('static',filename='img/logo.ico')}} alt="FoodShare">
+              <h1>Food<b style="background: linear-gradient(to right, #f57c00, #ffcc00); -webkit-background-clip: text; background-clip: text; color: transparent;">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <button class="toggle-btn" id="toggleBtn">X</button>
+          </div>
+          <div>
+          <a href={{url_for('dashboard')}} class="menu-item ">
+              <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+              <span class="menu-text">Dashboard</span>
+          </a>
+          </div>
+          <a href={{url_for('notifications')}} class="menu-item">
+              <div class="icon alert-icon" onclick="openSidebar()"></div>
+              <span class="menu-text">Notifications</span>
+          </a>
+          <a href={{url_for('ngo.handle_request')}} class="menu-item">
+              <div class="icon request-icon" onclick="openSidebar()"></div>
+              <span class="menu-text">Requests</span>
+          </a>
+          <a href={{url_for('stat')}} class="menu-item">
+              <div class="icon stats-icon" onclick="openSidebar()"></div>
+              <span class="menu-text">Stats</span>
+          </a>
+          <a href={{url_for('approval')}} class="menu-item active">
+            <div class="icon settings-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Approval</span>
+        </a>
+          <a href={{url_for('profile')}} class="menu-item">
+              <div class="icon settings-icon" onclick="openSidebar()"></div>
+              <span class="menu-text">Settings</span>
+          </a>
+        </div>
+  
+        <div class="main-content">
+            <div class="container">
+                <h2>Certificate Approval</h2>
+                
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search by volunteer name or task...">
+                </div>
+                
+                <table id="certificateTable">
+                    <thead>
+                        <tr>
+                            <th>Request ID</th>
+                            <th>Volunteer Name</th>
+                            <th>Task Completed</th>
+                            <th>Completion Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Sarah Johnson</td>
+                            <td>Food Distribution</td>
+                            <td>2025-04-10</td>
+                            <td><span class="status pending">Pending</span></td>
+                            <td>
+                                <button class="btn btn-approve" onclick="openModal(1)">Approve</button>
+                                <button class="btn btn-decline" onclick="openModal(1, false)">Decline</button>
+                                <button class="btn btn-view" onclick="viewCertificate(1)">View Details</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Michael Rodriguez</td>
+                            <td>Homeless Shelter Assistance</td>
+                            <td>2025-04-12</td>
+                            <td><span class="status pending">Pending</span></td>
+                            <td>
+                                <button class="btn btn-approve" onclick="openModal(2)">Approve</button>
+                                <button class="btn btn-decline" onclick="openModal(2, false)">Decline</button>
+                                <button class="btn btn-view" onclick="viewCertificate(2)">View Details</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Emily Chen</td>
+                            <td>Beach Cleanup</td>
+                            <td>2025-04-14</td>
+                            <td><span class="status pending">Pending</span></td>
+                            <td>
+                                <button class="btn btn-approve" onclick="openModal(3)">Approve</button>
+                                <button class="btn btn-decline" onclick="openModal(3, false)">Decline</button>
+                                <button class="btn btn-view" onclick="viewCertificate(3)">View Details</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>David Williams</td>
+                            <td>Tree Planting</td>
+                            <td>2025-04-15</td>
+                            <td><span class="status pending">Pending</span></td>
+                            <td>
+                                <button class="btn btn-approve" onclick="openModal(4)">Approve</button>
+                                <button class="btn btn-decline" onclick="openModal(4, false)">Decline</button>
+                                <button class="btn btn-view" onclick="viewCertificate(4)">View Details</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Empty state message (hidden by default) -->
+                <div id="emptyMessage" class="empty-message" style="display:none;">
+                    No certificate requests match your search criteria.
+                </div>
+            </div>
+            
+            <!-- Approval/Decline Modal -->
+            <div id="certificateModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modalTitle">Approve Certificate</h3>
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="certificate-details">
+                        <p><strong>Volunteer:</strong> <span id="modalVolunteer"></span></p>
+                        <p><strong>Task:</strong> <span id="modalTask"></span></p>
+                        <p><strong>Completion Date:</strong> <span id="modalDate"></span></p>
+                        <p><strong>Hours Served:</strong> <span id="modalHours"></span></p>
+                        <p><strong>Supervisor:</strong> <span id="modalSupervisor"></span></p>
+                    </div>
+                    <div id="modalMessage">
+                        <p>Are you sure you want to approve this certificate request?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" style="background-color: #9e9e9e;" onclick="closeModal()">Cancel</button>
+                        <button id="confirmButton" class="btn btn-approve" onclick="processCertificateRequest()">Confirm</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Details View Modal -->
+            <div id="detailsModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Certificate Request Details</h3>
+                        <span class="close" onclick="closeDetailsModal()">&times;</span>
+                    </div>
+                    <div class="certificate-details">
+                        <p><strong>Request ID:</strong> <span id="detailsId"></span></p>
+                        <p><strong>Volunteer:</strong> <span id="detailsVolunteer"></span></p>
+                        <p><strong>Task:</strong> <span id="detailsTask"></span></p>
+                        <p><strong>Completion Date:</strong> <span id="detailsDate"></span></p>
+                        <p><strong>Hours Served:</strong> <span id="detailsHours"></span></p>
+                        <p><strong>Supervisor:</strong> <span id="detailsSupervisor"></span></p>
+                        <p><strong>Comments:</strong> <span id="detailsComments"></span></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" style="background-color: #9e9e9e;" onclick="closeDetailsModal()">Close</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+          </div>
+       
+    
+    <button class="scroll-to-top-button">
+        <svg viewBox="0 0 384 512" class="svgIcon">
+          <path
+            d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"
+          ></path>
+        </svg>
+      </button>
+    <script src={{url_for('static', filename='js/sidebar.js')}}></script>
+    <script src={{url_for('static', filename='js/approval.js')}}></script>
+</body>
+</html>

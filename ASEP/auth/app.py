@@ -250,6 +250,10 @@ def notifications():
 def stat():
     return render_template('stats.html')
 
+@app.route('/approval')
+def approval():
+    return render_template('approval.html')
+
 @app.route('/N-guide')
 def ngo_guide():
     session.pop('first_time', None)
