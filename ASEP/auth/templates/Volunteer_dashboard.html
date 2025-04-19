@@ -19,33 +19,29 @@
         <button class="toggle-btn" id="toggleBtn">X</button>
     </div>
     <div class="menu">
-    <a href="{{url_for('volunteer_dashboard')}}" class="menu-item active" >
+    <a href="{{url_for('volunteer_dashboard')}}" class="menu-item active">
         <div class="icon dashboard-icon" onclick="openSidebar()"></div>
         <span class="menu-text">Dashboard</span>
     </a>
     </div>
-    <a href="{{url_for('achievements')}}" class="menu-item" >
-      <div class="icon dashboard-icon" onclick="openSidebar()"></div>
-      <span class="menu-text">Achievements</span>
-    </a>
-    <a href="{{url_for('events')}}" class="menu-item">
-      <div class="icon request-icon" onclick="openSidebar()"></div>
-      <span class="menu-text">Events</span>
-    </a>
     <a href="#" class="menu-item">
         <div class="icon alert-icon" onclick="openSidebar()"></div>
         <span class="menu-text">Notifications</span>
     </a>
-    <a href="#" class="menu-item">
-        <div class="icon stats-icon" onclick="openSidebar()"></div>
-        <span class="menu-text">Donate</span>
+    <a href="{{url_for('achievements')}}" class="menu-item">
+      <div class="icon achievement-icon" onclick="openSidebar()"></div>
+      <span class="menu-text">Achievements</span>
     </a>
-    <a href="#" class="menu-item">
+    <a href="{{url_for('events')}}" class="menu-item">
+      <div class="icon event-icon" onclick="openSidebar()"></div>
+      <span class="menu-text">Events</span>
+    </a>
+    <a href="{{url_for('profile')}}" class="menu-item active">
         <div class="icon settings-icon" onclick="openSidebar()"></div>
         <span class="menu-text">Settings</span>
     </a>
   </div>
-      
+    
   <div class="main">
     
     <h2 id="userName">Welcome back, {{name}}!</h2>
