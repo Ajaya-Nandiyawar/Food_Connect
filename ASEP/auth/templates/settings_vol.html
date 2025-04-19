@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volunteer Profile - Food Connect</title>
+  <link rel="stylesheet" href="sidebar.css">
+  <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+  <div class="app-container">
+    <div class="main-wrapper">
+      <!-- Sidebar -->
+      <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare">
+            <h1>Food<b style="background: linear-gradient(to right, #f57c00, #ffcc00); -webkit-background-clip: text; background-clip: text; color: transparent;">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="toggle-btn" id="toggleBtn">X</button>
+        </div>
+        <div class="menu">
+        <a href="{{url_for('volunteer_dashboard')}}" class="menu-item">
+            <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Dashboard</span>
+        </a>
+        </div>
+        <a href="#" class="menu-item">
+            <div class="icon alert-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Notifications</span>
+        </a>
+        <a href="{{url_for('achievements')}}" class="menu-item">
+          <div class="icon achievement-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Achievements</span>
+        </a>
+        <a href="{{url_for('events')}}" class="menu-item">
+          <div class="icon event-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Events</span>
+        </a>
+        <a href="{{url_for('profile')}}" class="menu-item active">
+            <div class="icon settings-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Settings</span>
+        </a>
+      </div>
+    
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="profile-container">
+          <!-- Profile Section -->
+          <section class="profile-section">
+            <div class="profile-header">
+              <img src="user.png" alt="User Profile Picture" class="profile-pic">
+              <div class="profile-info">
+                <h2>John Doe</h2>
+                <p>Active Volunteer | Joined 2024</p>
+                <p id="user-location">Fetching location...</p>
+              </div>
+              <button class="logout-btn">Logout</button>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+              <div class="stat-card">
+                <h3>120</h3>
+                <p>Total Hours</p>
+              </div>
+              <div class="stat-card">
+                <h3>15</h3>
+                <p>Events Volunteered</p>
+              </div>
+              <div class="stat-card">
+                <h3>350</h3> 
+                <p>People Impacted</p>
+              </div>
+              <div class="stat-card">
+                <h3>4</h3>
+                <p>Badges Earned</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- About Section -->
+          <section class="about-section">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+              <p id="about-text" contenteditable="false">Click "Edit" to add something about yourself!</p>
+              <button id="edit-about-btn" class="edit-btn">Edit</button>
+              <button id="save-about-btn" class="save-btn" style="display: none;">Save</button>
+            </div>
+          </section>
+
+          <!-- Badges Section -->
+          <section class="badges-section">
+            <h2 class="section-title">Your Badges</h2>
+            <div class="badges-container">
+              <div class="badges-header">
+                <span>Achievement Badges</span>
+                <span>3 of 12</span>
+              </div>
+              <div class="badges-grid">
+                <div class="badge-card">
+                  <img src="badge1.png" alt="First Donation">
+                  <h3>First Donation</h3>
+                </div>
+                <div class="badge-card">
+                  <img src="Safety.png" alt="Food Safety">
+                  <h3>Food Safety</h3>
+                </div>
+                <div class="badge-card">
+                  <img src="https://via.placeholder.com/60" alt="Quick Response">
+                  <h3>Quick Response</h3>
+                </div>
+                <div class="badge-card disabled">
+                  <img src="https://via.placeholder.com/60" alt="Team Leader">
+                  <h3>Team Leader</h3>
+                </div>
+                <div class="badge-card disabled">
+                  <img src="https://via.placeholder.com/60" alt="Inventory Pro">
+                  <h3>Inventory Pro</h3>
+                </div>
+                <div class="badge-card disabled">
+                  <img src="https://via.placeholder.com/60" alt="Community Builder">
+                  <h3>Community Builder</h3>
+                </div>
+              </div>
+              <div class="rank-badges">
+                <h3>Rank Badges</h3>
+                <div class="rank-grid">
+                  <div class="rank-card active">
+                    <img src="bronze.png" alt="Bronze">
+                    <h3>Bronze</h3>
+                  </div>
+                  <div class="rank-card">
+                    <img src="Silver.png" alt="Silver">
+                    <h3>Silver</h3>
+                  </div>
+                  <div class="rank-card">
+                    <img src="Gold.png" alt="Gold">
+                    <h3>Gold</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="progress-section">
+                <h3>Achievement Progress</h3>
+                <div class="progress-container">
+                  <span>Hours Contributed</span>
+                  <div class="progress-bar">
+                    <div class="progress" style="width: 48%;"></div>
+                  </div>
+                  <span>48/100</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="badge-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <img id="badge-image" src="" alt="Badge Image">
+      <p id="badge-message"></p>
+    </div>
+  </div>
+  <script src="profile.js"></script>
+  <script src="sidebar.js"></script>
+</body>
+</html>

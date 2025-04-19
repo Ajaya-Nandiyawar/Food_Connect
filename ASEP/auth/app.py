@@ -270,7 +270,7 @@ def restaurant_alerts():
 
 @app.route('/achievements')
 def achievements():
-    return render_template('achievements.html')
+    return render_template('achievements.html', name=session.get("name", "User"))
 
 @app.route('/restaurant_requests')
 def restaurant_requests():
