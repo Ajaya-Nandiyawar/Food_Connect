@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Volunteer Profile - Food Connect</title>
-  <link rel="stylesheet" href="sidebar.css">
-  <link rel="stylesheet" href="profile.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/settings_vol.css') }}">
 </head>
 <body>
   <div class="app-container">
@@ -35,7 +35,7 @@
           <div class="icon event-icon" onclick="openSidebar()"></div>
           <span class="menu-text">Events</span>
         </a>
-        <a href="{{url_for('profile')}}" class="menu-item active">
+        <a href="{{url_for('volunteer_settings')}}" class="menu-item active">
             <div class="icon settings-icon" onclick="openSidebar()"></div>
             <span class="menu-text">Settings</span>
         </a>
@@ -47,13 +47,17 @@
           <!-- Profile Section -->
           <section class="profile-section">
             <div class="profile-header">
-              <img src="user.png" alt="User Profile Picture" class="profile-pic">
+              <img src="{{url_for('static', filename='img/user.png')}}" alt="User Profile Picture" class="profile-pic">
               <div class="profile-info">
-                <h2>John Doe</h2>
-                <p>Active Volunteer | Joined 2024</p>
+                <h2 id="userName">{{name}}</h2>
+                <p>Active Volunteer | Joined 2025</p>
                 <p id="user-location">Fetching location...</p>
               </div>
-              <button class="logout-btn">Logout</button>
+              <a href="/logout">
+                <div class="parent">
+                    <button class="btnlogout">Logout</button>
+                </div>
+              </a>
             </div>
 
             <!-- Stats Cards -->
@@ -97,43 +101,43 @@
               </div>
               <div class="badges-grid">
                 <div class="badge-card">
-                  <img src="badge1.png" alt="First Donation">
+                  <img src="{{url_for('static', filename='img/badge1.png')}}" alt="First Donation">
                   <h3>First Donation</h3>
                 </div>
                 <div class="badge-card">
-                  <img src="Safety.png" alt="Food Safety">
+                  <img src="{{url_for('static', filename='img/Safety.png')}}" alt="Food Safety">
                   <h3>Food Safety</h3>
                 </div>
                 <div class="badge-card">
                   <img src="https://via.placeholder.com/60" alt="Quick Response">
                   <h3>Quick Response</h3>
                 </div>
-                <div class="badge-card disabled">
-                  <img src="https://via.placeholder.com/60" alt="Team Leader">
+                <div class="badge-card disabled" data-requirement="Complete 5 team events to unlock this badge.">
+                  <div class="placeholder"></div>
                   <h3>Team Leader</h3>
                 </div>
-                <div class="badge-card disabled">
-                  <img src="https://via.placeholder.com/60" alt="Inventory Pro">
+                <div class="badge-card disabled" data-requirement="Manage inventory for 3 events to unlock this badge.">
+                  <div class="placeholder"></div>
                   <h3>Inventory Pro</h3>
                 </div>
-                <div class="badge-card disabled">
-                  <img src="https://via.placeholder.com/60" alt="Community Builder">
+                <div class="badge-card disabled" data-requirement="Organize a community event to unlock this badge.">
+                  <div class="placeholder"></div>
                   <h3>Community Builder</h3>
                 </div>
               </div>
               <div class="rank-badges">
                 <h3>Rank Badges</h3>
                 <div class="rank-grid">
-                  <div class="rank-card active">
-                    <img src="bronze.png" alt="Bronze">
+                  <div class="rank-card">
+                    <img src="{{url_for('static', filename='img/Bronze.png')}}" alt="Bronze">
                     <h3>Bronze</h3>
                   </div>
                   <div class="rank-card">
-                    <img src="Silver.png" alt="Silver">
+                    <img src="{{url_for('static', filename='img/Silver.png')}}" alt="Silver">
                     <h3>Silver</h3>
                   </div>
                   <div class="rank-card">
-                    <img src="Gold.png" alt="Gold">
+                    <img src="{{url_for('static', filename='img/Gold.png')}}" alt="Gold">
                     <h3>Gold</h3>
                   </div>
                 </div>
@@ -163,7 +167,7 @@
       <p id="badge-message"></p>
     </div>
   </div>
-  <script src="profile.js"></script>
-  <script src="sidebar.js"></script>
+  <script src="{{ url_for('static', filename='js/settings_vol.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
 </body>
 </html>

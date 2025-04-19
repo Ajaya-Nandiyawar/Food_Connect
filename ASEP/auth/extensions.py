@@ -11,10 +11,10 @@ class NGO(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    address = db.Column(db.String(255))
-    contact_number = db.Column(db.String(20))
-    registration_number = db.Column(db.String(50))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # address = db.Column(db.String(255))
+    # contact_number = db.Column(db.String(20))
+    # registration_number = db.Column(db.String(50))
+    # created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def check_password(self, password):
         return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
@@ -24,9 +24,9 @@ class Restaurant(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    address = db.Column(db.String(255))
-    contact_number = db.Column(db.String(20))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # address = db.Column(db.String(255))
+    # contact_number = db.Column(db.String(20))
+    # created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def check_password(self, password):
         return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
@@ -36,7 +36,7 @@ class Volunteer(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def check_password(self, password):
         return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))

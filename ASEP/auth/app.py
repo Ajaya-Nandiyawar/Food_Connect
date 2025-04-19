@@ -234,9 +234,15 @@ def profile():
             return redirect("/login")
     elif organization == 'restaurant':
         return redirect(url_for('restaurant_settings'))  # Redirect to Restaurant-specific route
+    elif organization == 'volunteer':
+        user = Volunteer.query.filter_by(email=email).first()
+        if user:
+            return render_template("settings_vol.html", name=user.name, email=user.email)
+        else:
+            return redirect("/login")
 
     # Fallback for Firebase or invalid cases
-    if "name" in session and organization == 'ngo':
+    if "name" in session:
         return render_template("settings.html", name=session["name"], email=session["email"])
 
     return redirect("/login")
@@ -323,6 +329,8 @@ def restaurant_settings():
         return render_template("settings_rest.html", name=session["name"], email=session["email"])
 
     return redirect("/login")
+
+
 
 firebase_config = {
     "apiKey": os.getenv('FIREBASE_API_KEY'),
@@ -456,6 +464,23 @@ def reset_password(token):
 def events():
     return render_template('Events.html')
 
+@app.route('/volunteer_settings', methods=['GET'])
+@no_cache
+def volunteer_settings():
+
+    if "email" not in session or "organization" not in session or session["organization"].lower() != 'volunteer':
+        return redirect("/login")
+
+    email = session["email"]
+    user = Volunteer.query.filter_by(email=email).first()
+    if user:
+        return render_template("settings_vol.html", name=user.name, email=user.email)
+
+    # Fallback for Firebase
+    if "name" in session and session["organization"].lower() == 'volunteer':
+        return render_template("settings_vol.html", name=session["name"], email=session["email"])
+    
+    return redirect("/login")
 
 # Run the app
 if __name__ == '__main__':

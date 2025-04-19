@@ -168,4 +168,19 @@ document.addEventListener("DOMContentLoaded", () => {
       mainWrapper.classList.remove("modal-active");
     }
   });
+
+  document.querySelectorAll('.badge-card.disabled').forEach(card => {
+    card.addEventListener('click', () => {
+      const requirement = card.getAttribute('data-requirement');
+      const modal = document.getElementById('badge-modal');
+      const badgeMessage = document.getElementById('badge-message');
+
+      badgeMessage.textContent = requirement;
+      modal.style.display = 'block';
+    });
+  });
+
+  document.querySelector('.close-btn').addEventListener('click', () => {
+    document.getElementById('badge-modal').style.display = 'none';
+  });
 });
