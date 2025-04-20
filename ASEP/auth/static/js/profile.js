@@ -1,3 +1,73 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab Navigation
+    const tabs = document.querySelectorAll('.tab');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            this.classList.add('active');
+            
+            // Hide all tab panes
+            tabPanes.forEach(pane => pane.classList.remove('active'));
+            
+            // Show the corresponding tab pane
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+    
+    // Filter Buttons
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const tableRows = document.querySelectorAll('tbody tr');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all filter buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const filter = this.getAttribute('data-filter');
+            
+            // Show/hide table rows based on filter
+            tableRows.forEach(row => {
+                const status = row.querySelector('.status');
+                
+                if (filter === 'all') {
+                    row.style.display = '';
+                } else if (filter === 'pending' && status.classList.contains('pending')) {
+                    row.style.display = '';
+                } else if (filter === 'approved' && status.classList.contains('approved')) {
+                    row.style.display = '';
+                } else if (filter === 'declined' && status.classList.contains('declined')) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+    
+    // Set default active tab
+    document.querySelector('.tab[data-tab="certificates"]').classList.add('active');
+    document.getElementById('certificates').classList.add('active');
+    
+    // Sidebar menu item click
+    const menuItems = document.querySelectorAll('.menu-item');
+    
+    menuItems.forEach(item => {
+        item.addEventListener('click', function() {
+            menuItems.forEach(mi => mi.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+});
+
      // Sample data for certificates
      const certificatesData = [
         {

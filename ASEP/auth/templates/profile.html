@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodConnect - Volunteer Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare">
+                <h1>Food<b style="background: linear-gradient(to right, #f57c00, #ffcc00); -webkit-background-clip: text; background-clip: text; color: transparent;">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="toggle-btn" id="toggleBtn">X</button>
+            </div>
+            <div class="menu">
+            <a href="{{url_for('volunteer_dashboard')}}" class="menu-item">
+                <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Dashboard</span>
+            </a>
+            <a href="{{url_for('volunteer_settings')}}" class="menu-item">
+                <div class="icon settings-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Settings</span>
+            </a>
+            <a href="{{url_for('profile')}}" class="menu-item active">
+                <div class="icon settings-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Profile</span>
+            </a>
+          </div>
+        </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="profile-info">
+                    <div class="profile-image">
+                        <img src="https://via.placeholder.com/80" alt="Profile Picture">
+                    </div>
+                    <div class="profile-details">
+                        <h1>Volunteer</h1>
+                        <p>Active Volunteer | Joined 2023</p>
+                        <p>Location</p>
+                    </div>
+                </div>
+                <div class="settings-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab" data-tab="certificates">Certificates</div>
+                <div class="tab" data-tab="stats">Stats</div>
+                <div class="tab" data-tab="badges">Badges</div>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Certificates Tab -->
+                <div class="tab-pane active" id="certificates">
+                        <div class="dashboard-cards">
+                            <div class="card">
+                                <div class="card-number" id="totalCertificates">5</div>
+                                <div class="card-label">Total Certificates</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-number" id="pendingCertificates">2</div>
+                                <div class="card-label">Pending Approval</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-number" id="approvedCertificates">3</div>
+                                <div class="card-label">Approved Certificates</div>
+                            </div>
+                        </div>
+
+                        <h2 class="section-title">My Certificates</h2>
+        
+                        <div class="filters">
+                            <input type="text" id="searchInput" placeholder="Search by task name...">
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" data-filter="all">All</button>
+                                <button class="filter-btn" data-filter="pending">Pending</button>
+                                <button class="filter-btn" data-filter="approved">Approved</button>
+                                <button class="filter-btn" data-filter="declined">Declined</button>
+                            </div>
+                        </div>
+                        
+                        <div class="certificates-container">
+                            <table id="certificatesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Certificate ID</th>
+                                        <th>Task Name</th>
+                                        <th>Completion Date</th>
+                                        <th>Hours</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr data-status="approved">
+                                        <td>CERT-001</td>
+                                        <td>Community Garden Volunteer</td>
+                                        <td>2025-03-10</td>
+                                        <td>8 hours</td>
+                                        <td><span class="status approved">Approved</span></td>
+                                        <td>
+                                            <button class="btn btn-download" onclick="downloadCertificate(1)">Download</button>
+                                            <button class="btn btn-view" onclick="viewCertificate(1)">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr data-status="approved">
+                                        <td>CERT-002</td>
+                                        <td>Food Bank Assistant</td>
+                                        <td>2025-03-22</td>
+                                        <td>6 hours</td>
+                                        <td><span class="status approved">Approved</span></td>
+                                        <td>
+                                            <button class="btn btn-download" onclick="downloadCertificate(2)">Download</button>
+                                            <button class="btn btn-view" onclick="viewCertificate(2)">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr data-status="pending">
+                                        <td>CERT-003</td>
+                                        <td>City Park Cleanup</td>
+                                        <td>2025-04-05</td>
+                                        <td>4 hours</td>
+                                        <td><span class="status pending">Pending</span></td>
+                                        <td>
+                                            <button class="btn btn-download" disabled>Download</button>
+                                            <button class="btn btn-view" onclick="viewCertificate(3)">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr data-status="declined">
+                                        <td>CERT-004</td>
+                                        <td>Senior Center Helper</td>
+                                        <td>2025-04-08</td>
+                                        <td>3 hours</td>
+                                        <td><span class="status declined">Declined</span></td>
+                                        <td>
+                                            <button class="btn btn-download" disabled>Download</button>
+                                            <button class="btn btn-view" onclick="viewCertificate(4)">View Details</button>
+                                        </td>
+                                    </tr>
+                                    <tr data-status="approved">
+                                        <td>CERT-005</td>
+                                        <td>Homeless Shelter Volunteer</td>
+                                        <td>2025-04-12</td>
+                                        <td>5 hours</td>
+                                        <td><span class="status approved">Approved</span></td>
+                                        <td>
+                                            <button class="btn btn-download" onclick="downloadCertificate(5)">Download</button>
+                                            <button class="btn btn-view" onclick="viewCertificate(5)">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr data-status="pending">
+                                        <td>CERT-006</td>
+                                        <td>Animal Shelter Assistant</td>
+                                        <td>2025-04-17</td>
+                                        <td>7 hours</td>
+                                        <td><span class="status pending">Pending</span></td>
+                                        <td>
+                                            <button class="btn btn-download" disabled>Download</button>
+                                            <button class="btn btn-view" onclick="viewCertificate(6)">View</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <div id="emptyCertificates" class="empty-certificates" style="display: none;">
+                                <p>No certificates match your search criteria.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Certificate View Modal -->
+                    <div id="certificateModal" class="modal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>Certificate Details</h3>
+                                <span class="close">&times;</span>
+                            </div>
+                            
+                            <div class="certificate-details">
+                                <p><strong>Certificate ID:</strong> <span id="certId"></span></p>
+                                <p><strong>Task Name:</strong> <span id="certTask"></span></p>
+                                <p><strong>Completion Date:</strong> <span id="certDate"></span></p>
+                                <p><strong>Hours:</strong> <span id="certHours"></span></p>
+                                <p><strong>Status:</strong> <span id="certStatus"></span></p>
+                                <p><strong>Supervisor:</strong> <span id="certSupervisor"></span></p>
+                                <div id="declineReason" style="display: none;">
+                                    <p><strong>Decline Reason:</strong> <span id="certDeclineReason"></span></p>
+                                </div>
+                            </div>
+                            
+                            <div id="certificatePreview" style="display: none;">
+                                <h4>Certificate Preview</h4>
+                                <div class="certificate-preview">
+                                    <img src="/api/placeholder/400/320" alt="Certificate Logo" class="watermark">
+                                    <div class="certificate-title">Certificate of Volunteer Service</div>
+                                    <div class="certificate-content">
+                                        <p>This certifies that</p>
+                                        <p><strong>John Smith</strong></p>
+                                        <p>has successfully completed <span id="previewHours"></span> hours of volunteer service for</p>
+                                        <p><strong><span id="previewTask"></span></strong></p>
+                                        <p>on <span id="previewDate"></span></p>
+                                    </div>
+                                    <div class="certificate-signature">
+                                        <div class="line"></div>
+                                        <p>Program Director</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="modal-footer">
+                                <button class="btn" style="background-color: #9e9e9e;" onclick="closeModal()">Close</button>
+                                <button id="modalDownloadBtn" class="btn btn-download" onclick="downloadFromModal()">Download Certificate</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notification -->
+                    <div id="notification" class="notification">
+                        Certificate download started!
+                    </div>
+                       
+                    
+                    
+                    <button class="scroll-to-top-button">
+                        <svg viewBox="0 0 384 512" class="svgIcon">
+                          <path
+                            d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"
+                          ></path>
+                        </svg>
+                      </button>
+                
+                <!-- Stats Tab -->
+                <div class="tab-pane" id="stats">
+                    <div class="stats-content">
+                        <h3>Volunteer Statistics</h3>
+                        <p>Your statistics will appear here.</p>
+                    </div>
+                </div>
+
+                <!-- Badges Tab -->
+                <div class="tab-pane" id="badges">
+                    <div class="badges-content">
+                        <h3>Your Badges</h3>
+                        <p>Your earned badges will appear here.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+  
+</body>
+</html>
