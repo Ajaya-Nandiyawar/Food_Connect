@@ -59,8 +59,8 @@
 .btnlogout {
   transition: all 0.3s ease-in-out;
   font-family: "Dosis", sans-serif;
-  grid-column-start: 6;
-  margin-left: 1100px;
+  position: absolute;
+  right: 0;
 }
 
 .btnlogout {

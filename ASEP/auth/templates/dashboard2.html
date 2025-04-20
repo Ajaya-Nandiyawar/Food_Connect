@@ -62,6 +62,8 @@
       <!-- Main Content -->
       <main class="main-content">
         <!-- Stats Cards -->
+        <div class="icon notification-icon" style="position: absolute; right: 4%;"></div><br>
+
 
         <div class="stats-grid">
           <div class="stat1">
@@ -263,6 +265,19 @@
       </div>
       </main>
     </div>
+    <div class="notification-popup" id="notificationPopup">
+      <div class="popup-header">
+        <h4>Notifications</h4>
+        <span class="close-btn" onclick="togglePopup()">×</span>
+      </div>
+      <ul id="notificationList">
+        <li>🎉 You earned a new badge: Ocean Guardian</li>
+        <li>📢 Upcoming event: Beach Cleanup in 2 days</li>
+        <li>📱 App update available</li
+      </ul>
+      <p id="noNotifications" style="text-align:center; color: #444;">No notifications available</p>
+    </div>
+  
     <script src={{url_for('static', filename='js/dashboard2.js')}}></script>
     <script src={{url_for('static', filename='js/maps.js')}}></script>
     <script src={{url_for('static', filename='js/sidebar.js')}}></script>
@@ -660,6 +675,26 @@
       
       // Refresh every 60 seconds
       setInterval(fetchCombinedData, 60000);
+    </script>
+    <script>
+const notificationIcon = document.querySelector('.notification-icon');
+const popup = document.getElementById('notificationPopup');
+const list = document.getElementById('notificationList');
+const noNotifications = document.getElementById('noNotifications');
+
+function togglePopup() {
+  popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+
+  // Show or hide "no notifications" text
+  if (list.children.length === 0) {
+    noNotifications.style.display = 'block';
+  } else {
+    noNotifications.style.display = 'none';
+  }
+}
+
+notificationIcon.addEventListener('click', togglePopup);
+
     </script>
   </body>
 </html>

@@ -43,7 +43,7 @@
   </div>
     
   <div class="main">
-    
+    <div class="icon notification-icon" style="position: absolute; right: 4%;"></div><br>
     <h2 id="userName">Welcome back, {{name}}!</h2>
     <p style="color: #333333e2;">Here's an overview of your volunteer activity</p><br>
 
@@ -147,7 +147,21 @@
       </div>
     </div>
   </div>
+  <div class="notification-popup" id="notificationPopup">
+    <div class="popup-header">
+      <h4>Notifications</h4>
+      <span class="close-btn" onclick="togglePopup()">×</span>
+    </div>
+    <ul id="notificationList">
+      <li>🎉 You earned a new badge: Ocean Guardian</li>
+      <li>📢 Upcoming event: Beach Cleanup in 2 days</li>
+      <li>📱 App update available</li
+    </ul>
+    <p id="noNotifications" style="text-align:center; color: #444;">No notifications available</p>
+  </div>
+
   <script src="{{ url_for('static', filename='js/sidebar.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/Volunteer_dashboard.js')}}"></script>
 
 </body>
 </html>
