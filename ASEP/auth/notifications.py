@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, request
+from flask import Blueprint, render_template, jsonify, request, redirect, url_for
 from extensions import db
 
 notifications_bp = Blueprint("notifications", __name__)
@@ -26,15 +26,20 @@ def send_notification(ngo_name, food_type, quantity, additional_note):
 
 @notifications_bp.route("/alerts")
 def alerts():
-    notifications = Notification.query.order_by(Notification.created_at.desc()).all()
-    return render_template("alert.html", notifications=notifications)
+    # Redirect to restaurant dashboard or show a static message
+    return redirect(url_for('restaurant_dashboard'))
+
+@notifications_bp.route("/notifications")
+def notifications():
+    # Redirect to NGO dashboard or show a static message
+    return render_template("notification.html", message="Notifications are now shown in the dashboard popup.")
 
 @notifications_bp.route("/api/notifications")
 def get_notifications():
     notifications = Notification.query.order_by(Notification.created_at.desc()).limit(5).all()
     return jsonify([
         {
-            "id": notif.id,  # Include ID in the response for deletion
+            "id": notif.id,
             "message": notif.message,
             "ngo_name": notif.ngo_name,
             "food_type": notif.food_type,

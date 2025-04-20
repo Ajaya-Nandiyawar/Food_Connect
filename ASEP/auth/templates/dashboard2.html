@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f57c00" />
+    <meta name="csrf-token" content="{{ csrf_token() }}"> <!-- Ensure CSRF token is included -->
     <title>FoodShare Dashboard</title>
     
     <link rel="icon" href="{{ url_for('static', filename='img/logo.ico') }}" type="image/x-icon" />
@@ -23,7 +24,6 @@
 </head>
 
   <body>
-  
     <div class="container">
       <div class="sidebar" id="sidebar">
         <div class="logo">
@@ -62,8 +62,11 @@
       <!-- Main Content -->
       <main class="main-content">
         <!-- Stats Cards -->
-        <div class="icon notification-icon" style="position: absolute; right: 4%;"></div><br>
-
+        <div class="icon notification-icon" style="position: absolute; right: 4%;"></div>
+        <header class="page-header">
+          <h1>Dashboard {{name}}</h1>
+          <p>Welcome to your FoodConnect Dashboard</p>
+        </header>
 
         <div class="stats-grid">
           <div class="stat1">
@@ -137,10 +140,7 @@
                 Set Location on Map
               </button>
               <div id="coordinateStatus" class="status-message"></div>
-              <button  onclick="saveNewLocation()" class="set_location"
-              
-              
-              >
+              <button  onclick="saveNewLocation()" class="set_location">
                 <div class="center-body">
                   <div class="loader-shape-3"></div>
                 </div>
@@ -148,7 +148,6 @@
               </button>
             </div>
           </div>
-
 
           <!-- Route Planning Panel -->
           <div id="Route_Planning">
@@ -270,14 +269,10 @@
         <h4>Notifications</h4>
         <span class="close-btn" onclick="togglePopup()">×</span>
       </div>
-      <ul id="notificationList">
-        <li>🎉 You earned a new badge: Ocean Guardian</li>
-        <li>📢 Upcoming event: Beach Cleanup in 2 days</li>
-        <li>📱 App update available</li
-      </ul>
+      <ul id="notificationList"></ul>
       <p id="noNotifications" style="text-align:center; color: #444;">No notifications available</p>
     </div>
-  
+
     <script src={{url_for('static', filename='js/dashboard2.js')}}></script>
     <script src={{url_for('static', filename='js/maps.js')}}></script>
     <script src={{url_for('static', filename='js/sidebar.js')}}></script>
@@ -285,27 +280,27 @@
     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
     <script>
       mapboxgl.accessToken = "pk.eyJ1IjoidGhlLWRlc3Ryb3llciIsImEiOiJjbTdkbWd1ZjIwMDJ3MmpxdXp3dWNpb3VlIn0.GtirZBfgEJOCgwsM9ZB0Zg";
-    
+
       const map = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/streets-v11",
         center: [73.8572, 18.5207], // Pune center
         zoom: 11,
       });
-    
+
       let markers = [];
       let locations = [];
       let currentRoute = null;
       let directionsControl = null;
-    
+
       function addMarkers(locations) {
         markers.forEach(marker => marker.remove());
         markers = [];
-    
+
         locations.forEach(location => {
           const el = document.createElement("div");
           el.className = location.type === "red" ? "marker-pickup" : "marker-delivery";
-    
+
           const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
             <h3>${location.title}</h3>
             <p><strong>Food Item:</strong> ${location.description}</p>
@@ -313,19 +308,19 @@
             ${location.contact ? `<p><strong>Contact:</strong> <a href="tel:${location.contact}">${location.contact}</a></p>` : ""}
             <p><strong>Type:</strong> ${location.type === "red" ? "Pickup Point" : "Delivery Point"}</p>
           `);
-    
+
           const marker = new mapboxgl.Marker(el)
             .setLngLat([location.position.lng, location.position.lat])
             .setPopup(popup)
             .addTo(map);
-    
+
           marker.type = location.type;
           markers.push(marker);
         });
-    
+
         updateActivePoints();
       }
-    
+
       function updateActivePoints() {
         const activePointsElement = document.getElementById("activePoints");
         if (activePointsElement) {
@@ -333,7 +328,7 @@
           activePointsElement.textContent = visibleMarkers.length;
         }
       }
-    
+
       function filterMarkers(type, show) {
         markers.forEach(marker => {
           if (marker.type === type) {
@@ -342,317 +337,7 @@
         });
         updateActivePoints();
       }
-    
-      function fetchCombinedData() {
-        fetch("/ngo/combined_data_json")
-          .then(response => {
-            if (!response.ok) throw new Error("Failed to fetch combined data");
-            return response.json();
-          })
-          .then(data => {
-            locations = data;
-            addMarkers(locations);
-            populateDropdowns(locations);
-          })
-          .catch(error => console.error("Error fetching combined data:", error));
-      }
-    
-      map.on("load", () => {
-        fetchCombinedData();
-        map.addControl(new mapboxgl.NavigationControl());
-    
-        const geocoder = new MapboxGeocoder({
-          accessToken: mapboxgl.accessToken,
-          mapboxgl: mapboxgl,
-          marker: false,
-          placeholder: "Search for a location",
-          countries: "IN",
-          bbox: [73.7, 18.4, 74.0, 18.7],
-        });
-        map.addControl(geocoder, "top-left");
-    
-        geocoder.on("result", (e) => {
-          const marker = new mapboxgl.Marker()
-            .setLngLat(e.result.center)
-            .setPopup(new mapboxgl.Popup().setHTML(`<h3>${e.result.place_name}</h3>`))
-            .addTo(map);
-          map.flyTo({ center: e.result.center, zoom: 14 });
-        });
-      });
-    
-      function populateDropdowns(locations) {
-        const startPointSelect = document.getElementById("startPoint");
-        const endPointSelect = document.getElementById("endPoint");
-    
-        startPointSelect.innerHTML = '<option value="">Select starting point</option>';
-        endPointSelect.innerHTML = '<option value="">Select destination</option>';
-    
-        locations.forEach(location => {
-          const startOption = document.createElement("option");
-          const endOption = document.createElement("option");
-    
-          const coordinates = { lng: location.position.lng, lat: location.position.lat };
-    
-          startOption.value = JSON.stringify(coordinates);
-          startOption.textContent = location.title;
-    
-          endOption.value = JSON.stringify(coordinates);
-          endOption.textContent = location.title;
-    
-          startPointSelect.appendChild(startOption);
-          endPointSelect.appendChild(endOption);
-        });
-      }
-    
-      function calculateRoute() {
-        const startPoint = JSON.parse(document.getElementById('startPoint').value || 'null');
-        const endPoint = JSON.parse(document.getElementById('endPoint').value || 'null');
-    
-        if (!startPoint || !endPoint) {
-          alert('Please select both start and end points');
-          return;
-        }
-    
-        if (currentRoute) currentRoute.remove();
-        if (directionsControl) map.removeControl(directionsControl);
-    
-        directionsControl = new MapboxDirections({
-          accessToken: mapboxgl.accessToken,
-          unit: 'metric',
-          profile: 'mapbox/driving',
-          interactive: false,
-          controls: { inputs: false, instructions: true },
-        });
-    
-        map.addControl(directionsControl, 'top-right');
-        directionsControl.setOrigin([startPoint.lng, startPoint.lat]);
-        directionsControl.setDestination([endPoint.lng, endPoint.lat]);
-    
-        directionsControl.on('route', (e) => {
-          if (e.route && e.route[0]) {
-            const route = e.route[0];
-            document.getElementById('routeDistance').textContent = `${(route.distance / 1000).toFixed(2)} km`;
-            document.getElementById('routeDuration').textContent = `${Math.round(route.duration / 60)} mins`;
-            document.getElementById('totalRoutes').textContent = parseInt(document.getElementById('totalRoutes').textContent || '0') + 1;
-          }
-        });
-      }
-    
-      function optimizeRoute() {
-        const startPoint = JSON.parse(document.getElementById('startPoint').value || 'null');
-        if (!startPoint) {
-          alert('Please select a starting point');
-          return;
-        }
-    
-        if (currentRoute) currentRoute.remove();
-    
-        const deliveryPoints = locations.filter(loc => loc.type === "green");
-        if (deliveryPoints.length === 0) {
-          alert('No delivery points found to optimize');
-          return;
-        }
-    
-        const points = deliveryPoints.map(point => turf.point([point.position.lng, point.position.lat]));
-        let optimizedRoute = [turf.point([startPoint.lng, startPoint.lat])];
-        let remaining = [...points];
-    
-        while (remaining.length > 0) {
-          const currentPoint = optimizedRoute[optimizedRoute.length - 1];
-          const nearest = turf.nearest(currentPoint, turf.featureCollection(remaining));
-          optimizedRoute.push(nearest);
-          remaining = remaining.filter(point => 
-            point.geometry.coordinates[0] !== nearest.geometry.coordinates[0] ||
-            point.geometry.coordinates[1] !== nearest.geometry.coordinates[1]
-          );
-        }
-    
-        const routeCoordinates = optimizedRoute.map(point => point.geometry.coordinates);
-    
-        const sourceId = 'optimized-route-source';
-        const layerId = 'optimized-route-layer';
-    
-        if (map.getLayer(layerId)) map.removeLayer(layerId);
-        if (map.getSource(sourceId)) map.removeSource(sourceId);
-    
-        map.addSource(sourceId, {
-          type: 'geojson',
-          data: {
-            type: 'Feature',
-            properties: {},
-            geometry: { type: 'LineString', coordinates: routeCoordinates }
-          }
-        });
-    
-        map.addLayer({
-          id: layerId,
-          type: 'line',
-          source: sourceId,
-          layout: { 'line-join': 'round', 'line-cap': 'round' },
-          paint: { 'line-color': '#ff4444', 'line-width': 5, 'line-opacity': 0.75 }
-        });
-    
-        currentRoute = {
-          remove: () => {
-            if (map.getLayer(layerId)) map.removeLayer(layerId);
-            if (map.getSource(sourceId)) map.removeSource(sourceId);
-          }
-        };
-    
-        const bounds = new mapboxgl.LngLatBounds();
-        routeCoordinates.forEach(coord => bounds.extend(coord));
-        map.fitBounds(bounds, { padding: 50 });
-    
-        const totalDistance = turf.length(turf.lineString(routeCoordinates));
-        document.getElementById('routeDistance').textContent = `${totalDistance.toFixed(2)} km`;
-        document.getElementById('routeDuration').textContent = `~${Math.round(totalDistance * 2.5)} mins`;
-      }
-    
-      function clearRoute() {
-        if (currentRoute) currentRoute.remove();
-        if (directionsControl) {
-          map.removeControl(directionsControl);
-          directionsControl = null;
-        }
-        document.getElementById('routeDistance').textContent = '-';
-        document.getElementById('routeDuration').textContent = '-';
-      }
-    
-      let newLocation = null;
-      let isPlacing = false;
-    
-      const geocoder = new MapboxGeocoder({
-        accessToken: mapboxgl.accessToken,
-        mapboxgl: mapboxgl,
-        marker: false,
-        placeholder: 'Search address or coordinates',
-        bbox: [73.7, 18.4, 74.0, 18.7]
-      });
-    
-      document.getElementById('locationGeocoder').appendChild(geocoder.onAdd(map));
-    
-      geocoder.on('result', (e) => {
-        if (isPlacing) {
-          newLocation = {
-            position: { lat: e.result.center[1], lng: e.result.center[0] },
-            title: document.getElementById('locationName').value,
-            description: document.getElementById('foodItem').value,
-            quantity: document.getElementById('quantity').value + ' kg',
-            contact: document.getElementById('contact').value,
-            type: document.getElementById('locationType').value
-          };
-          updateCoordinateStatus(e.result.center);
-        }
-      });
-    
-      map.on('click', (e) => {
-        if (isPlacing) {
-          newLocation = {
-            position: { lat: e.lngLat.lat, lng: e.lngLat.lng },
-            title: document.getElementById('locationName').value,
-            description: document.getElementById('foodItem').value,
-            quantity: document.getElementById('quantity').value + ' kg',
-            contact: document.getElementById('contact').value,
-            type: document.getElementById('locationType').value
-          };
-          updateCoordinateStatus([e.lngLat.lng, e.lngLat.lat]);
-        }
-      });
-    
-      function enableLocationPlacement() {
-        const name = document.getElementById('locationName').value;
-        if (!name) {
-          alert('Please enter a location name');
-          return;
-        }
-        isPlacing = true;
-        document.getElementById('coordinateStatus').textContent = 'Search above or click map to set position';
-      }
-    
-      // Fixed saveNewLocation function
-      function saveNewLocation() {
-        if (!newLocation) {
-          alert('Please set location position first');
-          return;
-        }
-    
-        const phonePattern = /^(\+91|0)?[7-9]\d{9}$/;
-        if (!phonePattern.test(newLocation.contact)) {
-          alert('Please enter a valid Indian phone number');
-          return;
-        }
-    
-        // Add the new location to the local array
-        locations.push(newLocation);
-        addMarkers(locations);
-        populateDropdowns(locations);
-    
-        // Clear the form
-        document.getElementById('locationName').value = '';
-        document.getElementById('foodItem').value = '';
-        document.getElementById('quantity').value = '';
-        document.getElementById('contact').value = '';
-        document.getElementById('coordinateStatus').textContent = 'Location added successfully!';
-    
-        // Store the current newLocation for the flyTo call before resetting
-        const locationToZoom = { ...newLocation };
-        newLocation = null;
-        isPlacing = false;
-    
-        // Zoom to the new location
-        map.flyTo({ center: [locationToZoom.position.lng, locationToZoom.position.lat], zoom: 14 });
-      }
-    
-      function updateCoordinateStatus(coords) {
-        document.getElementById('coordinateStatus').innerHTML = `
-          Position set: <br>
-          Latitude: ${coords[1].toFixed(4)}<br>
-          Longitude: ${coords[0].toFixed(4)}
-        `;
-      }
-    
-      function exportToCSV() {
-        const headers = ['Title', 'Description', 'Quantity', 'Contact', 'Type', 'Latitude', 'Longitude'];
-        const csvData = locations.map(location => [
-          location.title,
-          location.description,
-          location.quantity,
-          location.contact || '',
-          location.type === 'red' ? 'Pickup Point' : 'Delivery Point',
-          location.position.lat,
-          location.position.lng
-        ]);
-        csvData.unshift(headers);
-    
-        const csvString = csvData.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-    
-        link.setAttribute('href', url);
-        link.setAttribute('download', 'food_locations.csv');
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    
-      function exportToJSON() {
-        const jsonString = JSON.stringify(locations, null, 2);
-        const blob = new Blob([jsonString], { type: 'application/json' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-    
-        link.setAttribute('href', url);
-        link.setAttribute('download', 'food_locations.json');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    
-      document.addEventListener("DOMContentLoaded", fetchCombinedData);
-    </script>
-    <script>
+
       function fetchCombinedData() {
         fetch("/ngo/combined_data_json")
           .then(response => {
@@ -672,29 +357,385 @@
           })
           .catch(error => console.error("Error fetching combined data:", error));
       }
-      
-      // Refresh every 60 seconds
+
+      map.on("load", () => {
+        fetchCombinedData();
+        map.addControl(new mapboxgl.NavigationControl());
+
+        const geocoder = new MapboxGeocoder({
+          accessToken: mapboxgl.accessToken,
+          mapboxgl: mapboxgl,
+          marker: false,
+          placeholder: "Search for a location",
+          countries: "IN",
+          bbox: [73.7, 18.4, 74.0, 18.7],
+        });
+        map.addControl(geocoder, "top-left");
+
+        geocoder.on("result", (e) => {
+          const marker = new mapboxgl.Marker()
+            .setLngLat(e.result.center)
+            .setPopup(new mapboxgl.Popup().setHTML(`<h3>${e.result.place_name}</h3>`))
+            .addTo(map);
+          map.flyTo({ center: e.result.center, zoom: 14 });
+        });
+      });
+
+      function populateDropdowns(locations) {
+        const startPointSelect = document.getElementById("startPoint");
+        const endPointSelect = document.getElementById("endPoint");
+
+        startPointSelect.innerHTML = '<option value="">Select starting point</option>';
+        endPointSelect.innerHTML = '<option value="">Select destination</option>';
+
+        locations.forEach(location => {
+          const startOption = document.createElement("option");
+          const endOption = document.createElement("option");
+
+          const coordinates = { lng: location.position.lng, lat: location.position.lat };
+
+          startOption.value = JSON.stringify(coordinates);
+          startOption.textContent = location.title;
+
+          endOption.value = JSON.stringify(coordinates);
+          endOption.textContent = location.title;
+
+          startPointSelect.appendChild(startOption);
+          endPointSelect.appendChild(endOption);
+        });
+      }
+
+      function calculateRoute() {
+        const startPoint = JSON.parse(document.getElementById('startPoint').value || 'null');
+        const endPoint = JSON.parse(document.getElementById('endPoint').value || 'null');
+
+        if (!startPoint || !endPoint) {
+          alert('Please select both start and end points');
+          return;
+        }
+
+        if (currentRoute) currentRoute.remove();
+        if (directionsControl) map.removeControl(directionsControl);
+
+        directionsControl = new MapboxDirections({
+          accessToken: mapboxgl.accessToken,
+          unit: 'metric',
+          profile: 'mapbox/driving',
+          interactive: false,
+          controls: { inputs: false, instructions: true },
+        });
+
+        map.addControl(directionsControl, 'top-right');
+        directionsControl.setOrigin([startPoint.lng, startPoint.lat]);
+        directionsControl.setDestination([endPoint.lng, endPoint.lat]);
+
+        directionsControl.on('route', (e) => {
+          if (e.route && e.route[0]) {
+            const route = e.route[0];
+            document.getElementById('routeDistance').textContent = `${(route.distance / 1000).toFixed(2)} km`;
+            document.getElementById('routeDuration').textContent = `${Math.round(route.duration / 60)} mins`;
+            document.getElementById('totalRoutes').textContent = parseInt(document.getElementById('totalRoutes').textContent || '0') + 1;
+          }
+        });
+      }
+
+      function optimizeRoute() {
+        const startPoint = JSON.parse(document.getElementById('startPoint').value || 'null');
+        if (!startPoint) {
+          alert('Please select a starting point');
+          return;
+        }
+
+        if (currentRoute) currentRoute.remove();
+
+        const deliveryPoints = locations.filter(loc => loc.type === "green");
+        if (deliveryPoints.length === 0) {
+          alert('No delivery points found to optimize');
+          return;
+        }
+
+        const points = deliveryPoints.map(point => turf.point([point.position.lng, point.position.lat]));
+        let optimizedRoute = [turf.point([startPoint.lng, startPoint.lat])];
+        let remaining = [...points];
+
+        while (remaining.length > 0) {
+          const currentPoint = optimizedRoute[optimizedRoute.length - 1];
+          const nearest = turf.nearest(currentPoint, turf.featureCollection(remaining));
+          optimizedRoute.push(nearest);
+          remaining = remaining.filter(point => 
+            point.geometry.coordinates[0] !== nearest.geometry.coordinates[0] ||
+            point.geometry.coordinates[1] !== nearest.geometry.coordinates[1]
+          );
+        }
+
+        const routeCoordinates = optimizedRoute.map(point => point.geometry.coordinates);
+
+        const sourceId = 'optimized-route-source';
+        const layerId = 'optimized-route-layer';
+
+        if (map.getLayer(layerId)) map.removeLayer(layerId);
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+
+        map.addSource(sourceId, {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            properties: {},
+            geometry: { type: 'LineString', coordinates: routeCoordinates }
+          }
+        });
+
+        map.addLayer({
+          id: layerId,
+          type: 'line',
+          source: sourceId,
+          layout: { 'line-join': 'round', 'line-cap': 'round' },
+          paint: { 'line-color': '#ff4444', 'line-width': 5, 'line-opacity': 0.75 }
+        });
+
+        currentRoute = {
+          remove: () => {
+            if (map.getLayer(layerId)) map.removeLayer(layerId);
+            if (map.getSource(sourceId)) map.removeSource(sourceId);
+          }
+        };
+
+        const bounds = new mapboxgl.LngLatBounds();
+        routeCoordinates.forEach(coord => bounds.extend(coord));
+        map.fitBounds(bounds, { padding: 50 });
+
+        const totalDistance = turf.length(turf.lineString(routeCoordinates));
+        document.getElementById('routeDistance').textContent = `${totalDistance.toFixed(2)} km`;
+        document.getElementById('routeDuration').textContent = `~${Math.round(totalDistance * 2.5)} mins`;
+      }
+
+      function clearRoute() {
+        if (currentRoute) currentRoute.remove();
+        if (directionsControl) {
+          map.removeControl(directionsControl);
+          directionsControl = null;
+        }
+        document.getElementById('routeDistance').textContent = '-';
+        document.getElementById('routeDuration').textContent = '-';
+      }
+
+      let newLocation = null;
+      let isPlacing = false;
+
+      const geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl,
+        marker: false,
+        placeholder: 'Search address or coordinates',
+        bbox: [73.7, 18.4, 74.0, 18.7]
+      });
+
+      document.getElementById('locationGeocoder').appendChild(geocoder.onAdd(map));
+
+      geocoder.on('result', (e) => {
+        if (isPlacing) {
+          newLocation = {
+            position: { lat: e.result.center[1], lng: e.result.center[0] },
+            title: document.getElementById('locationName').value,
+            description: document.getElementById('foodItem').value,
+            quantity: document.getElementById('quantity').value + ' kg',
+            contact: document.getElementById('contact').value,
+            type: document.getElementById('locationType').value
+          };
+          updateCoordinateStatus(e.result.center);
+        }
+      });
+
+      map.on('click', (e) => {
+        if (isPlacing) {
+          newLocation = {
+            position: { lat: e.lngLat.lat, lng: e.lngLat.lng },
+            title: document.getElementById('locationName').value,
+            description: document.getElementById('foodItem').value,
+            quantity: document.getElementById('quantity').value + ' kg',
+            contact: document.getElementById('contact').value,
+            type: document.getElementById('locationType').value
+          };
+          updateCoordinateStatus([e.lngLat.lng, e.lngLat.lat]);
+        }
+      });
+
+      function enableLocationPlacement() {
+        const name = document.getElementById('locationName').value;
+        if (!name) {
+          alert('Please enter a location name');
+          return;
+        }
+        isPlacing = true;
+        document.getElementById('coordinateStatus').textContent = 'Search above or click map to set position';
+      }
+
+      function saveNewLocation() {
+        if (!newLocation) {
+          alert('Please set location position first');
+          return;
+        }
+
+        const phonePattern = /^(\+91|0)?[7-9]\d{9}$/;
+        if (!phonePattern.test(newLocation.contact)) {
+          alert('Please enter a valid Indian phone number');
+          return;
+        }
+
+        locations.push(newLocation);
+        addMarkers(locations);
+        populateDropdowns(locations);
+
+        document.getElementById('locationName').value = '';
+        document.getElementById('foodItem').value = '';
+        document.getElementById('quantity').value = '';
+        document.getElementById('contact').value = '';
+        document.getElementById('coordinateStatus').textContent = 'Location added successfully!';
+
+        const locationToZoom = { ...newLocation };
+        newLocation = null;
+        isPlacing = false;
+
+        map.flyTo({ center: [locationToZoom.position.lng, locationToZoom.position.lat], zoom: 14 });
+      }
+
+      function updateCoordinateStatus(coords) {
+        document.getElementById('coordinateStatus').innerHTML = `
+          Position set: <br>
+          Latitude: ${coords[1].toFixed(4)}<br>
+          Longitude: ${coords[0].toFixed(4)}
+        `;
+      }
+
+      function exportToCSV() {
+        const headers = ['Title', 'Description', 'Quantity', 'Contact', 'Type', 'Latitude', 'Longitude'];
+        const csvData = locations.map(location => [
+          location.title,
+          location.description,
+          location.quantity,
+          location.contact || '',
+          location.type === 'red' ? 'Pickup Point' : 'Delivery Point',
+          location.position.lat,
+          location.position.lng
+        ]);
+        csvData.unshift(headers);
+
+        const csvString = csvData.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'food_locations.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      function exportToJSON() {
+        const jsonString = JSON.stringify(locations, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'food_locations.json');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchCombinedData();
+        fetchNotifications(); // Fetch notifications on page load
+      });
+
+      // Refresh every 60 seconds for map data
       setInterval(fetchCombinedData, 60000);
+
+      // Notification popup functionality
+      const notificationIcon = document.querySelector('.notification-icon');
+      const popup = document.getElementById('notificationPopup');
+      const list = document.getElementById('notificationList');
+      const noNotifications = document.getElementById('noNotifications');
+
+      function togglePopup() {
+        popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+        if (list.children.length === 0) {
+          noNotifications.style.display = 'block';
+        } else {
+          noNotifications.style.display = 'none';
+        }
+      }
+
+      notificationIcon.addEventListener('click', togglePopup);
+
+      // Fetch notifications dynamically
+      function fetchNotifications() {
+        fetch('/notifications/api/notifications')
+          .then(response => {
+            if (!response.ok) throw new Error('Fetch failed');
+            return response.json();
+          })
+          .then(data => {
+            list.innerHTML = ''; // Clear existing notifications
+            if (data.length === 0) {
+              noNotifications.style.display = 'block';
+            } else {
+              noNotifications.style.display = 'none';
+              data.forEach(notif => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                  <strong>${notif.message}</strong><br>
+                  Food Type: ${notif.food_type}, Quantity: ${notif.quantity}<br>
+                  Note: ${notif.additional_note || 'None'}<br>
+                  <small>${new Date(notif.created_at).toLocaleString()}</small><br>
+                  <button class="btn-link" onclick="deleteNotification(${notif.id})">Delete</button>
+                `;
+                list.appendChild(li);
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching notifications:', error);
+            noNotifications.style.display = 'block';
+            list.innerHTML = '';
+          });
+      }
+
+      // Delete notification
+      function deleteNotification(notificationId) {
+        if (confirm("Are you sure you want to delete this notification?")) {
+          fetch(`/notifications/api/notifications/delete/${notificationId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.content || ''
+            }
+          })
+            .then(response => {
+              if (!response.ok) throw new Error('Delete failed');
+              return response.json();
+            })
+            .then(data => {
+              if (data.status === 'success') {
+                alert(data.message);
+                fetchNotifications(); // Refresh notifications
+              } else {
+                alert('Error: ' + data.message);
+              }
+            })
+            .catch(error => {
+              console.error('Error deleting notification:', error);
+              alert('Failed to delete notification');
+            });
+        }
+      }
+
+      // Fetch notifications every 10 seconds
+      setInterval(fetchNotifications, 10000);
     </script>
-    <script>
-const notificationIcon = document.querySelector('.notification-icon');
-const popup = document.getElementById('notificationPopup');
-const list = document.getElementById('notificationList');
-const noNotifications = document.getElementById('noNotifications');
-
-function togglePopup() {
-  popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
-
-  // Show or hide "no notifications" text
-  if (list.children.length === 0) {
-    noNotifications.style.display = 'block';
-  } else {
-    noNotifications.style.display = 'none';
-  }
-}
-
-notificationIcon.addEventListener('click', togglePopup);
-
-    </script>
+  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9335954c9c42676f',t:'MTc0NTE2MTk4MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
   </body>
 </html>

@@ -429,3 +429,45 @@ td {
   color: #333;
   margin-left: 10px;
 }
+
+
+
+
+/* --------------- */
+
+
+
+
+
+.notification-popup li:last-child {
+  border-bottom: none;
+}
+
+.notification-popup .btn-link {
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.notification-popup .btn-link:hover {
+  text-decoration: underline;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #eee;
+}
+

@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>FoodShare Dashboard</title>
     <link rel="icon" href="{{ url_for('static', filename='img/logo.ico') }}" type="logo" />
     <link rel="stylesheet" href={{url_for('static', filename='css/home.css')}} />
@@ -22,10 +23,10 @@
             <div class="icon dashboard-icon" onclick="openSidebar()"></div>
             <span class="menu-text">Dashboard</span>
           </a>
-          <a href={{url_for('restaurant_alerts')}} class="menu-item">
+          <!-- <a href={{url_for('restaurant_alerts')}} class="menu-item">
             <div class="icon alert-icon" onclick="openSidebar()"></div>
             <span class="menu-text">Notifications</span>
-          </a>
+          </a> -->
           <a href={{url_for('restaurant_requests')}} class="menu-item">
             <div class="icon request-icon" onclick="openSidebar()"></div>
             <span class="menu-text">Requests</span>
@@ -147,7 +148,6 @@
         <div class="dashboard-grid">
           <div class="requests-table">
             <h2>Recent NGO Requests</h2>
-            
             <div class="table-container">
               <table>
                 <thead>
@@ -172,7 +172,6 @@
                 </tbody>
               </table>
             </div>
-            
           </div>
 
           <div class="side-content">
@@ -206,14 +205,10 @@
         <h4>Notifications</h4>
         <span class="close-btn" onclick="togglePopup()">×</span>
       </div>
-      <ul id="notificationList">
-        <li>🎉 You earned a new badge: Ocean Guardian</li>
-        <li>📢 Upcoming event: Beach Cleanup in 2 days</li>
-        <li>📱 App update available</li
-      </ul>
+      <ul id="notificationList"></ul>
       <p id="noNotifications" style="text-align:center; color: #444;">No notifications available</p>
     </div>
-  
+
     <button class="scroll-to-top-button">
       <svg viewBox="0 0 384 512" class="svgIcon">
         <path
@@ -222,46 +217,109 @@
       </svg>
     </button>
     <script>
-      // Get the button element
-const scrollToTopButton = document.querySelector('.scroll-to-top-button');
+      // Scroll-to-top functionality
+      const scrollToTopButton = document.querySelector('.scroll-to-top-button');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+          scrollToTopButton.style.display = 'flex';
+        } else {
+          scrollToTopButton.style.display = 'none';
+        }
+      });
+      scrollToTopButton.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
 
-// Show/hide button based on scroll position
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 100) { // Show button after scrolling 100px
-    scrollToTopButton.style.display = 'flex';
-  } else {
-    scrollToTopButton.style.display = 'none';
-  }
-});
-
-// Smooth scroll to top when button is clicked
-scrollToTopButton.addEventListener('click', () => {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-});
-    </script>
-    <script>
+      // Notification popup functionality
       const notificationIcon = document.querySelector('.notification-icon');
-const popup = document.getElementById('notificationPopup');
-const list = document.getElementById('notificationList');
-const noNotifications = document.getElementById('noNotifications');
+      const popup = document.getElementById('notificationPopup');
+      const list = document.getElementById('notificationList');
+      const noNotifications = document.getElementById('noNotifications');
 
-function togglePopup() {
-  popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+      function togglePopup() {
+        popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+        if (list.children.length === 0) {
+          noNotifications.style.display = 'block';
+        } else {
+          noNotifications.style.display = 'none';
+        }
+      }
 
-  // Show or hide "no notifications" text
-  if (list.children.length === 0) {
-    noNotifications.style.display = 'block';
-  } else {
-    noNotifications.style.display = 'none';
-  }
-}
+      notificationIcon.addEventListener('click', togglePopup);
 
-notificationIcon.addEventListener('click', togglePopup);
+      // Fetch notifications dynamically
+      function fetchNotifications() {
+        fetch('/notifications/api/notifications')
+          .then(response => {
+            if (!response.ok) throw new Error('Fetch failed');
+            return response.json();
+          })
+          .then(data => {
+            list.innerHTML = ''; // Clear existing notifications
+            if (data.length === 0) {
+              noNotifications.style.display = 'block';
+            } else {
+              noNotifications.style.display = 'none';
+              data.forEach(notif => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                  <strong>${notif.message}</strong><br>
+                  Food Type: ${notif.food_type}, Quantity: ${notif.quantity}<br>
+                  Note: ${notif.additional_note || 'None'}<br>
+                  <small>${new Date(notif.created_at).toLocaleString()}</small><br>
+                  <button class="btn-link" onclick="deleteNotification(${notif.id})">Delete</button>
+                `;
+                list.appendChild(li);
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching notifications:', error);
+            noNotifications.style.display = 'block';
+            list.innerHTML = '';
+          });
+      }
 
+      // Delete notification
+      function deleteNotification(notificationId) {
+        if (confirm("Are you sure you want to delete this notification?")) {
+          fetch(`/notifications/api/notifications/delete/${notificationId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.content || ''
+            },
+            body: JSON.stringify({ id: notificationId }) // Include the ID in the body if required by the server
+          })
+            .then(response => {
+              if (!response.ok) throw new Error('Delete failed');
+              return response.json();
+            })
+            .then(data => {
+              if (data.status === 'success') {
+                alert(data.message);
+                fetchNotifications(); // Refresh notifications
+              } else {
+                alert('Error: ' + data.message);
+              }
+            })
+            .catch(error => {
+              console.error('Error deleting notification:', error);
+              alert('Failed to delete notification');
+            });
+        }
+      }
+
+      // Fetch notifications on page load and every 10 seconds
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchNotifications();
+        setInterval(fetchNotifications, 10000);
+      });
     </script>
-    <script src={{url_for('static', filename='js/sidebar.js')}}></script>
+    <script src="{{url_for('static', filename='js/sidebar.js')}}"></script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'933572565aa3ed8b',t:'MTc0NTE2MDU0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
   </body>
 </html>

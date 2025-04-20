@@ -34,6 +34,21 @@ body {
   padding: 2rem;
 }
 
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.page-header p {
+  color: #6b7280;
+}
+
 /* Stats Grid */
 .stats-grid {
   display: grid;
@@ -1152,6 +1167,21 @@ button {
 .notification-popup ul li {
   margin-bottom: 14px;
   font-size: 15px;
+}
+
+.notification-popup .btn-link {
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  transition: background-color 0.3s ease;
+  text-align: center;
 }
 
 @keyframes fadeIn {
