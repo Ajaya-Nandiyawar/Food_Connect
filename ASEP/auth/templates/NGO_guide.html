@@ -109,7 +109,7 @@
         border-radius: 0 0 50px 50px;
         border-top: none;
         animation: basket-glow 2s infinite;
-        background-image: {{url_for('static', filename='img/logo.png')}};
+        background-image: url('{{ url_for('static', filename='img/logo.png') }}');
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;

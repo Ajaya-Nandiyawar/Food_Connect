@@ -277,4 +277,31 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.target === modal) {
             closeModal();
         }
-    };
+      }
+
+
+        // Location fetching
+        const locationElement = document.getElementById('user-location');
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              const { latitude, longitude } = position.coords;
+              try {
+                const response = await fetch(
+                  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+                );
+                const data = await response.json();
+                const location = data.address.city || data.address.town || data.address.village || 'Unknown location';
+                locationElement.textContent = `Location: ${location}`;
+              } catch (error) {
+                locationElement.textContent = 'Unable to fetch location';
+              }
+            },
+            () => {
+              locationElement.textContent = 'Location access denied';
+            }
+          );
+        } else {
+          locationElement.textContent = 'Geolocation not supported';
+        }
+     

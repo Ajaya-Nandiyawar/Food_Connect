@@ -141,8 +141,8 @@ def login():
             session['name'] = volunteer.name
             session['email'] = volunteer.email
             session['organization'] = 'volunteer'
-            # if session.get('first_time'):
-            #     return redirect('/V-guide')
+            if session.get('first_time'):
+                return redirect('/V-guide')
             return redirect('/volunteer_dashboard')
         else:
             flash("Invalid email or password", "error")
@@ -237,7 +237,7 @@ def profile():
     elif organization == 'volunteer':
         user = Volunteer.query.filter_by(email=email).first()
         if user:
-            return render_template("settings_vol.html", name=user.name, email=user.email)
+            return render_template("profile.html", name=user.name, email=user.email)
         else:
             return redirect("/login")
 
@@ -263,12 +263,17 @@ def approval():
 @app.route('/N-guide')
 def ngo_guide():
     session.pop('first_time', None)
-    return render_template('NGO.html')
+    return render_template('NGO_guide.html')
 
 @app.route('/R-guide')
 def restaurant_guide():
     session.pop('first_time', None)
-    return render_template('Restaurant.html')
+    return render_template('Restaurant_guide.html')
+
+@app.route('/V-guide')
+def volunteer_guide():
+    session.pop('first_time', None)
+    return render_template('Volunteer_guide.html')
 
 @app.route('/restaurant_alerts')
 def restaurant_alerts():

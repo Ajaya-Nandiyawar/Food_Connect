@@ -38,17 +38,19 @@
             <div class="header">
                 <div class="profile-info">
                     <div class="profile-image">
-                        <img src="https://via.placeholder.com/80" alt="Profile Picture">
+                        <img src="{{url_for('static', filename='img/user.png')}}" alt="Profile Picture">
                     </div>
                     <div class="profile-details">
                         <h1>Volunteer</h1>
                         <p>Active Volunteer | Joined 2023</p>
-                        <p>Location</p>
+                        <p id="user-location">Fetching location...</p>
                     </div>
                 </div>
+                <a href="{{url_for('volunteer_settings')}}" class="settings-link">
                 <div class="settings-icon">
                     <i class="fas fa-cog"></i>
                 </div>
+                </a>
             </div>
 
             <!-- Tabs -->

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FOODCONNECT - Volunteer Partnership</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/Volunteer_guide.css')}}" />
+    <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+  
+        body {
+          min-height: 100vh;
+          background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+          padding: 2rem;
+        }
+  
+        .container {
+          max-width: 1000px;
+          margin: 0 auto;
+          background: rgba(255, 255, 255, 0.9);
+          border-radius: 12px;
+          padding: 2rem;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+  
+        .info-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 1.5rem;
+          margin-top: 1.5rem;
+        }
+  
+        .info-card {
+          background: white;
+          padding: 1.5rem;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+          transition: transform 0.3s;
+        }
+  
+        .info-card:hover {
+          transform: translateY(-5px);
+        }
+  
+        .info-icon {
+          font-size: 2rem;
+          color: #f57c00;
+          margin-bottom: 1rem;
+        }
+  
+        .info-title {
+          font-size: 1.2rem;
+          color: #333;
+          margin-bottom: 0.5rem;
+        }
+  
+        .info-text {
+          color: #666;
+          line-height: 1.6;
+        }
+  
+        /* Loader Styles */
+        .loader-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: #fff;
+          display: none;
+          justify-content: center;
+          align-items: center;
+          z-index: 2000;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+  
+        .loader-container.active {
+          display: flex;
+          opacity: 1;
+        }
+  
+        .donation-loader {
+          position: relative;
+          width: 200px;
+          height: 200px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+  
+        .basket {
+          position: absolute;
+          bottom: 20px;
+          width: 100px;
+          height: 60px;
+          border: 5px solid #795548;
+          border-radius: 0 0 50px 50px;
+          border-top: none;
+          animation: basket-glow 2s infinite;
+        }
+  
+        .food-items {
+          position: absolute;
+          top: 0;
+          display: flex;
+          gap: 15px;
+        }
+  
+        .food-item {
+          position: relative;
+          animation: drop-food 2s infinite;
+        }
+  
+        .food-item i {
+          font-size: 24px;
+          color: #ff9800;
+        }
+  
+        .food-item:nth-child(2) {
+          animation-delay: 0.6s;
+        }
+  
+        .food-item:nth-child(3) {
+          animation-delay: 1.2s;
+        }
+  
+        .heart-container {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+  
+        .heart {
+          color: #e91ece;
+          font-size: 40px;
+          opacity: 0;
+          transform: scale(0.5);
+          animation: heart-beat 2s infinite;
+        }
+  
+        .loading-text {
+          position: absolute;
+          bottom: -40px;
+          color: #ff9800;
+          font-size: 1.2rem;
+          text-align: center;
+          width: 100%;
+        }
+  
+        @keyframes drop-food {
+          0% {
+            transform: translateY(0);
+            opacity: 0;
+          }
+          20% {
+            opacity: 1;
+          }
+          60% {
+            transform: translateY(80px);
+            opacity: 1;
+          }
+          80% {
+            opacity: 0;
+          }
+          100% {
+            transform: translateY(80px);
+            opacity: 0;
+          }
+        }
+  
+        @keyframes heart-beat {
+          0%,
+          100% {
+            transform: scale(0.5);
+            opacity: 0;
+          }
+          50% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+  
+        @keyframes basket-glow {
+          0%,
+          100% {
+            box-shadow: 0 0 5px rgba(121, 85, 72, 0.3);
+          }
+          50% {
+            box-shadow: 0 0 20px rgba(121, 85, 72, 0.5);
+          }
+        }
+  
+        .Continue_button {
+          position: relative;
+        }
+  
+        .Start {
+          background: transparent;
+          padding: 10px 15px;
+          border: 1px solid orangered;
+          background: linear-gradient(135deg, orange, orangered);
+          color: #f57c00;
+          border-radius: 10px;
+        }
+  
+        button:hover {
+          background-color: #f57c00;
+          color: white;
+          transform: scale(1.05);
+          filter: drop-shadow(0 0 5px orangered);
+          transition: drop-shadow 0.1s ease;
+        }
+      </style>
+  </head>
+  <body>
+    <!-- Loader -->
+    <div class="loader-container" id="loaderContainer">
+      <div class="donation-loader">
+        <div class="food-items">
+          <div class="food-item">
+            <i class="fas fa-apple-alt"></i>
+          </div>
+          <div class="food-item">
+            <i class="fas fa-bread-slice"></i>
+          </div>
+          <div class="food-item">
+            <i class="fas fa-carrot"></i>
+          </div>
+        </div>
+        <div class="basket"></div>
+        <div class="heart-container">
+          <i class="fas fa-heart heart"></i>
+        </div>
+        <div class="loading-text">Connecting hearts through food...</div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h1>Volunteer Partnership</h1>
+      <p class="subtitle">
+        Join our network of dedicated volunteers helping to connect restaurants
+        and NGOs for efficient food donation distribution.
+      </p>
+
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">👋</div>
+          <div class="benefit-title">Flexible Scheduling</div>
+          <div class="benefit-description">
+            Choose pickup and delivery times that fit your schedule. Volunteer
+            for as little as 2 hours per week.
+          </div>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">🚗</div>
+          <div class="benefit-title">Transportation Support</div>
+          <div class="benefit-description">
+            Get reimbursed for gas when using your vehicle or use our partner
+            transportation options.
+          </div>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">📱</div>
+          <div class="benefit-title">Easy Coordination</div>
+          <div class="benefit-description">
+            Use our Web app to receive notifications, confirm pickups, and track
+            your impact in the community.
+          </div>
+        </div>
+      </div>
+
+      <div class="rules-section">
+        <h2>Volunteer Rules and Regulations</h2>
+
+        <div class="rules-list">
+          <h3>Eligibility Requirements</h3>
+          <ul>
+            <li>Must be at least 18 years of age with valid ID</li>
+            <li>Reliable transportation required</li>
+            <li>Must complete food safety training (provided)</li>
+            <li>Background check required (free of charge)</li>
+          </ul>
+        </div>
+
+        <div class="rules-list">
+          <h3>Volunteer Responsibilities</h3>
+          <ul>
+            <li>Arrive promptly for scheduled pickups and deliveries</li>
+            <li>Handle food safely according to guidelines</li>
+            <li>Verify food quantities during pickup and delivery</li>
+            <li>Commit to minimum 2 hours weekly for 3 months</li>
+          </ul>
+        </div>
+
+        <div class="rules-list">
+          <h3>Food Safety Guidelines</h3>
+          <ul>
+            <li>Inspect food quality before accepting from restaurants</li>
+            <li>Use thermal bags to maintain proper food temperatures</li>
+            <li>Complete monthly food safety refresher courses</li>
+            <li>Wear FOODCONNECT ID during volunteer activities</li>
+          </ul>
+        </div>
+      </div>
+
+      <a href="{{url_for('volunteer_dashboard')}}" class="cta-button">Get Started --></a>
+    </div>
+    <script>
+        // Show loader immediately for demo
+        document.addEventListener("DOMContentLoaded", function () {
+          const loader = document.getElementById("loaderContainer");
+          loader.classList.add("active");
+  
+          // Auto-hide loader after 5 seconds for demo
+          setTimeout(() => {
+            loader.classList.remove("active");
+          }, 5000);
+        });
+      </script>
+  </body>
+</html>
