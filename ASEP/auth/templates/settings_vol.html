@@ -1,165 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Volunteer Profile - Food Connect</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/settings_vol.css') }}">
-</head>
-<body>
-  <div class="app-container">
-    <div class="main-wrapper">
-      <!-- Sidebar -->
-      <div class="sidebar" id="sidebar">
-        <div class="logo">
-            <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare">
-            <h1>Food<b style="background: linear-gradient(to right, #f57c00, #ffcc00); -webkit-background-clip: text; background-clip: text; color: transparent;">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Volunteer Profile - Food Connect</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/sidebar.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/settings_vol.css') }}"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <div class="main-wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+          <div class="logo">
+            <img src={{url_for('static', filename='img/logo.ico')}}
+            alt="FoodShare">
+            <h1>
+              Food<b
+                style="
+                  background: linear-gradient(to right, #f57c00, #ffcc00);
+                  -webkit-background-clip: text;
+                  background-clip: text;
+                  color: transparent;
+                "
+                >Connect</b
+              >
+            </h1>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <button class="toggle-btn" id="toggleBtn">X</button>
+          </div>
+          <div class="menu">
+            <a href="{{url_for('volunteer_dashboard')}}" class="menu-item">
+              <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+              <span class="menu-text">Dashboard</span>
+            </a>
+            <a href="{{url_for('profile')}}" class="menu-item">
+              <div class="icon settings-icon" onclick="openSidebar()"></div>
+              <span class="menu-text">Profile</span>
+            </a>
+            <a
+              href="{{url_for('volunteer_settings')}}"
+              class="menu-item active"
+            >
+              <div class="icon settings-icon" onclick="openSidebar()"></div>
+              <span class="menu-text">Settings</span>
+            </a>
+          </div>
         </div>
-        <div class="menu">
-        <a href="{{url_for('volunteer_dashboard')}}" class="menu-item">
-            <div class="icon dashboard-icon" onclick="openSidebar()"></div>
-            <span class="menu-text">Dashboard</span>
-        </a>
-        <a href="{{url_for('volunteer_settings')}}" class="menu-item active">
-            <div class="icon settings-icon" onclick="openSidebar()"></div>
-            <span class="menu-text">Settings</span>
-        </a>
-        <a href="{{url_for('profile')}}" class="menu-item">
-            <div class="icon settings-icon" onclick="openSidebar()"></div>
-            <span class="menu-text">Profile</span>
-        </a>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <div class="profile-container">
+            <!-- Profile Section -->
+            <section class="profile-section">
+              <div class="profile-header">
+                <img
+                  src="{{url_for('static', filename='img/user.png')}}"
+                  alt="User Profile Picture"
+                  class="profile-pic"
+                />
+                <div class="profile-info">
+                  <h2 id="userName">{{name}}</h2>
+                  <p>Active Volunteer | Joined 2025</p>
+                  <p id="user-location">Fetching location...</p>
+                </div>
+                <a href="/logout">
+                  <div class="parent">
+                    <button class="btnlogout">Logout</button>
+                  </div>
+                </a>
+              </div>
+
+              <!-- Stats Cards -->
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <h3>120</h3>
+                  <p>Total Hours</p>
+                </div>
+                <div class="stat-card">
+                  <h3>15</h3>
+                  <p>Events Volunteered</p>
+                </div>
+                <div class="stat-card">
+                  <h3>350</h3>
+                  <p>People Impacted</p>
+                </div>
+                <div class="stat-card">
+                  <h3>4</h3>
+                  <p>Badges Earned</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- About Section -->
+            <section class="about-section">
+              <h2 class="section-title">About Me</h2>
+              <div class="about-content">
+                <p id="about-text" contenteditable="false">
+                  Click "Edit" to add something about yourself!
+                </p>
+                <button id="edit-about-btn" class="edit-btn">Edit</button>
+                <button
+                  id="save-about-btn"
+                  class="save-btn"
+                  style="display: none"
+                >
+                  Save
+                </button>
+              </div>
+            </section>
+
+            <!-- Contacts Section -->
+            <section class="contacts-section">
+              <h2 class="section-title">Contact Information</h2>
+              <div class="contacts-content">
+                <p>
+                  <strong>Email:</strong>
+                  <input type="email" id="user-email" value="{{email}}" readonly />
+                </p>
+                <br>
+                <p>
+                  <strong>Phone:</strong>
+                  <input
+                    type="text"
+                    id="user-phone"
+                    value="{{phone}}"
+                    maxlength="10"
+                    pattern="\d*"
+                    readonly
+                  />
+                </p>
+                <br>
+                <p>
+                  <strong>Address:</strong>
+                  <input type="text" id="user-address" value="{{address}}" readonly />
+                </p>
+                <button id="edit-contacts-btn" class="edit-btn">Edit</button>
+                <button id="save-contacts-btn" class="save-btn" style="display: none;">
+                  Save
+                </button>
+              </div>
+            </section>
+          </div>
+        </main>
       </div>
     </div>
-    
-      <!-- Main Content -->
-      <main class="main-content">
-        <div class="profile-container">
-          <!-- Profile Section -->
-          <section class="profile-section">
-            <div class="profile-header">
-              <img src="{{url_for('static', filename='img/user.png')}}" alt="User Profile Picture" class="profile-pic">
-              <div class="profile-info">
-                <h2 id="userName">{{name}}</h2>
-                <p>Active Volunteer | Joined 2025</p>
-                <p id="user-location">Fetching location...</p>
-              </div>
-              <a href="/logout">
-                <div class="parent">
-                    <button class="btnlogout">Logout</button>
-                </div>
-              </a>
-            </div>
-
-            <!-- Stats Cards -->
-            <div class="stats-grid">
-              <div class="stat-card">
-                <h3>120</h3>
-                <p>Total Hours</p>
-              </div>
-              <div class="stat-card">
-                <h3>15</h3>
-                <p>Events Volunteered</p>
-              </div>
-              <div class="stat-card">
-                <h3>350</h3> 
-                <p>People Impacted</p>
-              </div>
-              <div class="stat-card">
-                <h3>4</h3>
-                <p>Badges Earned</p>
-              </div>
-            </div>
-          </section>
-
-          <!-- About Section -->
-          <section class="about-section">
-            <h2 class="section-title">About Me</h2>
-            <div class="about-content">
-              <p id="about-text" contenteditable="false">Click "Edit" to add something about yourself!</p>
-              <button id="edit-about-btn" class="edit-btn">Edit</button>
-              <button id="save-about-btn" class="save-btn" style="display: none;">Save</button>
-            </div>
-          </section>
-
-          <!-- Badges Section -->
-          <section class="badges-section">
-            <h2 class="section-title">Your Badges</h2>
-            <div class="badges-container">
-              <div class="badges-header">
-                <span>Achievement Badges</span>
-                <span>3 of 12</span>
-              </div>
-              <div class="badges-grid">
-                <div class="badge-card">
-                  <img src="{{url_for('static', filename='img/badge1.png')}}" alt="First Donation">
-                  <h3>First Donation</h3>
-                </div>
-                <div class="badge-card">
-                  <img src="{{url_for('static', filename='img/Safety.png')}}" alt="Food Safety">
-                  <h3>Food Safety</h3>
-                </div>
-                <div class="badge-card">
-                  <img src="https://via.placeholder.com/60" alt="Quick Response">
-                  <h3>Quick Response</h3>
-                </div>
-                <div class="badge-card disabled" data-requirement="Complete 5 team events to unlock this badge.">
-                  <div class="placeholder"></div>
-                  <h3>Team Leader</h3>
-                </div>
-                <div class="badge-card disabled" data-requirement="Manage inventory for 3 events to unlock this badge.">
-                  <div class="placeholder"></div>
-                  <h3>Inventory Pro</h3>
-                </div>
-                <div class="badge-card disabled" data-requirement="Organize a community event to unlock this badge.">
-                  <div class="placeholder"></div>
-                  <h3>Community Builder</h3>
-                </div>
-              </div>
-              <div class="rank-badges">
-                <h3>Rank Badges</h3>
-                <div class="rank-grid">
-                  <div class="rank-card">
-                    <img src="{{url_for('static', filename='img/Bronze.png')}}" alt="Bronze">
-                    <h3>Bronze</h3>
-                  </div>
-                  <div class="rank-card">
-                    <img src="{{url_for('static', filename='img/Silver.png')}}" alt="Silver">
-                    <h3>Silver</h3>
-                  </div>
-                  <div class="rank-card">
-                    <img src="{{url_for('static', filename='img/Gold.png')}}" alt="Gold">
-                    <h3>Gold</h3>
-                  </div>
-                </div>
-              </div>
-              <div class="progress-section">
-                <h3>Achievement Progress</h3>
-                <div class="progress-container">
-                  <span>Hours Contributed</span>
-                  <div class="progress-bar">
-                    <div class="progress" style="width: 48%;"></div>
-                  </div>
-                  <span>48/100</span>
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
-      </main>
-    </div>
-  </div>
-
-  <!-- Modal -->
-  <div id="badge-modal" class="modal" style="display: none;">
-    <div class="modal-content">
-      <span class="close-btn">&times;</span>
-      <img id="badge-image" src="" alt="Badge Image">
-      <p id="badge-message"></p>
-    </div>
-  </div>
-  <script src="{{ url_for('static', filename='js/settings_vol.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
-</body>
+    <script src="{{ url_for('static', filename='js/settings_vol.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+  </body>
 </html>

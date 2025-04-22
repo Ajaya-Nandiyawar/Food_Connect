@@ -1,86 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NGO Volunteer Application</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NGO Volunteer Application</title>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-  <!-- Material Icons -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href={{url_for('static', filename='css/application.css')}}/>
-</head>
-<body>
-
-  <div class="container">
-    <h2>Volunteer for Food Donation 🍽️</h2>
-    <form id="volunteerForm">
-      <div class="input-group">
-        <label for="name">Full Name</label>
-        <i class="material-icons">person</i>
-        <input type="text" id="name" name="name" required placeholder="Your Name" />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Material Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='css/application.css')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='css/loader.css')}}"
+    />
+  </head>
+  <body>
+    <!-- Loader -->
+    <div class="loader-container" id="loaderContainer">
+      <div class="donation-loader">
+        <div class="food-items">
+          <div class="food-item">
+            <i class="fas fa-apple-alt"></i>
+          </div>
+          <div class="food-item">
+            <i class="fas fa-bread-slice"></i>
+          </div>
+          <div class="food-item">
+            <i class="fas fa-carrot"></i>
+          </div>
+        </div>
+        <div class="basket"></div>
+        <div class="heart-container">
+          <i class="fas fa-heart heart"></i>
+        </div>
+        <div class="loading-text">Connecting hearts through food...</div>
       </div>
+    </div>
 
-      <div class="input-group">
-        <label for="email">Email Address</label>
-        <i class="material-icons">email</i>
-        <input type="email" id="email" name="email" required placeholder="example@gmail.com" />
-      </div>
+    <div class="container">
+      <h2>Volunteer for Food Donation 🍽️</h2>
+      <form id="volunteerForm">
+        <div class="input-group">
+          <label for="name">Full Name</label>
+          <i class="material-icons">person</i>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            placeholder="Your Name"
+          />
+        </div>
 
-      <div class="input-group">
-        <label for="phone">Phone Number</label>
-        <i class="material-icons">phone</i>
-        <input type="tel" id="phone" name="phone" required pattern="[0-9]{10}" placeholder="10-digit number" />
-      </div>
+        <div class="input-group">
+          <label for="email">Email Address</label>
+          <i class="material-icons">email</i>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="example@gmail.com"
+          />
+        </div>
 
-      <div class="input-group">
-        <label for="city">City</label>
-        <i class="material-icons">location_city</i>
-        <input type="text" id="autocomplete" name="city" required placeholder="Start typing your city..." />
-      </div>
-            
-      <div class="input-group">
-        <label for="event">Event*</label>
-        <i class="material-icons">handshake</i>
-        <select id="event" name="event" required>
-          <option value="">--Select Event--</option>
-          <option value="Food Drive">Food Drive</option>
-          <option value="Meal Packing">Meal Packing</option>
-          <option value="Street Distribution">Street Distribution</option>
-          <option value="Fundraising">Fundraising</option>
-        </select>
-      </div>
+        <div class="input-group">
+          <label for="phone">Phone Number</label>
+          <i class="material-icons">phone</i>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            required
+            pattern="[0-9]{10}"
+            placeholder="10-digit number"
+          />
+        </div>
 
-      <div class="input-group">
-        <label for="availability">Availability*</label>
-        <i class="material-icons">event</i>
-        <select id="availability" name="availability" required>
-          <option value="">--Select--</option>
-          <option value="Weekdays">Weekdays</option>
-          <option value="Weekends">Weekends</option>
-          <option value="Both">Both</option>
-        </select>
-      </div>
+        <div class="input-group">
+          <label for="city">City</label>
+          <i class="material-icons">location_city</i>
+          <input
+            type="text"
+            id="autocomplete"
+            name="city"
+            required
+            placeholder="Start typing your city..."
+          />
+        </div>
 
-      <div class="input-group">
-        <label for="message">Why do you want to volunteer?</label>
-        <i class="material-icons" style="top: 45%;">chat</i>
-        <textarea id="message" name="message" placeholder="Optional..."></textarea>
-      </div>
+        <div class="input-group">
+          <label for="event">Event*</label>
+          <i class="material-icons">handshake</i>
+          <select id="event" name="event" required>
+            <option value="">--Select Event--</option>
+            <option value="Food Drive">Food Drive</option>
+            <option value="Meal Packing">Meal Packing</option>
+            <option value="Street Distribution">Street Distribution</option>
+            <option value="Fundraising">Fundraising</option>
+          </select>
+        </div>
 
-      <button type="submit">Submit Application</button>
-      <div class="success-message" id="successMsg">🎉 Thank you for volunteering! We’ll contact you soon.</div>
-    </form>
-  </div>
+        <div class="input-group">
+          <label for="availability">Availability*</label>
+          <i class="material-icons">event</i>
+          <select id="availability" name="availability" required>
+            <option value="">--Select--</option>
+            <option value="Weekdays">Weekdays</option>
+            <option value="Weekends">Weekends</option>
+            <option value="Both">Both</option>
+          </select>
+        </div>
 
-  <div class="btn-wrap">
-    <button class="btn">
-      <span class="back-arrow-icon"></span>
-    </button>
-  </div>
+        <div class="input-group">
+          <label for="message">Why do you want to volunteer?</label>
+          <i class="material-icons" style="top: 45%">chat</i>
+          <textarea
+            id="message"
+            name="message"
+            placeholder="Optional..."
+          ></textarea>
+        </div>
 
+        <button type="submit">Submit Application</button>
+        <div class="success-message" id="successMsg">
+          🎉 Thank you for volunteering! We’ll contact you soon.
+        </div>
+      </form>
+    </div>
 
-<script src={{url_for('static', filename='js/application.js')}}></script>
-</body>
+    <div class="btn-wrap">
+      <a href="{{url_for('volunteer_dashboard')}}" class="back-button">
+        <button class="btn">
+          <span class="back-arrow-icon"></span>
+        </button>
+      </a>
+    </div>
+
+    <script src="{{url_for('static', filename='js/application.js')}}"></script>
+    <script src="{{url_for('static', filename='js/loader.js')}}"></script>
+  </body>
 </html>

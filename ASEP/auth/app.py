@@ -487,6 +487,10 @@ def volunteer_settings():
     
     return redirect("/login")
 
+@app.route('/application_form', methods=['GET'])
+def application_form():
+    return render_template('application_form.html')
+
 # Run the app
 if __name__ == '__main__':
     app.run(debug=True)

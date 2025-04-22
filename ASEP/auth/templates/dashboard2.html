@@ -688,7 +688,9 @@
                 const li = document.createElement('li');
                 li.innerHTML = `
                   <strong>${notif.message}</strong><br>
-                  Food Type: ${notif.food_type}, Quantity: ${notif.quantity}<br>
+                  Name: ${notif.ngo_name}<br>
+                  Food Type: ${notif.food_type}<br> 
+                  Quantity: ${notif.quantity}<br>
                   Note: ${notif.additional_note || 'None'}<br>
                   <small>${new Date(notif.created_at).toLocaleString()}</small><br>
                   <button class="btn-link" onclick="deleteNotification(${notif.id})">Delete</button>

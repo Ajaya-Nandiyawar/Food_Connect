@@ -263,6 +263,81 @@ tr:hover {
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
+.badge-modal-content {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 400px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    color: #333;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.badge-image-container img {
+    width: 300px;
+    height: 300px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+#badgeImageContainer :hover{
+    transform: scale(1.2);
+    transition: transform 0.3s ease;
+}
+
+#badgeReason {
+    font-size: 14px;
+    color: #000000;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#badgeName {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.badge-image-container .hexagon-placeholder {
+    width: 120px;
+    height: 120px;
+    background: #000;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 15px;
+    margin: 0 auto; /* Center horizontally */
+    position: relative;
+}
+
+
+
+.badge-details p {
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.badge-details strong {
+    font-weight: bold;
+    width: 120px;
+    display: inline-block;
+}
+
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -424,5 +499,101 @@ tr:hover {
     .container {
         flex-direction: column;
     }
+}
 
+/* Badges Section */
+.badges-section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.badges-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.badges-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+    color: #666;
+}
+
+.badges-grid, .rank-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.badge-card, .rank-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 8px;
+    background: #f9f9f9;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.badge-card:hover, .rank-card:hover {
+    transform: translateY(-5px);
+}
+
+.badge-card img, .rank-card img {
+    width: 250px;
+    height: 250px;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+}
+
+.badge-card h3, .rank-card h3 {
+    font-size: 1rem;
+    margin: 0.25rem 0;
+    color: #333;
+}
+
+.badge-card.disabled {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.badge-card.disabled .placeholder {
+    width: 60px;
+    height: 60px;
+    background: #ccc;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: #28a745;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .badges-grid, .rank-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .badges-grid, .rank-grid {
+        grid-template-columns: 1fr;
+    }
 }

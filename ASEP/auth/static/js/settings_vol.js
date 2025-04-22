@@ -105,82 +105,55 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const badges = document.querySelectorAll(".badge-card");
-  const rankBadges = document.querySelectorAll(".rank-card");
-  const modal = document.getElementById("badge-modal");
-  const badgeImage = document.getElementById("badge-image");
-  const badgeMessage = document.getElementById("badge-message");
-  const closeModal = document.querySelector(".close-btn");
-  const mainWrapper = document.querySelector(".main-wrapper"); // Select the main wrapper
+  const editBtn = document.getElementById("edit-contacts-btn");
+  const saveBtn = document.getElementById("save-contacts-btn");
+  const emailField = document.getElementById("user-email");
+  const phoneField = document.getElementById("user-phone");
+  const addressField = document.getElementById("user-address");
 
-  const badgeDetails = {
-    "First Donation": "Awarded for making your first donation.",
-    "Food Safety": "Awarded for completing food safety training.",
-    "Quick Response": "Awarded for responding quickly to a request.",
-    "Team Leader": "Awarded for leading a team successfully.",
-    "Inventory Pro": "Awarded for managing inventory efficiently.",
-    "Community Builder": "Awarded for building strong community connections."
-  };
+  // Load saved data from localStorage
+  const savedEmail = localStorage.getItem("userEmail");
+  const savedPhone = localStorage.getItem("userPhone");
+  const savedAddress = localStorage.getItem("userAddress");
 
-  const rankDetails = {
-    "Bronze": "Achieved for contributing 50+ hours of volunteering.",
-    "Silver": "Achieved for contributing 100+ hours of volunteering.",
-    "Gold": "Achieved for contributing 200+ hours of volunteering."
-  };
+  if (savedEmail) emailField.value = savedEmail;
+  if (savedPhone) phoneField.value = savedPhone;
+  if (savedAddress) addressField.value = savedAddress;
 
-  const openModal = (title, imgSrc, details) => {
-    badgeImage.src = imgSrc;
-    badgeMessage.innerText = details[title] || "No details available.";
-    modal.style.display = "flex";
-
-    // Add blur effect to the main wrapper
-    mainWrapper.classList.add("modal-active");
-  };
-
-  badges.forEach((badge) => {
-    badge.addEventListener("click", () => {
-      const badgeTitle = badge.querySelector("h3").innerText;
-      const badgeImgSrc = badge.querySelector("img").src;
-      openModal(badgeTitle, badgeImgSrc, badgeDetails);
-    });
+  editBtn.addEventListener("click", () => {
+    emailField.removeAttribute("readonly");
+    phoneField.removeAttribute("readonly");
+    addressField.removeAttribute("readonly");
+    phoneField.focus();
+    editBtn.style.display = "none";
+    saveBtn.style.display = "inline-block";
   });
 
-  rankBadges.forEach((rankBadge) => {
-    rankBadge.addEventListener("click", () => {
-      const rankTitle = rankBadge.querySelector("h3").innerText;
-      const rankImgSrc = rankBadge.querySelector("img").src;
-      openModal(rankTitle, rankImgSrc, rankDetails);
-    });
-  });
+  saveBtn.addEventListener("click", () => {
+    const phoneValue = phoneField.value.trim();
 
-  closeModal.addEventListener("click", () => {
-    modal.style.display = "none";
-
-    // Remove blur effect from the main wrapper
-    mainWrapper.classList.remove("modal-active");
-  });
-
-  window.addEventListener("click", (event) => {
-    if (event.target === modal) {
-      modal.style.display = "none";
-
-      // Remove blur effect from the main wrapper
-      mainWrapper.classList.remove("modal-active");
+    // Validate phone number length and numeric input
+    if (!/^\d{10}$/.test(phoneValue)) {
+      alert("Phone number must be exactly 10 digits.");
+      phoneField.focus();
+      return;
     }
-  });
 
-  document.querySelectorAll('.badge-card.disabled').forEach(card => {
-    card.addEventListener('click', () => {
-      const requirement = card.getAttribute('data-requirement');
-      const modal = document.getElementById('badge-modal');
-      const badgeMessage = document.getElementById('badge-message');
+    emailField.setAttribute("readonly", "true");
+    phoneField.setAttribute("readonly", "true");
+    addressField.setAttribute("readonly", "true");
+    editBtn.style.display = "inline-block";
+    saveBtn.style.display = "none";
 
-      badgeMessage.textContent = requirement;
-      modal.style.display = 'block';
+    // Save updated data to localStorage
+    localStorage.setItem("userEmail", emailField.value.trim());
+    localStorage.setItem("userPhone", phoneValue);
+    localStorage.setItem("userAddress", addressField.value.trim());
+
+    console.log("Updated Contact Information:", {
+      email: emailField.value.trim(),
+      phone: phoneValue,
+      address: addressField.value.trim(),
     });
-  });
-
-  document.querySelector('.close-btn').addEventListener('click', () => {
-    document.getElementById('badge-modal').style.display = 'none';
   });
 });

@@ -22,13 +22,13 @@
                 <div class="icon dashboard-icon" onclick="openSidebar()"></div>
                 <span class="menu-text">Dashboard</span>
             </a>
-            <a href="{{url_for('volunteer_settings')}}" class="menu-item">
-                <div class="icon settings-icon" onclick="openSidebar()"></div>
-                <span class="menu-text">Settings</span>
-            </a>
             <a href="{{url_for('profile')}}" class="menu-item active">
                 <div class="icon settings-icon" onclick="openSidebar()"></div>
                 <span class="menu-text">Profile</span>
+            </a>
+            <a href="{{url_for('volunteer_settings')}}" class="menu-item">
+                <div class="icon settings-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Settings</span>
             </a>
           </div>
         </div>
@@ -225,6 +225,23 @@
                         </div>
                     </div>
                     
+                    <div id="badgeModal" class="modal badge-modal">
+                        <div class="badge-modal-content">
+                            <div class="modal-header">
+                                <h3>Badge Details</h3>
+                                
+                            </div>
+                            <div class="badge-details">
+                                <div id="badgeImageContainer" class="badge-image-container"></div>
+                                <p><span id="badgeName"></span></p>
+                                <p><span id="badgeReason"></span></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn" style="background-color: #9e9e9e;" onclick="closeBadgeModal()">Close</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Notification -->
                     <div id="notification" class="notification">
                         Certificate download started!
@@ -250,9 +267,52 @@
 
                 <!-- Badges Tab -->
                 <div class="tab-pane" id="badges">
-                    <div class="badges-content">
-                        <h3>Your Badges</h3>
-                        <p>Your earned badges will appear here.</p>
+                    <div class="badges-section">
+                        <h2 class="section-title">Your Badges</h2>
+                        <div class="badges-container">
+                            <div class="badges-header">
+                                <span>Achievement Badges</span>
+                                <span>3 of 12</span>
+                            </div>
+                            <div class="badges-grid">
+                                <div class="badge-card" onclick="viewBadge(1)">
+                                    <img src="{{url_for('static', filename='img/First_Responder.png')}}" alt="First Responder">
+                                    <h3>First Responder</h3>
+                                </div>
+                                <div class="badge-card" onclick="viewBadge(2)">
+                                    <img src="{{url_for('static', filename='img/food_safety.png')}}" alt="Food Safety">
+                                    <h3>Food Safety</h3>
+                                </div>
+                                <div class="badge-card" onclick="viewBadge(3)">
+                                    <img src="{{url_for('static', filename='img/bronze_volunteer.png')}}" alt="Bronze Volunteer">
+                                    <h3>Bronze Volunteer</h3>
+                                </div>
+                                <div class="badge-card disabled" data-requirement="Complete 5 team events to unlock this badge." onclick="viewBadge(4)">
+                                    <div class="placeholder"></div>
+                                    <h3>Team Leader</h3>
+                                </div>
+                                <div class="badge-card disabled" data-requirement="Manage inventory for 3 events to unlock this badge." onclick="viewBadge(5)">
+                                    <div class="placeholder"></div>
+                                    <h3>Inventory Pro</h3>
+                                </div>
+                                <div class="badge-card disabled" data-requirement="Organize a community event to unlock this badge." onclick="viewBadge(6)">
+                                    <div class="placeholder"></div>
+                                    <h3>Community Builder</h3>
+                                </div>
+                                <div class="badge-card disabled" data-requirement="Organize a community event to unlock this badge." onclick="viewBadge(7)">
+                                    <div class="placeholder"></div>
+                                    <h3>Silver Supporter</h3>
+                                </div>
+                                <div class="badge-card disabled" data-requirement="Organize a community event to unlock this badge." onclick="viewBadge(8)">
+                                    <div class="placeholder"></div>
+                                    <h3>Gold Guide</h3>
+                                </div>
+                                <div class="badge-card disabled" data-requirement="Organize a community event to unlock this badge." onclick="viewBadge(9)">
+                                    <div class="placeholder"></div>
+                                    <h3>Community Builder</h3>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1222,3 +1222,10 @@ h2 {
   bottom: unset;
   transition-duration: 0.3s;
 }
+
+.volbtn ,.ngobtn {
+  background-color: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+}

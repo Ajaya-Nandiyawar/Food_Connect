@@ -95,7 +95,7 @@
             </div>
         </div>
     </div>
-    <button class="read-more"><a href="about_us.html" style="color: white;"> Read More </a> </button>
+    <button class="read-more"><a href="{{url_for('about_us')}}" style="color: white;"> Read More </a> </button>
   
         <p class="heading">Our Works</p>
         <br/>
@@ -250,13 +250,13 @@
               <button type="submit" class="submit-btn">Subscribe</button>
             </form>
             <div class="footer-bag" style="margin-top: 20px;">
-              <div class="footer-badge">
+              <div class="footer-badge">  
                 <i class="fas fa-hand-holding-heart badge-icon" style="color: #ff7e1d;"></i>
-                <span>Volunteer</span>
+                <a href="{{url_for('signup')}}"><button class="volbtn"><span>Volunteer</span></button></a>
               </div>
               <div class="footer-badge">
                 <i class="fas fa-donate badge-icon" style="color: #ff7e1d;"></i>
-                <span>Donate</span>
+                <a href="{{url_for('signup')}}"><button class="ngobtn"><span>Donate</span></button></a>
               </div>
             </div>
           </div>
@@ -303,7 +303,7 @@
         ></path>
       </svg>
     </button>
-    <script src={{url_for('static', filename='js/home page.js')}}></script>
-    <script src={{url_for('static', filename='js/partner.js')}}></script>
+    <script src="{{url_for('static', filename='js/home page.js')}}"></script>
+    <script src="{{url_for('static', filename='js/partner.js')}}"></script>
   </body>
 </html>

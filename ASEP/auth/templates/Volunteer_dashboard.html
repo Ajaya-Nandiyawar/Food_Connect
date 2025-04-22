@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Volunteer Hub</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <link href="sidebar.css" rel="stylesheet">
+  <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
   <link rel="stylesheet" href="{{url_for('static', filename='css/Volunteer_dashboard.css')}}">
   <link rel="stylesheet" href="{{url_for('static', filename='css/sidebar.css')}}">
 
@@ -23,13 +26,13 @@
         <div class="icon dashboard-icon" onclick="openSidebar()"></div>
         <span class="menu-text">Dashboard</span>
     </a>
-    <a href="{{url_for('volunteer_settings')}}" class="menu-item">
-        <div class="icon settings-icon" onclick="openSidebar()"></div>
-        <span class="menu-text">Settings</span>
-    </a>
     <a href="{{url_for('profile')}}" class="menu-item">
         <div class="icon settings-icon" onclick="openSidebar()"></div>
         <span class="menu-text">Profile</span>
+    </a>
+    <a href="{{url_for('volunteer_settings')}}" class="menu-item">
+        <div class="icon settings-icon" onclick="openSidebar()"></div>
+        <span class="menu-text">Settings</span>
     </a>
   </div>
 </div>
@@ -76,7 +79,7 @@
           <p class="location">📍 Central District</p>
           <p class="calendar">📅 09/05/25</p>
           <p class="time">🕒 9:00 AM to 5:00 PM</p>
-          <button id="showform" class="partner-btn">Join Initiative</button>
+          <a href="{{url_for('application_form')}}"><button id="showform" class="partner-btn">Join Initiative</button></a>
         </div>
       </div>
       <div class="ngo-card">
@@ -93,7 +96,7 @@
           <p class="location">📍 Central District</p>
           <p class="calendar">📅 09/05/25</p>
           <p class="time">🕒 9:00 AM to 5:00 PM</p>
-          <button id="showform" class="partner-btn">Join Initiative</button>
+          <a href="{{url_for('application_form')}}"><button id="showform" class="partner-btn">Join Initiative</button></a>
         </div>
       </div>
       <div class="ngo-card">
@@ -110,7 +113,7 @@
           <p class="location">📍 Central District</p>
           <p class="calendar">📅 09/05/25</p>
           <p class="time">🕒 9:00 AM to 5:00 PM</p>
-          <button id="showform" class="partner-btn">Join Initiative</button>
+          <a href="{{url_for('application_form')}}"><button id="showform" class="partner-btn">Join Initiative</button></a>
         </div>
       </div>
       <div class="ngo-card">
@@ -127,7 +130,7 @@
           <p class="location">📍 Central District</p>
           <p class="calendar">📅 09/05/25</p>
           <p class="time">🕒 9:00 AM to 5:00 PM</p>
-          <button id="showform" class="partner-btn">Join Initiative</button>
+          <a href="{{url_for('application_form')}}"><button id="showform" class="partner-btn">Join Initiative</button></a>
         </div>
       </div>
       <div class="ngo-card">
@@ -144,7 +147,7 @@
           <p class="location">📍 Central District</p>
           <p class="calendar">📅 09/05/25</p>
           <p class="time">🕒 9:00 AM to 5:00 PM</p>
-          <button id="showform" class="partner-btn">Join Initiative</button>
+          <a href="{{url_for('application_form')}}"><button id="showform" class="partner-btn">Join Initiative</button></a>
         </div>
       </div>
       <div class="ngo-card">
@@ -161,7 +164,7 @@
           <p class="location">📍 Central District</p>
           <p class="calendar">📅 09/05/25</p>
           <p class="time">🕒 9:00 AM to 5:00 PM</p>
-          <button id="showform" class="partner-btn">Join Initiative</button>
+           <a href="{{url_for('application_form')}}"><button id="showform" class="partner-btn">Join Initiative</button></a>
         </div>
       </div>
       <div class="ngo-card">
@@ -178,7 +181,7 @@
           <p class="location">📍 Central District</p>
           <p class="calendar">📅 09/05/25</p>
           <p class="time">🕒 9:00 AM to 5:00 PM</p>
-          <button id="showform" class="partner-btn">Join Initiative</button>
+          <a href="{{url_for('application_form')}}"><button id="showform" class="partner-btn">Join Initiative</button></a>
         </div>
       </div>
     </div>
