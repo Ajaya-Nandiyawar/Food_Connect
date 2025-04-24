@@ -114,7 +114,8 @@
 .donation-icon,
 .achievement-icon,
 .event-icon,
-.alert-icon {
+.alert-icon,
+.user-icon {
     background: currentColor;
     mask-size: contain;
     mask-repeat: no-repeat;
@@ -176,6 +177,20 @@
     mask-position: center;
     -webkit-mask-position: center;
   }
+
+  .user-icon {
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cellipse cx='12' cy='8' rx='5' ry='6'/%3E%3Cpath d='M21.8 19.1c-.9-1.8-2.6-3.3-4.8-4.2-.6-.2-1.3-.2-1.8.1-1 .6-2 .9-3.2.9s-2.2-.3-3.2-.9c-.5-.3-1.2-.4-1.8-.1-2.2.9-3.9 2.4-4.8 4.2C1.5 20.5 2.6 22 4.1 22h15.8c1.5 0 2.6-1.5 1.9-2.9z'/%3E%3C/svg%3E");
+  
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cellipse cx='12' cy='8' rx='5' ry='6'/%3E%3Cpath d='M21.8 19.1c-.9-1.8-2.6-3.3-4.8-4.2-.6-.2-1.3-.2-1.8.1-1 .6-2 .9-3.2.9s-2.2-.3-3.2-.9c-.5-.3-1.2-.4-1.8-.1-2.2.9-3.9 2.4-4.8 4.2C1.5 20.5 2.6 22 4.1 22h15.8c1.5 0 2.6-1.5 1.9-2.9z'/%3E%3C/svg%3E");
+  
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-position: center;
+    mask-size: contain;
+    -webkit-mask-size: contain;
+  }
+  
 
   .notification-icon {
     width: 30px;

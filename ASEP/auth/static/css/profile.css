@@ -33,7 +33,8 @@ body {
     font-size: 36px;
     font-weight: bold;
     margin: 10px 0;
-    color: #2196F3;
+    color: #ff8c00;
+    transition: color 0.3s;
 }
 
 .card-label {
@@ -472,9 +473,9 @@ tr:hover {
 }
 
 .filter-btn.active {
-    background-color: #2196F3;
+    background: linear-gradient(to right, #f57c00, #ffcc00);
     color: white;
-    border-color: #2196F3;
+    border-color: #ff8400;
 }
 
 /* Responsive adjustments */

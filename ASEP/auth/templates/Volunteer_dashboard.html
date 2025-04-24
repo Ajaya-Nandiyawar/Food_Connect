@@ -5,200 +5,251 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Volunteer Hub</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-      rel="stylesheet"
-    />
+  <link href="sidebar.css" rel="stylesheet">
   <link rel="stylesheet" href="{{url_for('static', filename='css/Volunteer_dashboard.css')}}">
   <link rel="stylesheet" href="{{url_for('static', filename='css/sidebar.css')}}">
 
-  </style>
 </head>
 <body>
-  <div class="sidebar" id="sidebar">
-    <div class="logo">
-        <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare">
-        <h1>Food<b style="background: linear-gradient(to right, #f57c00, #ffcc00); -webkit-background-clip: text; background-clip: text; color: transparent;">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <button class="toggle-btn" id="toggleBtn">X</button>
+  <div class="container">
+    <div class="sidebar" id="sidebar">
+      <div class="logo">
+          <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare">
+          <h1>Food<b style="background: linear-gradient(to right, #f57c00, #ffcc00); -webkit-background-clip: text; background-clip: text; color: transparent;">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <button class="toggle-btn" id="toggleBtn">X</button>
+      </div>
+      <div class="menu">
+        <a href="{{url_for('volunteer_dashboard')}}" class="menu-item active">
+            <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Dashboard</span>
+        </a>
+        <a href="{{url_for('profile')}}" class="menu-item">
+            <div class="icon user-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Profile</span>
+        </a>
+      </div>
     </div>
-    <div class="menu">
-    <a href="{{url_for('volunteer_dashboard')}}" class="menu-item active">
-        <div class="icon dashboard-icon" onclick="openSidebar()"></div>
-        <span class="menu-text">Dashboard</span>
-    </a>
-    <a href="{{url_for('profile')}}" class="menu-item">
-        <div class="icon settings-icon" onclick="openSidebar()"></div>
-        <span class="menu-text">Profile</span>
-    </a>
-    <a href="{{url_for('volunteer_settings')}}" class="menu-item">
-        <div class="icon settings-icon" onclick="openSidebar()"></div>
-        <span class="menu-text">Settings</span>
-    </a>
-  </div>
-</div>
     
-  <div class="main">
-    <div class="icon notification-icon" style="position: absolute; right: 4%;"></div><br>
-    <h2 id="userName">Welcome back, {{name}}!</h2>
-    <p style="color: #333333e2;">Here's an overview of your volunteer activity</p><br>
+    <div class="main">
+      <div class="icon notification-icon" style="position: absolute; right: 4%;"></div><br>
+      <h2 id="userName">Welcome back, {{name}}!</h2>
+      <p style="color: #333333e2;">Here's an overview of your volunteer activity</p><br>
 
-    <div class="overview">
-      <div class="card">
-        <h3>Total Hours</h3>
-        <div class="value">128.5</div><br>
-        <p style="color:rgb(9, 159, 9); font-size: 14px; font-weight: 800;">↗ 12.4% this month</p>
-      </div>
-      <div class="card">
-        <h3>Upcoming Events</h3>
-        <div class="value">4</div><br>
-        <p style="color: #1877f2; font-size: 14px; font-weight: 800;">Next: Cleanliness Drive (2 days)</p>
-      </div>
-      <div class="card">
-        <h3>Badges Earned</h3>
-        <div class="value">7</div><br>
-        <p style="color:rgba(0, 0, 0, 0.733); font-size: 14px; font-weight: 800;">Latest: Environment Champion</p>
-      </div>
-      <div class="card">
-        <h3>Activities Completed</h3>
-        <div class="value">23</div><br>
-        <p style="color:rgb(9, 159, 9); font-size: 14px; font-weight: 800;">↗ 3 this week</p>
-      </div>
-    </div>
-    <div class="ngo-grid">
-      <div class="ngo-card">
-        <div class="ngo-image">
-          <img src="" alt="Event">
+      <div class="overview">
+        <div class="card">
+          <h3>Total Hours</h3>
+          <div class="value">128.5</div><br>
+          <p style="color:rgb(9, 159, 9); font-size: 14px; font-weight: 800;">↗ 12.4% this month</p>
         </div>
-        <div class="ngo-info">
-          <div class="ngo-header">
-            <h3>Feeding Hope</h3>
-            <span class="impact">22</span>
+        <div class="card">
+          <h3>Upcoming Events</h3>
+          <div class="value">4</div><br>
+          <p style="color: #1877f2; font-size: 14px; font-weight: 800;">Next: Cleanliness Drive (2 days)</p>
+        </div>
+        <div class="card">
+          <h3>Badges Earned</h3>
+          <div class="value">7</div><br>
+          <p style="color:rgba(0, 0, 0, 0.733); font-size: 14px; font-weight: 800;">Latest: Environment Champion</p>
+        </div>
+        <div class="card">
+          <h3>Activities Completed</h3>
+          <div class="value">23</div><br>
+          <p style="color:rgb(9, 159, 9); font-size: 14px; font-weight: 800;">↗ 3 this week</p>
+        </div>
+      </div>
+      <div class="ngo-grid">
+        <div class="ngo-card">
+          <div class="ngo-image">
+            <img src="" alt="Event">
           </div>
-          <p class="focus-area">Focus: Homeless Support</p>
-          <p class="focus-area">Organizer:</p>
-          <p class="location">📍 Central District</p>
-          <p class="calendar">📅 09/05/25</p>
-          <p class="time">🕒 9:00 AM to 5:00 PM</p>
-          <a href="{{url_for('application_form')}}"><button id="showform" class="partner-btn">Join Initiative</button></a>
-        </div>
-      </div>
-      <div class="ngo-card">
-        <div class="ngo-image">
-          <img src="" alt="Event">
-        </div>
-        <div class="ngo-info">
-          <div class="ngo-header">
-            <h3>Feeding Hope</h3>
-            <span class="impact">22</span>
+          <div class="ngo-info">
+            <div class="ngo-header">
+              <h3>Feeding Hope</h3>
+              <span class="impact">22</span>
+            </div>
+            <p class="focus-area">Focus: Homeless Support</p>
+            <p class="focus-area">Organizer:</p>
+            <p class="location">📍 Central District</p>
+            <p class="calendar">📅 09/05/25</p>
+            <p class="time">🕒 9:00 AM to 5:00 PM</p>
+            <button id="showform" class="partner-btn">Join Initiative</button>
           </div>
-          <p class="focus-area">Focus: Homeless Support</p>
-          <p class="focus-area">Organizer:</p>
-          <p class="location">📍 Central District</p>
-          <p class="calendar">📅 09/05/25</p>
-          <p class="time">🕒 9:00 AM to 5:00 PM</p>
-          <a href="{{url_for('application_form')}}"><button id="showform" class="partner-btn">Join Initiative</button></a>
         </div>
-      </div>
-      <div class="ngo-card">
-        <div class="ngo-image">
-          <img src="" alt="Event">
-        </div>
-        <div class="ngo-info">
-          <div class="ngo-header">
-            <h3>Feeding Hope</h3>
-            <span class="impact">22</span>
+        <div class="ngo-card">
+          <div class="ngo-image">
+            <img src="" alt="Event">
           </div>
-          <p class="focus-area">Focus: Homeless Support</p>
-          <p class="focus-area">Organizer:</p>
-          <p class="location">📍 Central District</p>
-          <p class="calendar">📅 09/05/25</p>
-          <p class="time">🕒 9:00 AM to 5:00 PM</p>
-          <a href="{{url_for('application_form')}}"><button id="showform" class="partner-btn">Join Initiative</button></a>
-        </div>
-      </div>
-      <div class="ngo-card">
-        <div class="ngo-image">
-          <img src="" alt="Event">
-        </div>
-        <div class="ngo-info">
-          <div class="ngo-header">
-            <h3>Feeding Hope</h3>
-            <span class="impact">22</span>
+          <div class="ngo-info">
+            <div class="ngo-header">
+              <h3>Feeding Hope</h3>
+              <span class="impact">22</span>
+            </div>
+            <p class="focus-area">Focus: Homeless Support</p>
+            <p class="focus-area">Organizer:</p>
+            <p class="location">📍 Central District</p>
+            <p class="calendar">📅 09/05/25</p>
+            <p class="time">🕒 9:00 AM to 5:00 PM</p>
+            <button id="showform" class="partner-btn">Join Initiative</button>
           </div>
-          <p class="focus-area">Focus: Homeless Support</p>
-          <p class="focus-area">Organizer:</p>
-          <p class="location">📍 Central District</p>
-          <p class="calendar">📅 09/05/25</p>
-          <p class="time">🕒 9:00 AM to 5:00 PM</p>
-          <a href="{{url_for('application_form')}}"><button id="showform" class="partner-btn">Join Initiative</button></a>
         </div>
-      </div>
-      <div class="ngo-card">
-        <div class="ngo-image">
-          <img src="" alt="Event">
-        </div>
-        <div class="ngo-info">
-          <div class="ngo-header">
-            <h3>Feeding Hope</h3>
-            <span class="impact">22</span>
+        <div class="ngo-card">
+          <div class="ngo-image">
+            <img src="" alt="Event">
           </div>
-          <p class="focus-area">Focus: Homeless Support</p>
-          <p class="focus-area">Organizer:</p>
-          <p class="location">📍 Central District</p>
-          <p class="calendar">📅 09/05/25</p>
-          <p class="time">🕒 9:00 AM to 5:00 PM</p>
-          <a href="{{url_for('application_form')}}"><button id="showform" class="partner-btn">Join Initiative</button></a>
-        </div>
-      </div>
-      <div class="ngo-card">
-        <div class="ngo-image">
-          <img src="" alt="Event">
-        </div>
-        <div class="ngo-info">
-          <div class="ngo-header">
-            <h3>Feeding Hope</h3>
-            <span class="impact">22</span>
+          <div class="ngo-info">
+            <div class="ngo-header">
+              <h3>Feeding Hope</h3>
+              <span class="impact">22</span>
+            </div>
+            <p class="focus-area">Focus: Homeless Support</p>
+            <p class="focus-area">Organizer:</p>
+            <p class="location">📍 Central District</p>
+            <p class="calendar">📅 09/05/25</p>
+            <p class="time">🕒 9:00 AM to 5:00 PM</p>
+            <button id="showform" class="partner-btn">Join Initiative</button>
           </div>
-          <p class="focus-area">Focus: Homeless Support</p>
-          <p class="focus-area">Organizer:</p>
-          <p class="location">📍 Central District</p>
-          <p class="calendar">📅 09/05/25</p>
-          <p class="time">🕒 9:00 AM to 5:00 PM</p>
-           <a href="{{url_for('application_form')}}"><button id="showform" class="partner-btn">Join Initiative</button></a>
         </div>
-      </div>
-      <div class="ngo-card">
-        <div class="ngo-image">
-          <img src="" alt="Event">
-        </div>
-        <div class="ngo-info">
-          <div class="ngo-header">
-            <h3>Feeding Hope</h3>
-            <span class="impact">22</span>
+        <div class="ngo-card">
+          <div class="ngo-image">
+            <img src="" alt="Event">
           </div>
-          <p class="focus-area">Focus: Homeless Support</p>
-          <p class="focus-area">Organizer:</p>
-          <p class="location">📍 Central District</p>
-          <p class="calendar">📅 09/05/25</p>
-          <p class="time">🕒 9:00 AM to 5:00 PM</p>
-          <a href="{{url_for('application_form')}}"><button id="showform" class="partner-btn">Join Initiative</button></a>
+          <div class="ngo-info">
+            <div class="ngo-header">
+              <h3>Feeding Hope</h3>
+              <span class="impact">22</span>
+            </div>
+            <p class="focus-area">Focus: Homeless Support</p>
+            <p class="focus-area">Organizer:</p>
+            <p class="location">📍 Central District</p>
+            <p class="calendar">📅 09/05/25</p>
+            <p class="time">🕒 9:00 AM to 5:00 PM</p>
+            <button id="showform" class="partner-btn">Join Initiative</button>
+          </div>
+        </div>
+        <div class="ngo-card">
+          <div class="ngo-image">
+            <img src="" alt="Event">
+          </div>
+          <div class="ngo-info">
+            <div class="ngo-header">
+              <h3>Feeding Hope</h3>
+              <span class="impact">22</span>
+            </div>
+            <p class="focus-area">Focus: Homeless Support</p>
+            <p class="focus-area">Organizer:</p>
+            <p class="location">📍 Central District</p>
+            <p class="calendar">📅 09/05/25</p>
+            <p class="time">🕒 9:00 AM to 5:00 PM</p>
+            <button id="showform" class="partner-btn">Join Initiative</button>
+          </div>
+        </div>
+        <div class="ngo-card">
+          <div class="ngo-image">
+            <img src="" alt="Event">
+          </div>
+          <div class="ngo-info">
+            <div class="ngo-header">
+              <h3>Feeding Hope</h3>
+              <span class="impact">22</span>
+            </div>
+            <p class="focus-area">Focus: Homeless Support</p>
+            <p class="focus-area">Organizer:</p>
+            <p class="location">📍 Central District</p>
+            <p class="calendar">📅 09/05/25</p>
+            <p class="time">🕒 9:00 AM to 5:00 PM</p>
+            <button id="showform" class="partner-btn">Join Initiative</button>
+          </div>
+        </div>
+        <div class="ngo-card">
+          <div class="ngo-image">
+            <img src="" alt="Event">
+          </div>
+          <div class="ngo-info">
+            <div class="ngo-header">
+              <h3>Feeding Hope</h3>
+              <span class="impact">22</span>
+            </div>
+            <p class="focus-area">Focus: Homeless Support</p>
+            <p class="focus-area">Organizer:</p>
+            <p class="location">📍 Central District</p>
+            <p class="calendar">📅 09/05/25</p>
+            <p class="time">🕒 9:00 AM to 5:00 PM</p>
+            <button id="showform" class="partner-btn">Join Initiative</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="notification-popup" id="notificationPopup">
-    <div class="popup-header">
-      <h4>Notifications</h4>
-      <span class="close-btn" onclick="togglePopup()">×</span>
+    <div class="notification-popup" id="notificationPopup">
+      <div class="popup-header">
+        <h4>Notifications</h4>
+        <span class="close-btn" onclick="togglePopup()">×</span>
+      </div>
+      <ul id="notificationList">
+        <li>🎉 You earned a new badge: Ocean Guardian</li>
+        <li>📢 Upcoming event: Beach Cleanup in 2 days</li>
+        <li>📱 App update available</li
+      </ul>
+      <p id="noNotifications" style="text-align:center; color: #444;">No notifications available</p>
     </div>
-    <ul id="notificationList">
-      <li>🎉 You earned a new badge: Ocean Guardian</li>
-      <li>📢 Upcoming event: Beach Cleanup in 2 days</li>
-      <li>📱 App update available</li
-    </ul>
-    <p id="noNotifications" style="text-align:center; color: #444;">No notifications available</p>
-  </div>
-
+    
+    <div class="signup-popup" id="signupPopup">
+      <div class="popup-header">
+        <h4>Volunteer for Food Donation 🍽️</h4>
+        <span class="close-btn" onclick="toggleSignup()">×</span>
+      </div>
+      <div class="popup-body">
+      <form class="signup-form" id="joinForm">
+        <label>Full Name</label>
+        <input
+        type="text"
+        placeholder="Your Name"
+        pattern="[A-Za-z\s]+"
+        title="Please enter letters only"
+        required
+        oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')"
+      />    
+        <label>Email Address</label>
+        <input type="email" placeholder="example@gmail.com" required />
+    
+        <label>Phone Number</label>
+        <input
+        type="tel"
+        placeholder="10-digit number"
+        maxlength="10"
+        pattern="\d{10}"
+        title="Please enter a valid 10-digit number"
+        required
+        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
+      />    
+        <label>City</label>
+        <input type="text" placeholder="Start typing your city..." required />
+    
+        <label>Event*</label>
+        <select required>
+          <option>--Select Event--</option>
+          <option>Food Drive</option>
+          <option>Meal Kit Packing</option>
+          <option>Distribution Volunteer</option>
+        </select>
+    
+        <label>Availability*</label>
+        <select required>
+          <option>--Select--</option>
+          <option>Weekdays</option>
+          <option>Weekends</option>
+          <option>Both</option>
+        </select>
+    
+        <label>Why do you want to volunteer?</label>
+        <textarea placeholder="Optional..."></textarea>
+    
+        <button type="submit" class="partner-btn">Submit Application</button>
+      </form>
+      </div>
+    </div>
+    
+    
   <script src="{{ url_for('static', filename='js/sidebar.js')}}"></script>
   <script src="{{ url_for('static', filename='js/Volunteer_dashboard.js')}}"></script>
 

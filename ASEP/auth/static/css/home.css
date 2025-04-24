@@ -471,3 +471,56 @@ td {
   border-bottom: 1px solid #eee;
 }
 
+/* Stylish orange-themed notification popup */
+.notification-popup {
+  background: rgba(255, 243, 230, 0.9); /* soft orange tint */
+  border: 1px solid #ffa726; /* orange border */
+  box-shadow: 0 8px 32px rgba(255, 152, 0, 0.3);
+}
+
+.notification-popup .popup-header {
+  background-color: #ff9800;
+  color: white;
+  border-radius: 12px 12px 0 0;
+  padding: 10px 20px;
+}
+
+.notification-popup .popup-header h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.notification-popup .close-btn {
+  color: white;
+}
+
+.notification-popup ul li {
+  background-color: #fff8f0;
+  border-left: 4px solid #ffa726;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.notification-popup ul li:hover {
+  background-color: #ffe0b2;
+}
+
+.notification-popup .btn-link {
+  background-color: #ffcc80;
+  color: #e65100;
+}
+
+.notification-popup .btn-link:hover {
+  background-color: #ffb74d;
+}
+
+/* Blur background when popup is open */
+.container.blurred {
+  filter: blur(6px);
+  transition: filter 0.3s ease;
+  pointer-events: none; /* Prevent interaction while blurred */
+}
+
+.notification-popup {
+  pointer-events: auto; /* Allow interaction inside popup */
+}

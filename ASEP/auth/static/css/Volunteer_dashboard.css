@@ -11,6 +11,12 @@ body {
   color: #333;
 }
 
+.container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f5f7fa;
+}
 
 .main {
   flex: 1;
@@ -272,4 +278,169 @@ body {
   font-size: 16px;
   color: #333;
   margin-left: 10px;
+}
+
+/* Stylish orange-themed notification popup */
+.notification-popup {
+  background: rgba(255, 243, 230, 0.9); /* soft orange tint */
+  border: 1px solid #ffa726; /* orange border */
+  box-shadow: 0 8px 32px rgba(255, 152, 0, 0.3);
+}
+
+.notification-popup .popup-header {
+  background-color: #ff9800;
+  color: white;
+  border-radius: 12px 12px 0 0;
+  padding: 10px 20px;
+}
+
+.notification-popup .popup-header h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.notification-popup .close-btn {
+  color: white;
+}
+
+.notification-popup ul li {
+  background-color: #fff8f0;
+  border-left: 4px solid #ffa726;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.notification-popup ul li:hover {
+  background-color: #ffe0b2;
+}
+
+.notification-popup .btn-link {
+  background-color: #ffcc80;
+  color: #e65100;
+}
+
+.notification-popup .btn-link:hover {
+  background-color: #ffb74d;
+}
+
+/* Blur background when popup is open */
+.container.blurred {
+  filter: blur(6px);
+  transition: filter 0.3s ease;
+  pointer-events: none; /* Prevent interaction while blurred */
+}
+
+.notification-popup {
+  pointer-events: auto; /* Allow interaction inside popup */
+}
+
+.signup-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  max-height: 90vh;
+  background: #fffdf9;
+  border: 2px solid #ffa726;
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(255, 152, 0, 0.3);
+  z-index: 1001;
+  display: none;
+  overflow: hidden;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Popup Header */
+.signup-popup .popup-header {
+  background-color: #ff9800;
+  color: white;
+  border-radius: 18px 18px 0 0;
+  padding: 18px 24px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  letter-spacing: 0.5px;
+}
+
+.signup-popup .close-btn {
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Scrollable Form Area */
+.signup-popup .popup-body {
+  overflow-y: auto;
+  max-height: calc(90vh - 60px); /* Adjust based on header height */
+  padding: 24px;
+  scroll-behavior: smooth;
+}
+
+/* Smooth, styled scrollbar inside the popup */
+.signup-popup .popup-body::-webkit-scrollbar {
+  width: 8px;
+}
+.signup-popup .popup-body::-webkit-scrollbar-thumb {
+  background: #ffa726;
+  border-radius: 8px;
+}
+.signup-popup .popup-body::-webkit-scrollbar-track {
+  background: #fff3e0;
+}
+
+/* Form Styles */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.signup-form label {
+  font-weight: 600;
+  color: #444;
+}
+
+.signup-form input,
+.signup-form textarea,
+.signup-form select {
+  padding: 12px;
+  font-size: 15px;
+  border: 1px solid #ffcc80;
+  border-radius: 10px;
+  background-color: #fffaf3;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.signup-form input:focus,
+.signup-form textarea:focus,
+.signup-form select:focus {
+  border-color: #ffa726;
+  box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.15);
+}
+
+/* Submit Button */
+.signup-form button.partner-btn {
+  margin-top: 10px;
+  background: linear-gradient(to right, #ff9800, #ffa726);
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.1s ease-in-out;
+}
+
+.signup-form button.partner-btn:hover {
+  background: linear-gradient(to right, #fb8c00, #ffb300);
+}
+
+.signup-form button.partner-btn:active {
+  transform: translateY(1px);
 }
