@@ -1,201 +1,274 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("settings-form");
-  const cancelBtn = document.querySelector(".cancel-btn");
-  const logoutBtn = document.querySelector(".logout-btn");
-  const editImageBtn = document.querySelector(".edit-image");
-  const navLinks = document.querySelectorAll(".nav-links li");
+document.addEventListener("DOMContentLoaded", function () {
+  // Tab Navigation
+  const tabs = document.querySelectorAll(".tab");
+  const tabPanes = document.querySelectorAll(".tab-pane");
 
-  // Form submission
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    // Simulate saving changes
-    showNotification("Changes saved successfully!", "success");
-  });
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", function () {
+      // Remove active class from all tabs
+      tabs.forEach((t) => t.classList.remove("active"));
 
-  // Cancel button
-  cancelBtn.addEventListener("click", () => {
-    if (confirm("Are you sure you want to discard changes?")) {
-      form.reset();
-    }
-  });
+      // Add active class to clicked tab
+      this.classList.add("active");
 
-  // Logout button
-  logoutBtn.addEventListener("click", () => {
-    if (confirm("Are you sure you want to logout?")) {
-      // Add logout logic here
-      console.log("Logging out...");
-    }
-  });
+      // Hide all tab panes
+      tabPanes.forEach((pane) => pane.classList.remove("active"));
 
-  // Edit profile image
-  editImageBtn.addEventListener("click", () => {
-    // Simulate file input click
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
-    fileInput.click();
-
-    fileInput.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        // Handle image upload
-        console.log("Uploading image:", file.name);
-        showNotification("Profile image updated!", "success");
-      }
+      // Show the corresponding tab pane
+      const tabId = this.getAttribute("data-tab");
+      document.getElementById(tabId).classList.add("active");
     });
   });
 
-  // Navigation
-  navLinks.forEach((link) => {
-    link.addEventListener("click", () => {
-      document
-        .querySelector(".nav-links li.active")
-        ?.classList.remove("active");
-      link.classList.add("active");
-      // Add navigation logic here
-      console.log("Navigating to:", link.textContent.trim());
+  // Filter Buttons
+  const filterButtons = document.querySelectorAll(".filter-btn");
+  const tableRows = document.querySelectorAll("tbody tr");
+
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      // Remove active class from all filter buttons
+      filterButtons.forEach((btn) => btn.classList.remove("active"));
+
+      // Add active class to clicked button
+      this.classList.add("active");
+
+      const filter = this.getAttribute("data-filter");
+
+      // Show/hide table rows based on filter
+      tableRows.forEach((row) => {
+        const status = row.querySelector(".status");
+
+        if (filter === "all") {
+          row.style.display = "";
+        } else if (
+          filter === "pending" &&
+          status.classList.contains("pending")
+        ) {
+          row.style.display = "";
+        } else if (
+          filter === "approved" &&
+          status.classList.contains("approved")
+        ) {
+          row.style.display = "";
+        } else if (
+          filter === "declined" &&
+          status.classList.contains("declined")
+        ) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
     });
   });
 
-  // Form validation
-  const inputs = form.querySelectorAll("input[required], select[required]");
-  inputs.forEach((input) => {
-    input.addEventListener("invalid", (e) => {
-      e.preventDefault();
-      showNotification("Please fill in all required fields.", "error");
+  // Set default active tab
+  document
+    .querySelector('.tab[data-tab="settings"]')
+    .classList.add("active");
+  document.getElementById("settings").classList.add("active");
+
+  // Sidebar menu item click
+  const menuItems = document.querySelectorAll(".menu-item");
+
+  menuItems.forEach((item) => {
+    item.addEventListener("click", function () {
+      menuItems.forEach((mi) => mi.classList.remove("active"));
+      this.classList.add("active");
     });
   });
-
-  // Notification system
-  function showNotification(message, type = "info") {
-    const notification = document.createElement("div");
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
-
-    // Style the notification
-    Object.assign(notification.style, {
-      position: "fixed",
-      top: "20px",
-      right: "20px",
-      padding: "12px 24px",
-      borderRadius: "4px",
-      backgroundColor: type === "success" ? "#34a853" : "#d93025",
-      color: "white",
-      boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
-      zIndex: "1000",
-      animation: "slideIn 0.3s ease-out",
-    });
-
-    // Add animation keyframes
-    const style = document.createElement("style");
-    style.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-        `;
-    document.head.appendChild(style);
-
-    document.body.appendChild(notification);
-
-    // Remove notification after 3 seconds
-    setTimeout(() => {
-      notification.style.animation = "slideIn 0.3s ease-out reverse";
-      setTimeout(() => notification.remove(), 300);
-    }, 3000);
-  }
 });
 
-export function setupCounter(element) {
-  let counter = 0;
-  const setCounter = (count) => {
-    counter = count;
-    element.innerHTML = `count is ${counter}`;
-  };
-  element.addEventListener("click", () => setCounter(counter + 1));
-  setCounter(0);
+
+// Location fetching
+const locationElement = document.getElementById("user-location");
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude, longitude } = position.coords;
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+        );
+        const data = await response.json();
+        const location =
+          data.address.city ||
+          data.address.town ||
+          data.address.village ||
+          "Unknown location";
+        locationElement.textContent = `Location: ${location}`;
+      } catch (error) {
+        locationElement.textContent = "Unable to fetch location";
+      }
+    },
+    () => {
+      locationElement.textContent = "Location access denied";
+    }
+  );
+} else {
+  locationElement.textContent = "Geolocation not supported";
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const locationSpan = document.getElementById("userLocation");
-  const locationLink = document.getElementById("locationLink");
+// Badge functionality starts here
+// Sample data for badges
+const badgesData = [
+    {
+        id: 1,
+        name: "First Feeder",
+        image: "/static/img/badge1.png",
+        reason: "Completed your first donation successfully.",
+        status: "earned",
+    },
+    {
+        id: 2,
+        name: "Bronze Feeder",
+        image: "/static/img/bronze.png",
+        reason: "Completed 10 donations successfully.",
+        status: "earned",
+    },
+    {
+        id: 3,
+        name: "Zero Waste Warrior",
+        image: "/static/img/Zero_waste.png",
+        reason: "Completed 20 donations successfully.",
+        status: "earned",
+    },
+    {
+        id: 4,
+        name: "Silver Feeder",
+        requirement: "Complete 50 donations to unlock this badge.",
+        status: "disabled",
+        image: "https://via.placeholder.com/250?text=Locked",
+    },
+    {
+        id: 5,
+        name: "Golden Feeder",
+        requirement: "Complete 100 donations to unlock this badge.",
+        status: "disabled",
+        image: "https://via.placeholder.com/250?text=Locked",
+    },
+    {
+        id: 6,
+        name: "Variety Donor",
+        requirement: "Donate a variety of food items to unlock this badge.",
+        status: "disabled",
+        image: "https://via.placeholder.com/250?text=Locked",
+    },
+    {
+        id: 7,
+        name: "Rapid Responder",
+        requirement: "Donate Food within 2 hrs of surplus alert to unlock this badge.",
+        status: "disabled",
+        image: "https://via.placeholder.com/250?text=Locked",
+    },
+    {
+        id: 8,
+        name: "Platinum Patron",
+        requirement: "Complete 250+ donations to unlock this badge.",
+        status: "disabled",
+        image: "https://via.placeholder.com/250?text=Locked",
+    },
+    {
+        id: 9,
+        name: "Golden Champion",
+        requirement: "Complete 500+ donations to unlock this badge.",
+        status: "disabled",
+        image: "https://via.placeholder.com/250?text=Locked",
+    },
+];
 
-  function getLocation() {
-    if (!navigator.geolocation) {
-      locationSpan.textContent = "Geolocation is not supported by your browser";
-      return;
+// Badge modal elements
+const badgeModal = document.getElementById("badgeModal");
+const badgeCloseBtn = document.querySelector("#badgeModal .close");
+let currentBadgeId = null;
+
+// View badge details
+window.viewBadge = function (id) {
+  currentBadgeId = id;
+  const badge = badgesData.find((b) => b.id === id);
+
+  if (badge) {
+    // Populate modal
+    document.getElementById("badgeName").textContent = badge.name;
+    const imageContainer = document.getElementById("badgeImageContainer");
+    imageContainer.innerHTML = ""; // Clear previous content
+
+    if (badge.status === "earned") {
+      const img = document.createElement("img");
+      img.src = badge.image;
+      img.alt = badge.name;
+      imageContainer.appendChild(img);
+      document.getElementById("badgeReason").textContent = badge.reason;
+    } else {
+      const placeholder = document.createElement("div");
+      placeholder.className = "hexagon-placeholder";
+      placeholder.textContent = badge.requirement;
+      imageContainer.appendChild(placeholder);
+      document.getElementById("badgeReason").textContent = badge.requirement;
     }
 
-    const options = {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0,
-    };
-
-    navigator.geolocation.getCurrentPosition(
-      // Success callback
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
-
-          // Update Maps link
-          locationLink.href = `https://www.google.com/maps?q=${latitude},${longitude}`;
-          locationLink.style.display = "inline-block";
-
-          // Get address using Nominatim API
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`
-          );
-
-          if (!response.ok) throw new Error("Failed to fetch address");
-
-          const data = await response.json();
-          locationSpan.textContent = data.display_name;
-        } catch (error) {
-          console.error("Error:", error);
-          locationSpan.textContent = "Could not fetch address details";
-        }
-      },
-      // Error callback
-      (error) => {
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            locationSpan.textContent = "Please allow location access";
-            break;
-          case error.POSITION_UNAVAILABLE:
-            locationSpan.textContent = "Location information unavailable";
-            break;
-          case error.TIMEOUT:
-            locationSpan.textContent = "Location request timed out";
-            break;
-          default:
-            locationSpan.textContent = "An unknown error occurred";
-        }
-      },
-      options
-    );
+    // Show modal
+    badgeModal.style.display = "block";
   }
+};
 
-  // Start getting location when page loads
-  getLocation();
-});
+// Close badge modal
+window.closeBadgeModal = function () {
+  badgeModal.style.display = "none";
+  currentBadgeId = null;
+};
 
-// Get the button element
-const scrollToTopButton = document.querySelector('.scroll-to-top-button');
 
-// Show/hide button based on scroll position
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 100) { // Show button after scrolling 100px
-    scrollToTopButton.style.display = 'flex';
-  } else {
-    scrollToTopButton.style.display = 'none';
+// Close badge modal on clicking outside
+window.addEventListener("click", function (event) {
+  if (event.target === badgeModal) {
+    closeBadgeModal();
   }
 });
 
-// Smooth scroll to top when button is clicked
-scrollToTopButton.addEventListener('click', () => {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
+function toggleEdit(fieldId) {
+    const field = document.getElementById(fieldId);
+    const editButton = field.nextElementSibling; // Edit button
+    const saveButton = editButton.nextElementSibling; // Save button
+
+    if (field.disabled || field.readOnly) {
+        // Enable editing
+        field.disabled = false;
+        field.readOnly = false;
+        editButton.style.display = "none";
+        saveButton.style.display = "inline-block";
+    }
+}
+
+function saveDetails(fieldId) {
+    const field = document.getElementById(fieldId);
+    if (!field) {
+        console.error(`Field with id "${fieldId}" not found.`);
+        return;
+    }
+
+    const editButton = field.nextElementSibling; // Edit button
+    const saveButton = editButton.nextElementSibling; // Save button
+
+    // Save the value to localStorage
+    console.log(`Saving ${fieldId}: ${field.value}`);
+    localStorage.setItem(fieldId, field.value);
+
+    // Disable editing
+    field.disabled = true;
+    field.readOnly = true;
+    editButton.style.display = "inline-block";
+    saveButton.style.display = "none";
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const about = localStorage.getItem('about');
+    const email = localStorage.getItem('email');
+    const phone = localStorage.getItem('phone');
+
+    console.log('Loaded from localStorage:', { about, email, phone });
+
+    if (about) document.getElementById('about').value = about;
+    if (email) document.getElementById('email').value = email;
+    if (phone) document.getElementById('phone').value = phone;
 });

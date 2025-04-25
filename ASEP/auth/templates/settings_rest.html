@@ -3,29 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Settings</title>
-    <link rel="icon" href="{{ url_for('static', filename='img/logo.ico') }}" type="logo" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings_rest.css') }}">
+    <title>FoodConnect - Volunteer Profile</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings_rest.css') }}">  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
+        <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="logo">
-                <img src="{{ url_for('static', filename='img/logo.ico') }}" alt="FoodShare">
-                <h1>Food<b style="color: rgb(239, 107, 13);">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare">
+                <h1>Food<b style="background: linear-gradient(to right, #f57c00, #ffcc00); -webkit-background-clip: text; background-clip: text; color: transparent;">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <button class="toggle-btn" id="toggleBtn">X</button>
             </div>
-            <div>
-            <a href={{url_for('restaurant_dashboard')}} class="menu-item">
+            <div class="menu">
+            <a href="{{url_for('restaurant_dashboard')}}" class="menu-item">
                 <div class="icon dashboard-icon" onclick="openSidebar()"></div>
                 <span class="menu-text">Dashboard</span>
             </a>
-            </div>
-            <!-- <a href={{url_for('restaurant_alerts')}} class="menu-item">
-                <div class="icon alert-icon" onclick="openSidebar()"></div>
-                <span class="menu-text">Notifications</span>
-            </a> -->
             <a href={{url_for('restaurant_requests')}} class="menu-item">
                 <div class="icon request-icon" onclick="openSidebar()"></div>
                 <span class="menu-text">Requests</span>
@@ -34,128 +30,159 @@
                 <div class="icon donation-icon" onclick="openSidebar()"></div>
                 <span class="menu-text">Donations</span>
             </a>
-            <a href={{url_for('restaurant_settings')}} class="menu-item active">
+            <a href="{{url_for('restaurant_settings')}}" class="menu-item active">
                 <div class="icon settings-icon" onclick="openSidebar()"></div>
                 <span class="menu-text">Settings</span>
             </a>
+          </div>
         </div>
-    
-        <main class="main-content">
-            <h1>Profile Settings</h1>
-            <p class="subtitle">Manage your account information and preferences</p>
-
-            <div class="settings-container">
-                <div class="profile-card">
-                    <div class="profile-header">
-                        <div class="profile-image">
-                            <img src="https://e7.pngegg.com/pngimages/753/432/png-clipart-user-profile-2018-in-sight-user-conference-expo-business-default-business-angle-service.png" alt="Profile">
-                        </div>
-                        <div class="profile-info">
-                            <h2>{{name}}</h2>
-                            <p>{{email}}</p>
-                        </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="profile-info">
+                    <div class="profile-image">
+                        <img src="{{url_for('static', filename='img/user.png')}}" alt="Profile Picture">
                     </div>
-                    <a href="/logout">
-                        <div class="parent">
-                            <button class="btnlogout">Logout</button>
-                        </div>
-                    </a>
+                    <div class="profile-details">
+                        <h1 id="userName">{{name}}</h1>
+                        <!-- <p>Active Volunteer | Joined 2025</p> -->
+                        <p id="user-location">Fetching location...</p>
+                    </div>
                 </div>
-
-                <form id="settings-form" class="settings-form">
-                    <div class="form-section">
-                        <h3>Basic Information</h3>
-                        <div class="form-group">
-                            <label>Organization Name</label>
-                            <h3>{{name}}</h3>
-                        </div>
-                        <div class="form-group">
-                            <label>Type</label>
-                            <span class="badge rest">Restaurant</span>
-                        <span class="badge verified">Verified</span>
-                        </div>
+                <a href="/logout">
+                    <div class="parent">
+                      <button class="btnlogout">Logout</button>
                     </div>
-
-                    <div class="form-section">
-                        <h3>Contact Information</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Email Address</label>
-                                <input type="email" value="restaurant@email.com" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Phone Number</label>
-                                <input type="tel" value="+1 234 567 8900" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-item">
-                        <i class="icon">📍</i>
-                        <span id="userLocation">
-                            <span class="loading-spinner"></span>
-                            Fetching location...
-                        </span>
-                        <a id="locationLink" href="#" target="_blank" class="location-button" style="display: none;">
-                            Open in Maps
-                        </a>
-                    </div>
-
-                    <div class="form-section">
-                        <h3>Notification Preferences</h3>
-                        <div class="checkbox-group">
-                            <label class="checkbox">
-                                <input type="checkbox" checked>
-                                <span>Email notifications for new requests</span>
-                            </label>
-                            <label class="checkbox">
-                                <input type="checkbox" checked>
-                                <span>SMS notifications for urgent requests</span>
-                            </label>
-                            <label class="checkbox">
-                                <input type="checkbox">
-                                <span>Weekly summary reports</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="button" class="cancel-btn">Cancel</button>
-                        <button type="submit" class="save-btn">Save Changes</button>
-                    </div>
-                </form>
+                </a>
             </div>
-        </main>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab" data-tab="settings">Settings</div>
+                <div class="tab" data-tab="badges">Badges</div>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Certificates Tab -->
+                <div class="tab-pane active" id="settings">
+                    <h2 class="section-title">Account Settings</h2>
+
+                    <div class="settings-container">
+                        
+                        <div class="settings-item">
+                            <label for="about">About:</label>
+                            <textarea id="about" name="about" rows="4" cols="50" placeholder="Add about yourself..." disabled></textarea>
+                            <button class="btn-edit" onclick="toggleEdit('about')">Edit</button>
+                            <button class="btn-save" onclick="saveDetails('about')" style="display: none;">Save</button>
+                        </div>
+                        <section class="settings-item1">
+                            <div class="settings-item">
+                                <label for="email">Email:</label>
+                                <input type="email" id="email" name="email" value="{{email}}" placeholder="Enter your email" readonly>
+                                <button class="btn-edit" onclick="toggleEdit('email')">Edit</button>
+                                <button class="btn-save" onclick="saveDetails('email')" style="display: none;">Save</button>
+                            </div>
+                            <div class="settings-item">
+                                <label for="phone">Phone:</label>
+                                <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" readonly>
+                                <button class="btn-edit" onclick="toggleEdit('phone')">Edit</button>
+                                <button class="btn-save" onclick="saveDetails('phone')" style="display: none;">Save</button>
+                            </div>
+                        </section>
+                        <div class="settings-item">
+                                <label for="licenseId">Registration Number / License ID:</label>
+                                <input type="text" id="licenseId" name="licenseId" placeholder="Enter your Registration Number / License ID" readonly>
+                                <button class="btn-edit" onclick="toggleEdit('licenseId')">Edit</button>
+                                <button class="btn-save" onclick="saveDetails('licenseId')" style="display: none;">Save</button>
+                        </div>
+                    </div>
+                        
+                    </div>
+                    
+                    <div id="badgeModal" class="modal badge-modal">
+                        <div class="badge-modal-content">
+                            <div class="modal-header">
+                                <h3>Badge Details</h3>
+                                
+                            </div>
+                            <div class="badge-details">
+                                <div id="badgeImageContainer" class="badge-image-container"></div>
+                                <p><span id="badgeName"></span></p>
+                                <p><span id="badgeReason"></span></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn" id="closebtn" style="background-color: #9e9e9e;" onclick="closeBadgeModal()">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <button class="scroll-to-top-button">
+                        <svg viewBox="0 0 384 512" class="svgIcon">
+                          <path
+                            d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"
+                          ></path>
+                        </svg>
+                    </button>
+
+                <!-- Badges Tab -->
+                <div class="tab-pane" id="badges">
+                    <div class="badges-section">
+                        <h2 class="section-title">Your Badges</h2>
+                        <div class="badges-container">
+                            <div class="badges-header">
+                                <span>Achievement Badges</span>
+                                <span>3 of 9</span>
+                            </div>
+                            <div class="badges-grid">
+                                <div class="badge-card" onclick="viewBadge(1)">
+                                    <img src="{{url_for('static', filename='img/badge1.png')}}" alt="First Feeder">
+                                    <h3>First Feeder</h3>
+                                </div>
+                                <div class="badge-card" onclick="viewBadge(2)">
+                                    <img src="{{url_for('static', filename='img/bronze.png')}}" alt="Bronze Feeder">
+                                    <h3>Bronze Feeder</h3>
+                                </div>
+                                <div class="badge-card" onclick="viewBadge(3)">
+                                    <img src="{{url_for('static', filename='img/Zero_waste.png')}}" alt="Zero Waste Warrior">
+                                    <h3>Zero Waste Warrior</h3>
+                                </div>
+                                <div class="badge-card disabled" data-requirement="Complete 50 donations to unlock this badge." onclick="viewBadge(4)">
+                                    <div class="placeholder"></div>
+                                    <h3>Silver Feeder</h3>
+                                </div>
+                                <div class="badge-card disabled" data-requirement="Complete 100 donations to unlock this badge." onclick="viewBadge(5)">
+                                    <div class="placeholder"></div>
+                                    <h3>Golden Feeder</h3>
+                                </div>
+                                <div class="badge-card disabled" data-requirement="Donate a variety of food items to unlock this badge." onclick="viewBadge(6)">
+                                    <div class="placeholder"></div>
+                                    <h3>Variety Donor</h3>
+                                </div>
+                                <div class="badge-card disabled" data-requirement="Donate Food within 2 hrs of surplus alert to unlock this badge." onclick="viewBadge(7)">
+                                    <div class="placeholder"></div>
+                                    <h3>Rapid Responder</h3>
+                                </div>
+                                <div class="badge-card disabled" data-requirement="Complete 250+ donations to unlock this badge." onclick="viewBadge(8)">
+                                    <div class="placeholder"></div>
+                                    <h3>Platinum Patron</h3>
+                                </div>
+                                <div class="badge-card disabled" data-requirement="Complete 500+ donations to unlock this badge." onclick="viewBadge(9)">
+                                    <div class="placeholder"></div>
+                                    <h3>Golden Champion</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <button class="scroll-to-top-button">
-        <svg viewBox="0 0 384 512" class="svgIcon">
-          <path
-            d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"
-          ></path>
-        </svg>
-      </button>
-      <script>
-        // Get the button element
-const scrollToTopButton = document.querySelector('.scroll-to-top-button');
 
-// Show/hide button based on scroll position
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 100) { // Show button after scrolling 100px
-    scrollToTopButton.style.display = 'flex';
-  } else {
-    scrollToTopButton.style.display = 'none';
-  }
-});
-
-// Smooth scroll to top when button is clicked
-scrollToTopButton.addEventListener('click', () => {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-});
-      </script>
-    <script src={{url_for('static', filename='js/settings_rest.js')}}></script>
-    <script src={{url_for('static', filename='js/sidebar.js')}}></script>
+    <script src="{{ url_for('static', filename='js/settings_rest.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    
 </body>
 </html>
