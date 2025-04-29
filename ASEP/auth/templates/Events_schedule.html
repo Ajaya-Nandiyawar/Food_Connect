@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NGO Event Scheduling</title>
+  <link rel="stylesheet" href="Events_schedule.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/Events_schedule.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}" />
+</head>
+<body>
+<div class="container">
+  <div class="sidebar" id="sidebar">
+    <div class="logo">
+        <img src={{url_for('static', filename='img/logo.ico')}} alt="FoodShare">
+        <h1>Food<b style="background: linear-gradient(to right, #f57c00, #ffcc00); -webkit-background-clip: text; background-clip: text; color: transparent;">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <button class="toggle-btn" id="toggleBtn">X</button>
+    </div>
+    <div class="menu">
+    <a href={{url_for('dashboard')}} class="menu-item" >
+        <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+        <span class="menu-text">Dashboard</span>
+    </a>
+    <a href={{url_for('notifications')}} class="menu-item">
+        <div class="icon alert-icon" onclick="openSidebar()"></div>
+        <span class="menu-text">Notifications</span>
+    </a>
+    <a href={{url_for('ngo.handle_request')}} class="menu-item">
+        <div class="icon request-icon" onclick="openSidebar()"></div>
+        <span class="menu-text">Requests</span>
+    </a>
+    <a href={{url_for('Events_schedule')}} class="menu-item active">
+        <div class="icon stats-icon" onclick="openSidebar()"></div>
+        <span class="menu-text">Events</span>
+    </a>
+    <a href={{url_for('approval')}} class="menu-item">
+      <div class="icon settings-icon" onclick="openSidebar()"></div>
+      <span class="menu-text">Approval</span>
+    </a>
+    <a href={{url_for('profile')}} class="menu-item">
+        <div class="icon settings-icon" onclick="openSidebar()"></div>
+        <span class="menu-text">Settings</span>
+    </a>
+  </div>
+</div>
+
+  <main class="main-content">
+    <h1>Event Management</h1>
+    <p>Schedule and manage your events</p>
+
+    <div class="card">
+      <h2>Create New Event</h2>
+      <form id="eventForm">
+        <div class="form-row">
+            <input type="text" id="eventName" placeholder="Event Name" required>
+            <select id="focusArea" required>
+              <option value="">Select Focus Area</option>
+              <option value="Education">Education</option>
+              <option value="Health">Health</option>
+              <option value="Environment">Environment</option>
+              <option value="Poverty Alleviation">Poverty Alleviation</option>
+            </select>
+            <input type="number" id="volunteersNeeded" placeholder="Volunteers Needed" required>
+        </div>
+        <div class="form-row">
+            <div style="flex: 1; display: flex; flex-direction: column;">
+              <p style="font-weight: 600;">Event Date</p>
+              <input type="date" id="eventDate" required>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column;">
+              <p style="font-weight: 600;">Starting Time</p>
+              <input type="time" id="startTime" required>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column;">
+              <p style="font-weight: 600;">Ending Time</p>
+              <input type="time" id="endTime" required>
+            </div>
+          </div>
+          
+          
+        <div class="form-row">
+            <input type="text" id="eventLocation" placeholder="Location" required>
+            <input type="tel" id="phoneNumber" placeholder="Helpline Number"
+            maxlength="10"
+            pattern="\d{10}"
+            title="Please enter a valid 10-digit number"
+            required
+            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"/>
+        </div>
+          
+        <div class="form-row">
+            <textarea id="eventDescription" placeholder="Event Description" required></textarea>
+        </div>
+          
+        <div class="button-row">
+            <button type="button" id="clearForm" class="btn red">Clear Form</button>
+            <button type="submit" class="btn blue">Create Event</button>
+        </div>
+        <p id="warning" class="warning"></p>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Scheduled Events</h2>
+      <div id="eventsContainer"></div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="modal" id="modal">
+      <h3>Volunteer Applications</h3>
+      <ul id="applicationsList"></ul>
+      <button onclick="closeModal()" class="btn blue">Close</button>
+    </div>
+
+  </main>
+</div>
+<script src="{{ url_for('static', filename='js/sidebar.js')}}"></script>
+<script src="{{ url_for('static', filename='js/Events_schedule.js')}}"></script>
+</body>
+</html>

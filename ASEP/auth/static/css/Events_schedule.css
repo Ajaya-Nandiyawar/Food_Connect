@@ -1,0 +1,148 @@
+/* Base styles */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f7fa;
+}
+
+/* Container Layout */
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 40px;
+}
+
+.main-content h1 {
+  margin-top: 0;
+}
+
+.card {
+  background: #ffffff;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Special sizing */
+#eventName {
+  flex: 2; /* bigger width */
+}
+
+#focusArea {
+  flex: 1; /* normal width */
+}
+
+#volunteersNeeded {
+  flex: 0.5; /* smaller width */
+}
+
+/* For the rest */
+.form-row input:not(#eventName):not(#volunteersNeeded),
+.form-row select:not(#focusArea) {
+  flex: 1;
+}
+
+/* Textarea full width */
+.form-row textarea {
+  flex: 100%;
+  resize: vertical;
+  min-height: 100px;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  height: 100px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+/* Buttons */
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn.red {
+  background: #f44336;
+}
+
+.btn.blue {
+  background: #2196f3;
+}
+
+/* Warning */
+.warning {
+  color: red;
+  margin-top: 10px;
+}
+
+/* Events List */
+#eventsContainer .event-card {
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+}
+
+/* Modal and Overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  z-index: 1000;
+}
+
+.modal {
+  position: fixed;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  z-index: 1001;
+}
+
+.modal h3 {
+  margin-top: 0;
+}

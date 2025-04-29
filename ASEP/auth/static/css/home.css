@@ -60,6 +60,7 @@ body {
 .main-content {
   flex: 1;
   padding: 2rem;
+  margin-left: 0;
 }
 
 .page-header {
@@ -276,29 +277,9 @@ td {
 }
 
 @media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    min-height: auto;
-    position: static;
-  }
-
-  .user-profile {
-    position: static;
-    margin-top: 1rem;
-  }
-
   .stats-grid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
-}
-
-.sidebar.collapsed .user-profile {
-  display: none !important;
-  visibility: hidden;
 }
 
 

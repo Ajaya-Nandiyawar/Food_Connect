@@ -106,19 +106,7 @@ body {
   border-radius: 20px;
 }
 
-.focus-area, .location {
-  color: #64748B;
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
-}
-
-.time {
-  color: #64748B;
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
-}
-
-.calendar {
+.focus-area, .data {
   color: #64748B;
   margin-bottom: 0.5rem;
   font-size: 0.95rem;
