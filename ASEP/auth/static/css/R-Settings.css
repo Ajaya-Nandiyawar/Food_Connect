@@ -337,6 +337,25 @@ body {
   
 }
 
+.badge-image-container {
+  transition: transform 0.3s ease;
+}
+
+.badge-image-container:hover {
+  transform: scale(1.1);
+  animation: spin 2s infinite linear;
+}
+
+
+@keyframes spin {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
 #badgeImageContainer :hover{
   transform: scale(1.2);
   transition: transform 0.3s ease;
