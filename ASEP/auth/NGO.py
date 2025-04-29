@@ -41,7 +41,7 @@ class RequestModel(db.Model):
 def handle_request():
     if request.method == 'GET':
         requests = RequestModel.query.order_by(RequestModel.created_at).all()
-        return render_template('request.html', requests=[request.to_dict() for request in requests])
+        return render_template('N-Request.html', requests=[request.to_dict() for request in requests])
 
     if request.content_type != "application/json":
         return jsonify({"status": "error", "message": "Content-Type must be application/json"}), 415

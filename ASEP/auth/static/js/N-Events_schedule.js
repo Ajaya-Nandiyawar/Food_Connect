@@ -52,15 +52,17 @@ function renderEvents() {
     card.className = 'event-card';
     // Update renderEvents function to show new details
     card.innerHTML = `
-        <h4>${event.name}</h4>
-        <p><strong>Focus Area:</strong> ${event.focusArea}</p>
-        <p><strong>Date:</strong> ${event.date}</p>
-        <p><strong>Time:</strong> ${event.startTime} to ${event.endTime}</p>
-        <p><strong>Location:</strong> ${event.location}</p>
-        <p><strong>Phone:</strong> ${event.phoneNumber}</p>
-        <p><strong>Volunteers Needed:</strong> ${event.volunteers}</p>
+      <h4>${event.name}</h4>
+      <p><strong>Focus Area:</strong> ${event.focusArea}</p>
+      <p><strong>Date:</strong> ${event.date}</p>
+      <p><strong>Time:</strong> ${event.startTime} to ${event.endTime}</p>
+      <p><strong>Location:</strong> ${event.location}</p>
+      <p><strong>Phone:</strong> ${event.phoneNumber}</p>
+      <p><strong>Volunteers Needed:</strong> ${event.volunteers}</p>
+      <div style="margin-top: 10px;">
         <button class="btn blue" onclick="viewApplications(${index})">View Applications</button>
         <button class="btn red" onclick="deleteEvent(${index})">Delete</button>
+      </div>
     `;
 
     eventsContainer.appendChild(card);

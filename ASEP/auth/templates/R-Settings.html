@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FoodConnect - Volunteer Profile</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings_rest.css') }}">  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/R-Settings.css') }}">  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -22,11 +22,11 @@
                 <div class="icon dashboard-icon" onclick="openSidebar()"></div>
                 <span class="menu-text">Dashboard</span>
             </a>
-            <a href={{url_for('restaurant_requests')}} class="menu-item">
+            <a href="{{url_for('restaurant_requests')}}" class="menu-item">
                 <div class="icon request-icon" onclick="openSidebar()"></div>
                 <span class="menu-text">Requests</span>
             </a>
-            <a href={{url_for('restaurant.handle_donation')}} class="menu-item">
+            <a href="{{url_for('restaurant.handle_donation')}}" class="menu-item">
                 <div class="icon donation-icon" onclick="openSidebar()"></div>
                 <span class="menu-text">Donations</span>
             </a>
@@ -181,7 +181,7 @@
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/settings_rest.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/R-Settings.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     
 </body>

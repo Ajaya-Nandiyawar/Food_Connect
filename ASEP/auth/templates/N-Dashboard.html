@@ -10,7 +10,7 @@
     <link rel="icon" href="{{ url_for('static', filename='img/logo.ico') }}" type="image/x-icon" />
     
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard2.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/N-Dashboard.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}" />
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css" />
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" />
@@ -32,28 +32,28 @@
             <button class="toggle-btn" id="toggleBtn">X</button>
         </div>
         <div class="menu">
-        <a href={{url_for('dashboard')}} class="menu-item active" >
+        <a href="{{url_for('dashboard')}}" class="menu-item active" >
             <div class="icon dashboard-icon" onclick="openSidebar()"></div>
             <span class="menu-text">Dashboard</span>
         </a>
         </div>
-        <a href={{url_for('notifications')}} class="menu-item">
+        <!-- <a href={{url_for('notifications')}} class="menu-item">
             <div class="icon alert-icon" onclick="openSidebar()"></div>
             <span class="menu-text">Notifications</span>
-        </a>
-        <a href={{url_for('ngo.handle_request')}} class="menu-item">
+        </a> -->
+        <a href="{{url_for('ngo.handle_request')}}" class="menu-item">
             <div class="icon request-icon" onclick="openSidebar()"></div>
             <span class="menu-text">Requests</span>
         </a>
-        <a href={{url_for('stat')}} class="menu-item">
-            <div class="icon stats-icon" onclick="openSidebar()"></div>
-            <span class="menu-text">Stats</span>
+        <a href="{{url_for('Events_schedule')}}" class="menu-item">
+            <div class="icon event-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Schedule Events</span>
         </a>
-        <a href={{url_for('approval')}} class="menu-item">
-          <div class="icon settings-icon" onclick="openSidebar()"></div>
+        <a href="{{url_for('approval')}}" class="menu-item">
+          <div class="icon Approval-icon" onclick="openSidebar()"></div>
           <span class="menu-text">Approval</span>
       </a>
-        <a href={{url_for('profile')}} class="menu-item">
+        <a href="{{url_for('profile')}}" class="menu-item">
             <div class="icon settings-icon" onclick="openSidebar()"></div>
             <span class="menu-text">Settings</span>
         </a>
@@ -273,7 +273,7 @@
       <p id="noNotifications" style="text-align:center; color: #444;">No notifications available</p>
     </div>
 
-    <script src={{url_for('static', filename='js/dashboard2.js')}}></script>
+    <script src={{url_for('static', filename='js/N-Dashboard.js')}}></script>
     <script src={{url_for('static', filename='js/maps.js')}}></script>
     <script src={{url_for('static', filename='js/sidebar.js')}}></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>

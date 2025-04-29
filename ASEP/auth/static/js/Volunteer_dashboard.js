@@ -21,3 +21,21 @@ function togglePopup() {
   }
 }
 notificationIcon.addEventListener('click', togglePopup);
+
+function toggleSignup() {
+  const popup = document.getElementById('signupPopup');
+  const isVisible = popup.style.display === 'block';
+  popup.style.display = isVisible ? 'none' : 'block';
+
+  const container = document.querySelector('.container');
+  if (!isVisible) {
+    container.classList.add('blurred');
+  } else {
+    container.classList.remove('blurred');
+  }
+}
+
+// Add event listeners to all Join Initiative buttons
+document.querySelectorAll('#showform').forEach(button => {
+  button.addEventListener('click', toggleSignup);
+});

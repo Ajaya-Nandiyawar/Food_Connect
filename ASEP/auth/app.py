@@ -108,11 +108,11 @@ create_tables()
 # Routes (unchanged except for model references)
 @app.route('/')
 def home():
-    return render_template('home page.html')
+    return render_template('01_home_page.html')
 
 @app.route('/about_us')
 def about_us():
-    return render_template('about_us.html')
+    return render_template('02_about_us.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -146,7 +146,7 @@ def login():
             return redirect('/volunteer_dashboard')
         else:
             flash("Invalid email or password", "error")
-    response = make_response(render_template('login.html', form=form))
+    response = make_response(render_template('03_login.html', form=form))
     response.headers['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups'
     return response
 
@@ -183,7 +183,7 @@ def signup():
         session['organization'] = organization
         session['first_time'] = True
         return redirect(url_for('login'))
-    return render_template('signup.html', form=form)
+    return render_template('04_signup.html', form=form)
 
 
 @app.route('/dashboard')
@@ -195,7 +195,7 @@ def dashboard():
     if session['organization'] != 'ngo':
         return redirect('/login')  # Restrict to NGOs only
     api_key = os.getenv('GOOGLE_MAPS_API_KEY')
-    return render_template('dashboard2.html', name=session['name'], organization=session['organization'], api_key=api_key)
+    return render_template('N-Dashboard.html', name=session['name'], organization=session['organization'], api_key=api_key)
 
 @app.route('/restaurant_dashboard')
 @no_cache
@@ -205,7 +205,7 @@ def restaurant_dashboard():
     if session['organization'] != 'restaurant':
         return redirect('/login')  # Restrict to Restaurants only
     requests = RequestModel.query.order_by(RequestModel.created_at).all()
-    return render_template('home.html', requests=requests)
+    return render_template('R-Dashboard.html', requests=requests)
 
 @app.route('/volunteer_dashboard')
 @no_cache
@@ -229,7 +229,7 @@ def profile():
     if organization == 'ngo':
         user = NGO.query.filter_by(email=email).first()
         if user:
-            return render_template("settings.html", name=user.name, email=user.email)
+            return render_template("N-Settings.html", name=user.name, email=user.email)
         else:
             return redirect("/login")
     elif organization == 'restaurant':
@@ -237,13 +237,13 @@ def profile():
     elif organization == 'volunteer':
         user = Volunteer.query.filter_by(email=email).first()
         if user:
-            return render_template("profile.html", name=user.name, email=user.email)
+            return render_template("V-Profile.html", name=user.name, email=user.email)
         else:
             return redirect("/login")
 
     # Fallback for Firebase or invalid cases
     if "name" in session:
-        return render_template("settings.html", name=session["name"], email=session["email"])
+        return render_template("N-Settings.html", name=session["name"], email=session["email"])
 
     return redirect("/login")
 
@@ -252,13 +252,13 @@ def profile():
 def notifications():
     return render_template('notification.html')
 
-@app.route('/stat')
-def stat():
-    return render_template('stats.html')
+@app.route('/events_schedule')
+def Events_schedule():
+    return render_template('N-Events_schedule.html')
 
 @app.route('/approval')
 def approval():
-    return render_template('approval.html')
+    return render_template('N-Approval.html')
 
 @app.route('/N-guide')
 def ngo_guide():
@@ -286,7 +286,7 @@ def achievements():
 @app.route('/restaurant_requests')
 def restaurant_requests():
     requests = RequestModel.query.order_by(RequestModel.created_at).all()
-    return render_template('NGO Food Requests.html', requests=requests)
+    return render_template('R-ngo_requests.html', requests=requests)
 
 @app.route('/update_request_status/<int:request_id>', methods=['POST'])
 def update_request_status(request_id):
@@ -327,11 +327,11 @@ def restaurant_settings():
     email = session["email"]
     user = Restaurant.query.filter_by(email=email).first()
     if user:
-        return render_template("settings_rest.html", name=user.name, email=user.email)
+        return render_template("R-Settings.html", name=user.name, email=user.email)
 
     # Fallback for Firebase
     if "name" in session and session["organization"].lower() == 'restaurant':
-        return render_template("settings_rest.html", name=session["name"], email=session["email"])
+        return render_template("R-Settings.html", name=session["name"], email=session["email"])
 
     return redirect("/login")
 
@@ -424,7 +424,7 @@ def forgot_password():
         flash('Password reset link has been sent to your email', 'success')
         return redirect(url_for('login'))
 
-    return render_template('Forgot_Pass.html', form=form)
+    return render_template('05_Forgot_Pass.html', form=form)
 
 
 
@@ -462,7 +462,7 @@ def reset_password(token):
         flash('Your password has been updated successfully!', 'success')
         return redirect(url_for('login'))
 
-    return render_template('reset_pass.html', form=form, token=token)
+    return render_template('06_reset_pass.html', form=form, token=token)
 
 
 @app.route('/events')
@@ -479,17 +479,17 @@ def volunteer_settings():
     email = session["email"]
     user = Volunteer.query.filter_by(email=email).first()
     if user:
-        return render_template("settings_vol.html", name=user.name, email=user.email)
+        return render_template("V-Settings.html", name=user.name, email=user.email)
 
     # Fallback for Firebase
     if "name" in session and session["organization"].lower() == 'volunteer':
-        return render_template("settings_vol.html", name=session["name"], email=session["email"])
+        return render_template("V-Settings.html", name=session["name"], email=session["email"])
     
     return redirect("/login")
 
 @app.route('/application_form', methods=['GET'])
 def application_form():
-    return render_template('application_form.html')
+    return render_template('V-Application_form.html')
 
 # Run the app
 if __name__ == '__main__':

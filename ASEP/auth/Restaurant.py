@@ -73,7 +73,7 @@ def handle_donation():
         })
     elif request.method == 'GET':
         donations = DonationModel.query.all()
-        return render_template('donationManagement.html', donations=donations)
+        return render_template('R-Donations.html', donations=donations)
     
     if request.method == 'POST':
         try:

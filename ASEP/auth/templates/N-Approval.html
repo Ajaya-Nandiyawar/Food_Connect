@@ -5,40 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Statistics Overview</title>
     <link rel="icon" href="{{ url_for('static', filename='img/logo.ico') }}" type="logo" />
-    <link rel="stylesheet" href={{url_for('static', filename='css/sidebar.css')}}>
-    <link rel="stylesheet" href={{url_for('static', filename='css/approval.css')}}>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/sidebar.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/N-Approval.css')}}">
     
 </head>
 <body>
         <div class="sidebar" id="sidebar">
           <div class="logo">
-              <img src={{url_for('static',filename='img/logo.ico')}} alt="FoodShare">
+              <img src="{{url_for('static',filename='img/logo.ico')}}" alt="FoodShare">
               <h1>Food<b style="background: linear-gradient(to right, #f57c00, #ffcc00); -webkit-background-clip: text; background-clip: text; color: transparent;">Connect</b></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <button class="toggle-btn" id="toggleBtn">X</button>
           </div>
           <div>
-          <a href={{url_for('dashboard')}} class="menu-item ">
+          <a href="{{url_for('dashboard')}}" class="menu-item ">
               <div class="icon dashboard-icon" onclick="openSidebar()"></div>
               <span class="menu-text">Dashboard</span>
           </a>
           </div>
-          <a href={{url_for('notifications')}} class="menu-item">
+          <!-- <a href={{url_for('notifications')}} class="menu-item">
               <div class="icon alert-icon" onclick="openSidebar()"></div>
               <span class="menu-text">Notifications</span>
-          </a>
-          <a href={{url_for('ngo.handle_request')}} class="menu-item">
+          </a> -->
+          <a href="{{url_for('ngo.handle_request')}}" class="menu-item">
               <div class="icon request-icon" onclick="openSidebar()"></div>
               <span class="menu-text">Requests</span>
           </a>
-          <a href={{url_for('stat')}} class="menu-item">
-              <div class="icon stats-icon" onclick="openSidebar()"></div>
-              <span class="menu-text">Stats</span>
+          <a href="{{url_for('Events_schedule')}}" class="menu-item">
+              <div class="icon event-icon" onclick="openSidebar()"></div>
+              <span class="menu-text">Schedule Events</span>
           </a>
-          <a href={{url_for('approval')}} class="menu-item active">
-            <div class="icon settings-icon" onclick="openSidebar()"></div>
+          <a href="{{url_for('approval')}}" class="menu-item active">
+            <div class="icon Approval-icon" onclick="openSidebar()"></div>
             <span class="menu-text">Approval</span>
         </a>
-          <a href={{url_for('profile')}} class="menu-item">
+          <a href="{{url_for('profile')}}" class="menu-item">
               <div class="icon settings-icon" onclick="openSidebar()"></div>
               <span class="menu-text">Settings</span>
           </a>
@@ -178,6 +178,6 @@
         </svg>
       </button>
     <script src={{url_for('static', filename='js/sidebar.js')}}></script>
-    <script src={{url_for('static', filename='js/approval.js')}}></script>
+    <script src={{url_for('static', filename='js/N-Approval.js')}}></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>FoodShare - Request Donations</title>
     <link rel="icon" href="{{ url_for('static', filename='img/logo.ico') }}" type="logo" />
-    <link rel="stylesheet" href={{url_for('static', filename='css/request.css')}} />
+    <link rel="stylesheet" href={{url_for('static', filename='css/N-Request.css')}} />
     <link rel="stylesheet" href={{url_for('static', filename='css/sidebar.css')}}/>
   </head>
   <body>
@@ -24,20 +24,20 @@
             <span class="menu-text">Dashboard</span>
           </a>
         </div>
-        <a href={{url_for('notifications')}} class="menu-item">
+        <!-- <a href={{url_for('notifications')}} class="menu-item">
           <div class="icon alert-icon" onclick="openSidebar()"></div>
           <span class="menu-text">Notifications</span>
-        </a>
+        </a> -->
         <a href={{url_for('ngo.handle_request')}} class="menu-item active">
           <div class="icon request-icon" onclick="openSidebar()"></div>
           <span class="menu-text">Requests</span>
         </a>
-        <a href={{url_for('stat')}} class="menu-item">
-          <div class="icon stats-icon" onclick="openSidebar()"></div>
-          <span class="menu-text">Stats</span>
+        <a href={{url_for('Events_schedule')}} class="menu-item">
+          <div class="icon event-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Schedule Events</span>
         </a>
         <a href={{url_for('approval')}} class="menu-item">
-          <div class="icon settings-icon" onclick="openSidebar()"></div>
+          <div class="icon Approval-icon" onclick="openSidebar()"></div>
           <span class="menu-text">Approval</span>
       </a>
         <a href={{url_for('profile')}} class="menu-item">
@@ -236,7 +236,7 @@ scrollToTopButton.addEventListener('click', () => {
     });
   });
 </script>
-    <script src={{url_for('static', filename='js/request.js')}}></script>
+    <script src={{url_for('static', filename='js/N-Request.js')}}></script>
     <script src={{url_for('static', filename='js/sidebar.js')}}></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
   </body>

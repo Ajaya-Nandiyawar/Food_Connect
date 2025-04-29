@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>FoodShare - NGO Food Requests</title>
     <link rel="icon" href="{{ url_for('static', filename='img/logo.ico') }}" type="logo" />
-    <link rel="stylesheet" href={{url_for('static', filename='css/NGO Food Requests.css')}} />
+    <link rel="stylesheet" href={{url_for('static', filename='css/R-ngo_requests.css')}} />
     <link rel="stylesheet" href={{url_for('static' , filename='css/sidebar.css')}} />
 </head>
 <body>
@@ -126,8 +126,8 @@
           ></path>
         </svg>
       </button>
-    <script type="module" src={{url_for('static',filename='js/NGO Food Requests.js')}}></script>
-    <script type="module" src={{url_for('static',filename='js/settings.js')}}></script>
-    <script src={{url_for('static',filename='js/sidebar.js')}}></script>
+    <script type="module" src="{{url_for('static',filename='js/R-ngo_requests.js')}}"></script>
+    <script type="module" src="{{url_for('static',filename='js/N-Settings.js')}}"></script>
+    <script src="{{url_for('static',filename='js/sidebar.js')}}"></script>
 </body>
 </html>
