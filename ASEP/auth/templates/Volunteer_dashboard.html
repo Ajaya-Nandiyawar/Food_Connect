@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Volunteer Hub</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link href="sidebar.css" rel="stylesheet">
@@ -66,6 +67,7 @@
             <div class="ngo-header">
               <h3>Feeding Hope</h3>
               <span class="impact">15</span>
+              <span class="status-label" id="status-feeding-hope" style="display: none; font-size: 12px; color: #1877f2;"></span>
             </div>
             <p class="focus-area">Focus: Homeless Support</p>
             <p class="focus-area">Organizer:</p>
@@ -84,6 +86,7 @@
             <div class="ngo-header">
               <h3>Sustainable Environment</h3>
               <span class="impact">30</span>
+              <span class="status-label" id="status-feeding-hope" style="display: none; font-size: 12px; color: #1877f2;"></span>
             </div>
             <p class="focus-area">Focus: Cleanling Surrounding</p>
             <p class="focus-area">Organizer:</p>
@@ -102,6 +105,7 @@
             <div class="ngo-header">
               <h3>Community Tree Plantation</h3>
               <span class="impact">20</span>
+              <span class="status-label" id="status-feeding-hope" style="display: none; font-size: 12px; color: #1877f2;"></span>
             </div>
             <p class="focus-area">Focus: Community Gardening</p>
             <p class="focus-area">Organizer:</p>
@@ -123,7 +127,7 @@
       <ul id="notificationList">
         <li>🎉 You earned a new badge: Ocean Guardian</li>
         <li>📢 Upcoming event: Beach Cleanup in 2 days</li>
-        <li>📱 App update available</li
+        <li>📱 App update available</li>
       </ul>
       <p id="noNotifications" style="text-align:center; color: #444;">No notifications available</p>
     </div>
@@ -134,7 +138,8 @@
         <span class="close-btn" onclick="toggleSignup()">×</span>
       </div>
       <div class="popup-body">
-      <form class="signup-form" id="joinForm">
+      <form class="signup-form" id="joinForm" action="/Volunteer/application" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label>Full Name</label>
         <input
         type="text"
@@ -143,9 +148,10 @@
         title="Please enter letters only"
         required
         oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')"
+        name="name"
       />    
         <label>Email Address</label>
-        <input type="email" placeholder="example@gmail.com" required />
+        <input type="email" name="Email" placeholder="example@gmail.com" required />
     
         <label>Phone Number</label>
         <input
@@ -156,12 +162,13 @@
         title="Please enter a valid 10-digit number"
         required
         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
+        name="phone"
       />    
         <label>City</label>
-        <input type="text" placeholder="Start typing your city..." required />
+        <input type="text" name="City" placeholder="Start typing your city..." required />
     
         <label>Event*</label>
-        <select required>
+        <select required name="event">
           <option>--Select Event--</option>
           <option>Food Drive</option>
           <option>Meal Kit Packing</option>
@@ -169,7 +176,7 @@
         </select>
     
         <label>Availability*</label>
-        <select required>
+        <select required name="availability">
           <option>--Select--</option>
           <option>Weekdays</option>
           <option>Weekends</option>
@@ -177,7 +184,7 @@
         </select>
     
         <label>Why do you want to volunteer?</label>
-        <textarea placeholder="Optional..."></textarea>
+        <textarea placeholder="Optional..." name="reason"></textarea>
     
         <button type="submit" class="partner-btn">Submit Application</button>
       </form>
@@ -187,6 +194,15 @@
   
   <script src="{{ url_for('static', filename='js/sidebar.js')}}"></script>
   <script src="{{ url_for('static', filename='js/Volunteer_dashboard.js')}}"></script>
+  <script>
+    const csrfToken = "{{ csrf_token }}";
+      if (!csrfToken) {
+        console.error('CSRF token not found in template');
+        return;
+      }
+
+  </script>
+  
 
 </body>
 </html>

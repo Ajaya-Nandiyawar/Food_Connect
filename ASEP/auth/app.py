@@ -10,6 +10,7 @@ import pyrebase
 import json
 from NGO import ngo_blueprint, RequestModel
 from Restaurant import restaurant_blueprint
+from Volunteer import volunteer_blueprint
 from notifications import notifications_bp
 import bcrypt
 import firebase_admin
@@ -96,6 +97,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.register_blueprint(ngo_blueprint, url_prefix='/ngo')
 app.register_blueprint(notifications_bp, url_prefix='/notifications')
 app.register_blueprint(restaurant_blueprint, url_prefix='/Restaurant')
+app.register_blueprint(volunteer_blueprint, url_prefix='/Volunteer')
+
 
 db.init_app(app)
 

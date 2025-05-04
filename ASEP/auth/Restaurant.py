@@ -7,6 +7,9 @@ from geopy.exc import GeocoderTimedOut
 from notifications import send_notification
 from flask_mail import Message
 import cloudinary.uploader
+from threading import Timer
+from flask import current_app as app
+from flask import current_app
 
 
 
@@ -128,6 +131,54 @@ def handle_donation():
             db.session.add(new_donation)
             db.session.commit()
 
+            def warn_before_expiry(donation_id):
+                with app.app_context():
+                    donation = DonationModel.query.get(donation_id)
+                    if donation and donation.status == 'Pending':
+                        send_notification(
+                            ngo_name="System",
+                            food_type="Expiring Donation",
+                            quantity=f"Donation ID {donation_id}",
+                            additional_note="This donation request will be removed in 1 hour. If you need it, accept it soon to prevent waste."
+                        )
+
+                        ngos = NGO.query.all()
+                        if ngos:
+                            ngo_emails = [ngo.email for ngo in ngos]
+                            msg = Message(
+                                subject="Donation Will Expire in 1 Hour",
+                                recipients=ngo_emails,
+                                body=f"Donation ID {donation_id} will be automatically removed in 1 hour.\n\nAct quickly if this donation is needed.\n\nFoodConnect Team"
+                            )
+                            mail.send(msg)
+
+            def delete_expired_donation(app, donation_id):
+                with app.app_context():
+                    donation = DonationModel.query.get(donation_id)
+                    if donation and donation.status == 'Pending':
+                        db.session.delete(donation)
+                        db.session.commit()
+
+                        send_notification(
+                            ngo_name="System",
+                            food_type="Donation Expired",
+                            quantity=f"Donation ID {donation_id} auto-deleted.",
+                            additional_note="It wasn't accepted within 3 hours and has been removed to avoid spoilage."
+                        )
+
+                        ngos = NGO.query.all()
+                        if ngos:
+                            ngo_emails = [ngo.email for ngo in ngos]
+                            msg = Message(
+                                subject="Donation Expired",
+                                recipients=ngo_emails,
+                                body=f"Name:{restaurant_name}\n\nDonation ID {donation_id} was removed from the system after 3 hours to avoid spoilage.\n\nFoodConnect Team"
+                            )
+                            mail.send(msg)
+
+            Timer(7200, warn_before_expiry, args=[new_donation.id]).start()    # Warn after 2 hours
+            Timer(10800, delete_expired_donation, args=[current_app._get_current_object(), new_donation.id]).start()    
+
             restaurant_name = session.get('name', 'Unknown Restaurant')
             send_notification(
                 ngo_name=restaurant_name,
@@ -228,4 +279,4 @@ def cancel_donation(donation_id):
 
     donation.status = "Cancelled"
     db.session.commit()
-    return jsonify({"status": "success", "message": "Donation cancelled successfully", "donation": donation.to_dict()}), 200        
+    return jsonify({"status": "success", "message": "Donation cancelled successfully", "donation": donation.to_dict()}), 200
