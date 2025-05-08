@@ -432,3 +432,16 @@ body {
 .signup-form button.partner-btn:active {
   transform: translateY(1px);
 }
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.modal-content select,
+.modal-content textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+}

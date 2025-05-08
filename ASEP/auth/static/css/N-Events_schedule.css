@@ -146,3 +146,55 @@ textarea {
 .modal h3 {
   margin-top: 0;
 }
+
+.events-list {
+  margin-top: 20px;
+}
+.event-item {
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.event-item h3 {
+  margin: 0 0 10px;
+}
+.event-item p {
+  margin: 5px 0;
+}
+.delete-btn,
+.view-volunteers-btn {
+  background: #ff4444;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+.view-volunteers-btn {
+  background: #1877f2;
+}
+.volunteers-list {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+.volunteer-item {
+  border-bottom: 1px solid #ddd;
+  padding: 5px 0;
+}
+.status-btn {
+  background: #28a745;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+.status-btn[data-status="Rejected"] {
+  background: #dc3545;
+}

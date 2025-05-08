@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NGO Volunteer Certificate Generator</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/N-certification.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/sidebar.css') }}"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="sidebar" id="sidebar">
+        <div class="logo">
+          <img src={{url_for('static', filename='img/logo.ico')}}
+          alt="FoodShare">
+          <h1>
+            Food<b
+              style="
+                background: linear-gradient(to right, #f57c00, #ffcc00);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+              "
+              >Connect</b
+            >
+          </h1>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <button class="toggle-btn" id="toggleBtn">X</button>
+        </div>
+        <div class="menu">
+          <a href="{{url_for('dashboard')}}" class="menu-item">
+            <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Dashboard</span>
+          </a>
+        </div>
+        <!-- <a href={{url_for('notifications')}} class="menu-item">
+                <div class="icon alert-icon" onclick="openSidebar()"></div>
+                <span class="menu-text">Notifications</span>
+            </a> -->
+        <a href="{{url_for('ngo.handle_request')}}" class="menu-item">
+          <div class="icon request-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Requests</span>
+        </a>
+        <a href="{{url_for('Events_schedule')}}" class="menu-item">
+          <div class="icon event-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Schedule Events</span>
+        </a>
+        <a href="{{url_for('certification')}}" class="menu-item active">
+          <div class="icon achievement-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Certification</span>
+        </a>
+        <a href="{{url_for('profile')}}" class="menu-item">
+          <div class="icon settings-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Settings</span>
+        </a>
+      </div>
+
+      <main class="main-content">
+        <div id="vol-mobile-alert">
+          This site works best on a desktop or laptop.
+        </div>
+
+        <div class="vol-cert-container">
+          <form id="vol-cert-form">
+            <h2>Volunteer Certificate Generator</h2>
+            <div class="vol-form-group">
+              <label for="vol-fullname">Volunteer Name:</label>
+              <select name="fullname" id="vol-fullname" required>
+                <option value="" disabled selected>Select a volunteer</option>
+                <!-- Options will be dynamically populated -->
+              </select>
+            </div>   
+
+            <div class="vol-form-group">
+              <label for="vol-task">Volunteer Task:</label>
+              <input type="text" name="task" id="vol-task" required />
+            </div>
+
+            <div class="vol-form-group">
+              <label for="vol-date">Date of Completion:</label>
+              <input type="date" name="date" id="vol-date" required />
+            </div>
+
+            <div class="vol-form-group">
+              <label for="vol-hours">Hours Served:</label>
+              <input
+                type="number"
+                name="hours"
+                id="vol-hours"
+                min="1"
+                required
+              />
+            </div>
+
+            <div class="vol-form-group">
+              <label for="vol-supervisor">Supervisor Name:</label>
+              <input
+                type="text"
+                name="supervisor"
+                id="vol-supervisor"
+                required
+              />
+            </div>
+
+            <div class="vol-form-group">
+              <label for="vol-role">Supervisor Title:</label>
+              <input
+                type="text"
+                name="role"
+                id="vol-role"
+                required
+                value="Program Director"
+              />
+            </div>
+
+            <div class="vol-form-group">
+              <label for="vol-org">Organization Name:</label>
+              <input
+                type="text"
+                name="org"
+                id="vol-org"
+                required
+                value="{{name}}"
+              />
+            </div>
+
+            <div class="vol-cert-btn">
+              <button id="vol-cert-generate" type="submit">
+                Generate Certificate
+              </button>
+            </div>
+          </form>
+
+          <div>
+            <div id="vol-cert-document">
+              <div class="vol-cert-border"></div>
+              <div class="vol-cert-watermark">CERTIFIED</div>
+
+              <div class="vol-cert-logo">
+                <img
+                  id="vol-ngo-logo"
+                  src="../static/img/logo_png.png"
+                  alt="NGO Logo"
+                />
+                <div class="vol-cert-details">
+                  <div class="vol-cert-no">
+                    Certificate No: VCR-<span id="vol-cert-no">2025042001</span>
+                  </div>
+                  <div class="vol-cert-url">
+                    Verification URL:
+                    <span id="vol-cert-url">ngo.org/verify/</span>
+                  </div>
+                  <div class="vol-cert-date">
+                    Issue Date: <span id="vol-issue-date">April 19, 2025</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="vol-cert-content">
+                <h3>CERTIFICATE OF VOLUNTEER SERVICE</h3>
+                <h1 id="vol-service-name">
+                  Community Food Distribution Program
+                </h1>
+                <h4>
+                  Organization:   <b id="vol-org-name">Community Helpers NGO</b>
+                </h4>
+              </div>
+
+              <div class="vol-cert-recipient">
+                <h1 id="vol-volunteer-name">Sarah Johnson</h1>
+                <h4>
+                  Completion Date:  <b id="vol-completion-date"
+                    >April 15, 2025</b
+                  >
+                </h4>
+                <h4>Hours Served:  <b id="vol-service-hours">8 hours</b></h4>
+              </div>
+
+              <div class="vol-cert-signatures">
+                <div class="vol-signature-box">
+                  <div class="vol-signature-line"></div>
+                  <div class="vol-signature-name" id="vol-supervisor-name">
+                    David Wilson
+                  </div>
+                  <div class="vol-signature-title" id="vol-supervisor-title">
+                    Program Director
+                  </div>
+                </div>
+
+                <div class="vol-signature-box">
+                  <div class="vol-signature-line"></div>
+                  <div class="vol-signature-name">Maria Garcia</div>
+                  <div class="vol-signature-title">Executive Director</div>
+                </div>
+              </div>
+
+              <div class="vol-cert-stamp"></div>
+            </div>
+
+            <button id="vol-cert-download">Download Certificate</button>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/N-certification.js')}}"></script>
+  </body>
+</html>

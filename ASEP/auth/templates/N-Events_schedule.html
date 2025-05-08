@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>NGO Event Scheduling</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/N-Events_schedule.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}" />
@@ -19,10 +20,6 @@
         <div class="icon dashboard-icon" onclick="openSidebar()"></div>
         <span class="menu-text">Dashboard</span>
     </a>
-    <!-- <a href={{url_for('notifications')}} class="menu-item">
-        <div class="icon alert-icon" onclick="openSidebar()"></div>
-        <span class="menu-text">Notifications</span>
-    </a> -->
     <a href={{url_for('ngo.handle_request')}} class="menu-item">
         <div class="icon request-icon" onclick="openSidebar()"></div>
         <span class="menu-text">Requests</span>
@@ -31,9 +28,9 @@
         <div class="icon event-icon" onclick="openSidebar()"></div>
         <span class="menu-text">Schedule Events</span>
     </a>
-    <a href={{url_for('approval')}} class="menu-item">
+    <a href={{url_for('certification')}} class="menu-item">
       <div class="icon Approval-icon" onclick="openSidebar()"></div>
-      <span class="menu-text">Approval</span>
+      <span class="menu-text">Certification</span>
     </a>
     <a href={{url_for('profile')}} class="menu-item">
         <div class="icon settings-icon" onclick="openSidebar()"></div>
@@ -49,36 +46,36 @@
     <div class="card">
       <h2>Create New Event</h2>
       <form id="eventForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="form-row">
-            <input type="text" id="eventName" placeholder="Event Name" required>
-            <select id="focusArea" required>
+            <input type="text" id="eventName" name="name" placeholder="Event Name" required>
+            <select id="focusArea" name="focus_area" required>
               <option value="">Select Focus Area</option>
               <option value="Education">Education</option>
               <option value="Health">Health</option>
               <option value="Environment">Environment</option>
               <option value="Poverty Alleviation">Poverty Alleviation</option>
             </select>
-            <input type="number" id="volunteersNeeded" placeholder="Volunteers Needed" required>
+            <input type="number" id="volunteersNeeded" name="volunteers_needed"  placeholder="Volunteers Needed" required>
         </div>
         <div class="form-row">
             <div style="flex: 1; display: flex; flex-direction: column;">
               <p style="font-weight: 600;">Event Date</p>
-              <input type="date" id="eventDate" required>
+              <input type="date" id="eventDate" name="event_date" required>
             </div>
             <div style="flex: 1; display: flex; flex-direction: column;">
               <p style="font-weight: 600;">Starting Time</p>
-              <input type="time" id="startTime" required>
+              <input type="time" id="startTime" name="start_time" required>
             </div>
             <div style="flex: 1; display: flex; flex-direction: column;">
               <p style="font-weight: 600;">Ending Time</p>
-              <input type="time" id="endTime" required>
+              <input type="time" id="endTime" name="end_time" required>
             </div>
           </div>
           
-          
         <div class="form-row">
-            <input type="text" id="eventLocation" placeholder="Location" required>
-            <input type="tel" id="phoneNumber" placeholder="Helpline Number"
+            <input type="text" id="eventLocation" name="location" placeholder="Location" required>
+            <input type="tel" id="phoneNumber" name="phone_number" placeholder="Helpline Number"
             maxlength="10"
             pattern="\d{10}"
             title="Please enter a valid 10-digit number"
@@ -87,7 +84,7 @@
         </div>
           
         <div class="form-row">
-            <textarea id="eventDescription" placeholder="Event Description" required></textarea>
+            <textarea id="eventDescription" placeholder="Event Description" name="description" required></textarea>
         </div>
           
         <div class="button-row">
@@ -100,7 +97,7 @@
 
     <div class="card">
       <h2>Scheduled Events</h2>
-      <div id="eventsContainer"></div>
+      <div id="eventsList"></div>
     </div>
 
     <div class="overlay" id="overlay"></div>
