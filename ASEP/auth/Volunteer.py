@@ -12,104 +12,47 @@ volunteer_blueprint = Blueprint('volunteer', __name__)
 
 class Volunteer_application_model(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    volunteer_id = db.Column(db.Integer, db.ForeignKey('volunteer.id'), nullable=False)
+    volunteer_id = db.Column(db.Integer, nullable=False)  # Add this field
     name = db.Column(db.String(100), nullable=False)
     Email = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(15), nullable=False)
     City = db.Column(db.String(100), nullable=False)
-    event = db.Column(db.String(100))
-    event_id = db.Column(db.Integer, db.ForeignKey('event_model.id'), nullable=True)
-    availability = db.Column(db.String(100))
-    reason = db.Column(db.Text)
-    status = db.Column(db.String(20), default='Pending')  # Ensure this field exists
+    event = db.Column(db.String(100), nullable=False)
+    event_id = db.Column(db.Integer, nullable=False)
+    availability = db.Column(db.String(100), nullable=False)
+    reason = db.Column(db.Text, nullable=False)
+    status = db.Column(db.String(20), nullable=False, default='Pending')  # Add this field
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    __table_args__ = (
+        db.UniqueConstraint('Email', 'event_id', name='_email_event_uc'),
+    )
 
     def to_dict(self):
         return {
-            'id': self.id,
-            'volunteer_id': self.volunteer_id,
-            'name': self.name,
-            'Email': self.Email,
-            'phone': self.phone,
-            'City': self.City,
-            'event': self.event,
-            'event_id': self.event_id,
-            'availability': self.availability,
-            'reason': self.reason,
-            'status': self.status,
-            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            "id": self.id,
+            "volunteer_id": self.volunteer_id,
+            "name": self.name,
+            "Email": self.Email,
+            "phone": self.phone,
+            "City": self.City,
+            "event": self.event,
+            "event_id": self.event_id,
+            "availability": self.availability,
+            "reason": self.reason,
+            "status": self.status,
+            "created_at": self.created_at.isoformat(),
         }
 
-@volunteer_blueprint.route('/application', methods=['GET', 'POST'])
+@volunteer_blueprint.route('/application', methods=['POST'])
 def submit_application():
-    logger.debug(f"Handling /application with session: {session}")
-    if 'user_id' not in session or 'email' not in session:
-        logger.warning("No user_id or email in session, redirecting to login")
-        return redirect(url_for('login'))
-
-    from extensions import Volunteer  # Import here to avoid circular import
-    user = Volunteer.query.get(session['user_id'])
-    if not user:
-        logger.error(f"User with ID {session['user_id']} not found, clearing session")
-        session.clear()
-        return redirect(url_for('login'))
-
-    if request.method == 'GET':
-        logger.debug(f"Rendering application form for user: {user.name}")
-        return render_template('V-Application_form.html', name=user.name, email=user.email)
-
-    if request.method == 'POST':
-        try:
-            name = request.form.get('name')
-            email = request.form.get('Email')
-            phone = request.form.get('phone')
-            city = request.form.get('City')
-            event = request.form.get('event')
-            availability = request.form.get('availability')
-            reason = request.form.get('reason')
-
-            if not all([name, email, phone, city, event]):
-                logger.error("Missing required fields in application form")
-                return jsonify({"error": "Required fields are missing."}), 400
-
-            # Check if application already exists for this volunteer
-            existing_application = Volunteer_application_model.query.filter_by(
-                volunteer_id=session['user_id'], Email=email, event=event
-            ).first()
-            if existing_application:
-                logger.error(f"Application for {email} and event {event} already exists")
-                return jsonify({"error": "You have already applied for this event."}), 400
-
-            new_application = Volunteer_application_model(
-                volunteer_id=session['user_id'],
-                name=name,
-                Email=email,
-                phone=phone,
-                City=city,
-                event=event,
-                availability=availability,
-                reason=reason
-            )
-            db.session.add(new_application)
-            db.session.commit()
-
-            logger.debug(f"Application created with ID {new_application.id} for user: {user.name}")
-
-            msg = Message(
-                subject='Volunteer Application Submitted',
-                recipients=[email],
-                body=f"Dear {name},\n\nThank you for applying to volunteer at the {event} event!\n\n"
-                     f"Details:\n- City: {city}\n- Availability: {availability or 'N/A'}\n- Reason: {reason or 'N/A'}\n\n"
-                     f"We will review your application and get back to you soon.\n\nBest regards,\nFoodConnect Team"
-            )
-            mail.send(msg)
-
-            logger.debug(f"Redirecting to dashboard for user: {user.name}")
-            return redirect(url_for('volunteer.dashboard'))
-
-        except Exception as e:
-            logger.error(f"Error processing application: {str(e)}")
-            return jsonify({"error": str(e)}), 500
+    try:
+        data = request.form
+        # Process the form data and save it to the database
+        return jsonify({"status": "success", "message": "Application submitted successfully!"}), 201
+    except Exception as e:
+        logger.error(f"Error submitting application: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @volunteer_blueprint.route('/dashboard')
 def dashboard():

@@ -6,6 +6,7 @@ from geopy.geocoders import Nominatim
 from extensions import mail
 from notifications import send_notification  # Assuming this function is defined in notifications.py
 import logging
+from sqlalchemy import and_, or_
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -191,6 +192,25 @@ def get_combined_data_json():
 def handle_events():
     if request.method == 'GET':
         try:
+            now = datetime.now()
+
+            # Update expired events
+            expired_events = EventModel.query.filter(
+                or_(
+                    EventModel.event_date < now.date(),
+                    and_(
+                        EventModel.event_date == now.date(),
+                        EventModel.end_time < now.time()
+                    )
+                ),
+                EventModel.status == 'Active'
+            ).all()
+
+            for event in expired_events:
+                event.status = 'Completed'
+            db.session.commit()
+
+            # Fetch active events
             events = EventModel.query.filter_by(status='Active').all()
             return jsonify([event.to_dict() for event in events]), 200
         except Exception as e:
@@ -264,12 +284,6 @@ def handle_events():
 @ngo_blueprint.route('/events/<int:event_id>/applications', methods=['GET'])
 def get_event_applications(event_id):
     try:
-        from Volunteer import Volunteer_application_model
-        event = EventModel.query.get(event_id)
-        if not event:
-            logger.error(f"Event with ID {event_id} not found")
-            return jsonify({"status": "error", "message": "Event not found."}), 404
-
         applications = Volunteer_application_model.query.filter_by(event_id=event_id).all()
         return jsonify([app.to_dict() for app in applications]), 200
     except Exception as e:
@@ -279,62 +293,47 @@ def get_event_applications(event_id):
 @ngo_blueprint.route('/volunteer_applications', methods=['POST'])
 def submit_volunteer_application():
     try:
-        data = request.get_json()
-        volunteer_id = data.get('volunteer_id')
-        event_id = data.get('event_id')
-        name = data.get('name')
-        email = data.get('Email')
-        phone = data.get('phone')
-        city = data.get('City')
-        event = data.get('event')
-        availability = data.get('availability')
-        reason = data.get('reason')
+        data = request.json
 
-        if not all([volunteer_id, event_id, name, email, phone, city, event, availability]):
-            logger.error("Missing required fields in volunteer application")
-            return jsonify({"status": "error", "message": "Required fields are missing."}), 400
-
-        from extensions import Volunteer
-        from Volunteer import Volunteer_application_model
-        volunteer = Volunteer.query.get(volunteer_id)
-        if not volunteer:
-            logger.error(f"Volunteer with ID {volunteer_id} not found")
-            return jsonify({"status": "error", "message": "Volunteer not found."}), 404
-
-        event_model = EventModel.query.get(event_id)
-        if not event_model:
-            logger.error(f"Event with ID {event_id} not found")
-            return jsonify({"status": "error", "message": "Event not found."}), 404
-
-        # Check for existing application
+        # Check if the volunteer has already applied for the same event
         existing_application = Volunteer_application_model.query.filter_by(
-            volunteer_id=volunteer_id, event_id=event_id
+            Email=data['Email'],
+            event_id=data['event_id']
         ).first()
-        if existing_application:
-            logger.error(f"Application for volunteer {volunteer_id} and event {event_id} already exists")
-            return jsonify({"status": "error", "message": "You have already applied for this event."}), 400
 
+        if existing_application:
+            return jsonify({
+                "status": "error",
+                "message": f"You have already applied for the event '{data['event']}' with this email."
+            }), 400
+
+        # Create a new application
         new_application = Volunteer_application_model(
-            volunteer_id=volunteer_id,
-            name=name,
-            Email=email,
-            phone=phone,
-            City=city,
-            event=event,
-            event_id=event_id,
-            availability=availability,
-            reason=reason,
-            status='Pending'
+            volunteer_id=data['volunteer_id'],
+            name=data['name'],
+            Email=data['Email'],
+            phone=data['phone'],
+            City=data['City'],
+            event=data['event'],
+            event_id=data['event_id'],
+            availability=data['availability'],
+            reason=data['reason'],
+            status=data.get('status', 'Pending'),  # Default to 'Pending' if not provided
+            created_at=datetime.utcnow()
         )
         db.session.add(new_application)
         db.session.commit()
 
-        logger.debug(f"Volunteer application created with ID {new_application.id}")
-        return jsonify({"status": "success", "message": "Application submitted successfully"}), 200
-
+        return jsonify({
+            "status": "success",
+            "message": "Application submitted successfully!"
+        }), 201
     except Exception as e:
-        logger.error(f"Error processing volunteer application: {str(e)}")
-        return jsonify({"status": "error", "message": str(e)}), 500
+        logger.error(f"Error submitting application: {str(e)}")
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
 
 from Volunteer import Volunteer_application_model  # Add this import at the top of the file
 
@@ -357,3 +356,25 @@ def update_volunteer_application_status(application_id):
     db.session.commit()
     logger.debug(f"Application ID {application_id} status updated to {new_status}")
     return jsonify({"status": "success", "message": "Application status updated"})
+
+
+def expire_events():
+    
+
+    now = datetime.now()
+    expired_events = EventModel.query.filter(
+        or_(
+            EventModel.event_date < now.date(),
+            and_(
+                EventModel.event_date == now.date(),
+                EventModel.end_time < now.time()
+            )
+        ),
+        EventModel.status == 'Active'
+    ).all()
+
+    for event in expired_events:
+        event.status = 'Completed'
+        db.session.commit()
+        logger.debug(f"Event ID {event.id} status updated to Completed")
+

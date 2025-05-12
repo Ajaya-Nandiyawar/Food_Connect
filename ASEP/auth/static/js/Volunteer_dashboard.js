@@ -209,66 +209,104 @@ function applyForEvent(eventId, eventName) {
 }
 
 joinForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const formData = new FormData(joinForm);
-  const data = {
-    event_id: formData.get("event_id"),
-    volunteer_id: window.volunteerId,
-    name: formData.get("name"),
-    Email: formData.get("Email"),
-    phone: formData.get("phone"),
-    City: formData.get("City"),
-    event: formData.get("event"),
-    availability: formData.get("availability") || "",
-    reason: formData.get("reason") || "",
-  };
+    e.preventDefault();
+    const formData = new FormData(joinForm);
+    const data = {
+        event_id: formData.get("event_id"),
+        volunteer_id: window.volunteerId,
+        name: formData.get("name"),
+        Email: formData.get("Email"),
+        phone: formData.get("phone"),
+        City: formData.get("City"),
+        event: formData.get("event"),
+        availability: formData.get("availability") || "",
+        reason: formData.get("reason") || "",
+    };
 
-  console.log("Form data being sent:", data);
+    console.log("Form data being sent:", data);
 
-  // Check for missing fields
-  for (const [key, value] of Object.entries(data)) {
-    if (!value) {
-      console.warn(`Missing value for field: ${key}`);
+    try {
+        const response = await fetch("/ngo/volunteer_applications", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken,
+            },
+            body: JSON.stringify(data),
+        });
+
+        console.log("Application response status:", response.status);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(
+                `HTTP error! Status: ${response.status}, Response: ${errorText}`
+            );
+            const errorResponse = JSON.parse(errorText);
+            if (errorResponse.message.includes("already applied")) {
+                alert(`Error: ${errorResponse.message}`);
+            } else {
+                alert("Failed to submit application. Please try again.");
+            }
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("Application response:", result);
+
+        if (result.status === "success") {
+            signupPopup.style.display = "none";
+            joinForm.reset();
+            const container = document.querySelector(".container");
+            container.classList.remove("blurred");
+            fetchEvents();
+            alert("Application submitted successfully!");
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        console.error("Error submitting application:", error);
+        alert("Failed to submit application. Please check your connection.");
     }
-  }
-
-  try {
-    const response = await fetch("/ngo/volunteer_applications", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": csrfToken,
-      },
-      body: JSON.stringify(data),
-    });
-
-    console.log("Application response status:", response.status);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(
-        `HTTP error! Status: ${response.status}, Response: ${errorText}`
-      );
-      throw new Error(`HTTP error! Status: ${response.status}: ${errorText}`);
-    }
-
-    const result = await response.json();
-    console.log("Application response:", result);
-
-    if (result.status === "success") {
-      signupPopup.style.display = "none";
-      joinForm.reset();
-      const container = document.querySelector(".container");
-      container.classList.remove("blurred");
-      fetchEvents();
-      alert("Application submitted successfully!");
-    } else {
-      alert(result.message);
-    }
-  } catch (error) {
-    console.error("Error submitting application:", error);
-    alert("Failed to submit application: " + error.message);
-  }
 });
 
+// In your Volunteer_dashboard.js
+async function handleFormSubmit(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+
+    // Convert FormData to JSON
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+
+    try {
+        const response = await fetch('/ngo/volunteer_applications', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken,
+            },
+            body: JSON.stringify(data), // Send JSON data
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Application failed');
+        }
+
+        // Success handling
+        const result = await response.json();
+        alert(result.message);
+    } catch (error) {
+        console.error('Error submitting application:', error);
+        alert(error.message);
+    }
+}
+
+// Attach to form submit
+document.querySelector('form').addEventListener('submit', handleFormSubmit);
+
 fetchEvents();
+
