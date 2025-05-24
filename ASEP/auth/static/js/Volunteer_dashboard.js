@@ -133,13 +133,13 @@ function renderEvents(events) {
                         <img src="/static/img/vol_card_3.svg" alt="Event">
                     </div>
                     <div class="ngo-info">
-                        <div class="ngo-header">
-                            <h3>${event.name}</h3>
-                            <span class="impact">${
-                              event.volunteers_needed
-                            }</span>
-                            <span class="status-label" style="font-size: 12px; color: #1877f2;">${status}</span>
-                        </div>
+                      <div class="ngo-header">
+                          <h3>${event.name}</h3>
+                          <div class="badge-status-group">
+                              <span class="impact">${event.volunteers_needed}</span>
+                              <span class="status-label" style="font-size: 12px;">${status}</span>
+                          </div>
+                      </div>
                         <p class="focus-area">Focus: ${event.focus_area}</p>
                         <p class="data">📍 ${event.location}</p>
                         <p class="data">📅 ${event.event_date}</p>

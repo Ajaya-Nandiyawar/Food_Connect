@@ -65,16 +65,24 @@ document.addEventListener("DOMContentLoaded", () => {
           eventItem.className = "event-item";
           eventItem.innerHTML = `
             <h3>${event.name}</h3>
-            <p>Focus: ${event.focus_area}</p>
-            <p>Volunteers Needed: ${event.volunteers_needed}</p>
-            <p>Date: ${event.event_date}</p>
-            <p>Time: ${event.start_time} - ${event.end_time}</p>
-            <p>Location: ${event.location}</p>
-            <p>Phone: ${event.phone_number}</p>
-            <p>Description: ${event.description}</p>
-            <p>Status: ${event.status}</p>
-            <button class="delete-btn" data-id="${event.id}">Delete</button>
-            <button class="view-volunteers-btn" data-id="${event.id}">View Volunteers</button>
+            <div class="event-row">
+              <p><strong>Focus:</strong> ${event.focus_area}</p>
+              <p><strong>Volunteers:</strong> ${event.volunteers_needed}</p>
+            </div>
+            <div class="event-row">
+              <p><strong>Date:</strong> ${event.event_date}</p>
+              <p><strong>Time:</strong> ${event.start_time} - ${event.end_time}</p>
+            </div>
+            <div class="event-row">
+              <p><strong>Location:</strong> ${event.location}</p>
+              <p><strong>Phone:</strong> ${event.phone_number}</p>
+            </div>
+            <p><strong>Description:</strong> ${event.description}</p>
+            <p class="status-badge status-${event.status}"><strong>Status:</strong> ${event.status}</p>
+            <div class="event-actions">
+              <button class="delete-btn" data-id="${event.id}">Delete</button>
+              <button class="view-volunteers-btn" data-id="${event.id}">View Volunteers</button>
+            </div>
           `;
           eventsList.appendChild(eventItem);
 

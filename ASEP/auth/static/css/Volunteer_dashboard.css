@@ -104,6 +104,32 @@ body {
   padding: 0.25rem 0.75rem;
   background: rgba(102, 187, 106, 0.1);
   border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;         /* Uniform height */
+  line-height: 1;       /* Avoid extra height */
+  padding: 0 12px;      /* Optional horizontal padding */
+}
+
+.status-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;         /* Uniform height */
+  line-height: 1;       /* Avoid extra height */
+  padding: 0 12px;      /* Optional horizontal padding */
+  font-size: 0.9rem;
+  border-radius: 20px;
+  background-color: #c8facc;  /* Light green background */
+  color: #1b5e20;
+}
+
+.badge-status-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 100%; /* Ensures it stretches to match sibling height */
 }
 
 .focus-area, .data {
