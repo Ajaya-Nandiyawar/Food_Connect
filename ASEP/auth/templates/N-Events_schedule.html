@@ -102,9 +102,20 @@
 
     <div class="overlay" id="overlay"></div>
     <div class="modal" id="modal">
-      <h3>Volunteer Applications</h3>
-      <ul id="applicationsList"></ul>
-      <button onclick="closeModal()" class="btn blue">Close</button>
+      <div class="modal-header">
+        <h3>Volunteer Applications</h3>
+        <div class="status-tabs">
+          <button class="status-tab active" data-status="Unapproved">Unapproved</button>
+          <button class="status-tab" data-status="Approved">Approved</button>
+          <button class="status-tab" data-status="Completed">Completed</button>
+        </div>
+      </div>
+      <div class="modal-content" id="applicationsList">
+        <!-- Volunteer cards will be inserted here -->
+      </div>
+      <div class="modal-footer">
+        <button onclick="closeModal()" class="btn blue">Close</button>
+      </div>
     </div>
 
   </main>

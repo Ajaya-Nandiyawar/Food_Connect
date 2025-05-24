@@ -130,71 +130,145 @@ textarea {
   z-index: 1000;
 }
 
+/* Modal styles */
 .modal {
   position: fixed;
   background: #fff;
-  padding: 20px;
+  padding: 0;
   border-radius: 10px;
-  width: 400px;
+  width: 600px;
+  max-height: 80vh;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: none;
+  flex-direction: column;
   z-index: 1001;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
-.modal h3 {
-  margin-top: 0;
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
 }
 
-.events-list {
-  margin-top: 20px;
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
 }
-.event-item {
-  background: #fff;
-  padding: 15px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+
+.modal-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
 }
-.event-item h3 {
-  margin: 0 0 10px;
+
+.modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
 }
-.event-item p {
-  margin: 5px 0;
+
+.status-tabs {
+  display: flex;
+  margin-top: 15px;
+  border-bottom: 1px solid #eee;
 }
-.delete-btn,
-.view-volunteers-btn {
-  background: #ff4444;
-  color: white;
-  padding: 5px 10px;
+
+.status-tab {
+  padding: 8px 15px;
+  background: none;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
+  font-weight: 600;
+  color: #666;
+  position: relative;
   margin-right: 5px;
 }
-.view-volunteers-btn {
-  background: #1877f2;
+
+.status-tab.active {
+  color: #2196f3;
 }
-.volunteers-list {
-  margin-top: 10px;
-  padding: 10px;
-  background: #f0f0f0;
+
+.status-tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #2196f3;
+}
+
+/* Volunteer card styles */
+.volunteer-card {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #e1e4e8;
+}
+
+.volunteer-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.volunteer-id {
+  font-weight: bold;
+  color: #333;
+}
+
+.volunteer-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.volunteer-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.volunteer-actions button {
+  padding: 5px 10px;
   border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
 }
-.volunteer-item {
-  border-bottom: 1px solid #ddd;
-  padding: 5px 0;
-}
-.status-btn {
+
+.btn-approve {
   background: #28a745;
   color: white;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-right: 5px;
 }
-.status-btn[data-status="Rejected"] {
+
+.btn-decline {
   background: #dc3545;
+  color: white;
+}
+
+.btn-view {
+  background: #6c757d;
+  color: white;
+}
+
+.volunteer-details {
+  display: none;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #ddd;
+}
+
+.volunteer-details p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.volunteer-details.show {
+  display: block;
 }
