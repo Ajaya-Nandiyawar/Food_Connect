@@ -3,13 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 from flask_wtf.csrf import CSRFProtect
-from extensions import db, mail, NGO, Restaurant, Volunteer  # Import from extensions
+from extensions import db, mail, NGO, Restaurant, Volunteer # Import from extensions
 from forms import ForgotPasswordForm, ResetPasswordForm, SignupForm, LoginForm
 import os
 import pyrebase
 import json
 from NGO import ngo_blueprint, RequestModel
-from Restaurant import restaurant_blueprint
+from Restaurant import restaurant_blueprint, DonationModel 
 from Volunteer import volunteer_blueprint
 from notifications import notifications_bp
 import bcrypt
@@ -114,6 +114,12 @@ def about_us():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    # Add stats for display
+    ngo_count = NGO.query.count()
+    restaurant_count = Restaurant.query.count()
+    donation_count = DonationModel.query.count()
+    total = ngo_count + restaurant_count
+
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
@@ -146,7 +152,7 @@ def login():
             return redirect('/Volunteer/dashboard')  # Redirect to blueprint route
         else:
             flash("Invalid email or password", "error")
-    response = make_response(render_template('03_login.html', form=form))
+    response = make_response(render_template('03_login.html', form=form, ngo_count=ngo_count, restaurant_count=restaurant_count,donation_count=donation_count ,total=total))
     response.headers['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups'
     return response
 
@@ -184,6 +190,19 @@ def signup():
         session['first_time'] = True
         return redirect(url_for('login'))
     return render_template('04_signup.html', form=form)
+
+@app.route('/stats')
+def stats():
+    ngo_count = NGO.query.count()
+    restaurant_count = Restaurant.query.count()
+    donation_count = DonationModel.query.count()
+    return jsonify({
+        'total_ngos': ngo_count,
+        'total_restaurants': restaurant_count,
+        'total_registered': ngo_count + restaurant_count,
+        'total_donations' : donation_count
+        
+    })
 
 @app.route('/dashboard')
 @no_cache
