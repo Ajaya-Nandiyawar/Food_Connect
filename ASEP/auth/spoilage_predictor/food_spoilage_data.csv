@@ -1,0 +1,281 @@
+food_type,temperature,humidity,storage_type,time_since_preparation,spoiled
+apple,4,60,fridge,720,0
+apple,25,80,open_air ,720,1
+apple,4,65,fridge,480,0
+apple,77,77,open_air ,48,1
+apple,15,60,fridge,600,0
+apple,4,50,fridge,840,0
+apple,25,75,open_air ,480,0
+apple,4,55,fridge,960,1
+apple,20,70,open_air ,600,1
+apple,4,60,fridge,360,0
+banana,4,60,fridge,336,0
+banana,22,70,open_air ,336,1
+banana,4,65,fridge,480,1
+banana,28,80,fridge,240,0
+banana,20,75,open_air ,360,1
+banana,4,50,fridge,432,1
+banana,22,70,open_air ,240,0
+banana,4,55,fridge,360,0
+banana,4,60,fridge,600,1
+banana,25,80,open_air ,480,1
+orange,4,60,fridge,720,0
+orange,25,80,open_air ,720,1
+orange,4,65,fridge,480,0
+orange,77,77,open_air ,48,1
+orange,15,60,fridge,600,0
+orange,4,50,fridge,840,0
+orange,25,75,open_air ,480,0
+orange,4,55,fridge,960,1
+orange,20,70,open_air ,600,1
+orange,4,60,fridge,360,0
+salad,4,65,fridge,24,0
+salad,25,70,open_air ,3,1
+salad,4,60,fridge,96,1
+salad,77,77,open_air ,48,1
+salad,40,90,open_air ,12,1
+salad,4,50,fridge,72,0
+salad,25,80,open_air ,6,1
+salad,4,55,fridge,120,1
+salad,77,77,open_air ,24,1
+salad,15,60,fridge,48,0
+meat,4,60,fridge,48,0
+meat,30,55,open_air ,2,1
+meat,4,65,fridge,72,1
+meat,85,85,open_air ,72,1
+meat,77,77,open_air ,120,1
+meat,4,50,fridge,24,0
+meat,33,55,open_air ,2,1
+meat,25,70,open_air ,50,1
+meat,40,80,open_air ,24,1
+meat,15,60,fridge,36,0
+rice,4,50,fridge,96,0
+rice,20,80,open_air ,6,1
+rice,4,65,fridge,144,1
+rice,30,60,open_air ,24,1
+rice,25,70,open_air ,48,1
+rice,4,55,fridge,72,0
+rice,27,65,fridge,48,0
+rice,20,75,open_air ,12,1
+rice,4,60,fridge,120,1
+rice,25,80,open_air ,4,1
+bread,4,60,fridge,168,0
+bread,22,75,open_air ,120,0
+bread,4,65,fridge,240,1
+bread,28,80,fridge,144,0
+bread,20,70,open_air ,168,1
+bread,4,50,fridge,192,0
+bread,22,75,open_air ,96,0
+bread,4,55,fridge,216,1
+bread,25,80,open_air ,144,1
+bread,4,60,fridge,120,0
+apple,4,60,fridge,600,0
+apple,20,80,open_air ,600,1
+apple,4,65,fridge,360,0
+apple,25,70,open_air ,840,1
+apple,15,60,fridge,480,0
+apple,4,50,fridge,720,0
+apple,25,75,open_air ,360,0
+apple,4,55,fridge,840,1
+apple,20,70,open_air ,480,1
+apple,4,60,fridge,240,0
+banana,4,60,fridge,240,0
+banana,22,70,open_air ,240,0
+banana,4,65,fridge,360,0
+banana,28,80,fridge,168,0
+banana,20,75,open_air ,336,1
+banana,4,50,fridge,360,1
+banana,22,70,open_air ,168,0
+banana,4,55,fridge,288,0
+banana,4,60,fridge,480,1
+banana,25,80,open_air ,360,1
+orange,4,60,fridge,600,0
+orange,20,80,open_air ,600,1
+orange,4,65,fridge,360,0
+orange,25,70,open_air ,840,1
+orange,15,60,fridge,480,0
+orange,4,50,fridge,720,0
+orange,25,75,open_air ,360,0
+orange,4,55,fridge,840,1
+orange,20,70,open_air ,480,1
+orange,4,60,fridge,240,0
+salad,4,65,fridge,48,0
+salad,25,70,open_air ,4,1
+salad,4,60,fridge,72,0
+salad,77,77,open_air ,12,1
+salad,40,90,open_air ,6,1
+salad,4,50,fridge,96,1
+salad,25,80,open_air ,8,1
+salad,4,55,fridge,108,1
+salad,77,77,open_air ,36,1
+salad,15,60,fridge,60,0
+meat,4,60,fridge,36,0
+meat,30,55,open_air ,3,1
+meat,4,65,fridge,60,1
+meat,85,85,open_air ,48,1
+meat,77,77,open_air ,96,1
+meat,4,50,fridge,12,0
+meat,33,55,open_air ,4,1
+meat,25,70,open_air ,24,1
+meat,40,80,open_air ,12,1
+meat,15,60,fridge,24,0
+rice,4,50,fridge,72,0
+rice,20,80,open_air ,8,1
+rice,4,65,fridge,120,1
+rice,30,60,open_air ,12,1
+rice,25,70,open_air ,36,1
+rice,4,55,fridge,48,0
+rice,27,65,fridge,96,0
+rice,20,75,open_air ,24,1
+rice,4,60,fridge,108,1
+rice,25,80,open_air ,6,1
+bread,4,60,fridge,144,0
+bread,22,75,open_air ,96,0
+bread,4,65,fridge,192,1
+bread,28,80,fridge,120,0
+bread,20,70,open_air ,144,1
+bread,4,50,fridge,168,0
+bread,22,75,open_air ,72,0
+bread,4,55,fridge,180,1
+bread,25,80,open_air ,120,1
+bread,4,60,fridge,96,0
+apple,4,60,fridge,480,0
+apple,20,80,open_air ,480,1
+apple,4,65,fridge,240,0
+apple,25,70,open_air ,720,1
+apple,15,60,fridge,360,0
+apple,4,50,fridge,600,0
+apple,25,75,open_air ,240,0
+apple,4,55,fridge,720,1
+apple,20,70,open_air ,360,1
+apple,4,60,fridge,120,0
+banana,4,60,fridge,168,0
+banana,22,70,open_air ,168,0
+banana,4,65,fridge,240,0
+banana,28,80,fridge,96,0
+banana,20,75,open_air ,240,1
+banana,4,50,fridge,288,1
+banana,22,70,open_air ,96,0
+banana,4,55,fridge,216,0
+banana,4,60,fridge,360,1
+banana,25,80,open_air ,240,1
+orange,4,60,fridge,480,0
+orange,20,80,open_air ,480,1
+orange,4,65,fridge,240,0
+orange,25,70,open_air ,720,1
+orange,15,60,fridge,360,0
+orange,4,50,fridge,600,0
+orange,25,75,open_air ,240,0
+orange,4,55,fridge,720,1
+orange,20,70,open_air ,360,1
+orange,4,60,fridge,120,0
+salad,4,65,fridge,36,0
+salad,25,70,open_air ,2,1
+salad,4,60,fridge,84,1
+salad,77,77,open_air ,24,1
+salad,40,90,open_air ,8,1
+salad,4,50,fridge,60,0
+salad,25,80,open_air ,10,1
+salad,4,55,fridge,96,1
+salad,77,77,open_air ,48,1
+salad,15,60,fridge,72,0
+meat,4,60,fridge,24,0
+meat,30,55,open_air ,6,1
+meat,4,65,fridge,48,0
+meat,85,85,open_air ,24,1
+meat,77,77,open_air ,72,1
+meat,4,50,fridge,36,0
+meat,33,55,open_air ,8,1
+meat,25,70,open_air ,12,1
+meat,40,80,open_air ,4,1
+meat,15,60,fridge,12,0
+rice,4,50,fridge,48,0
+rice,20,80,open_air ,10,1
+rice,4,65,fridge,96,0
+rice,30,60,open_air ,16,1
+rice,25,70,open_air ,24,1
+rice,4,55,fridge,60,0
+rice,27,65,fridge,84,0
+rice,20,75,open_air ,18,1
+rice,4,60,fridge,132,1
+rice,25,80,open_air ,2,1
+bread,4,60,fridge,120,0
+bread,22,75,open_air ,84,0
+bread,4,65,fridge,204,1
+bread,28,80,fridge,108,0
+bread,20,70,open_air ,132,1
+bread,4,50,fridge,156,0
+bread,22,75,open_air ,60,0
+bread,4,55,fridge,192,1
+bread,25,80,open_air ,108,1
+bread,4,60,fridge,84,0
+apple,4,60,fridge,540,0
+apple,20,80,open_air ,540,1
+apple,4,65,fridge,300,0
+apple,25,70,open_air ,660,1
+apple,15,60,fridge,420,0
+apple,4,50,fridge,780,0
+apple,25,75,open_air ,300,0
+apple,4,55,fridge,900,1
+apple,20,70,open_air ,420,1
+apple,4,60,fridge,180,0
+banana,4,60,fridge,300,0
+banana,22,70,open_air ,300,1
+banana,4,65,fridge,420,1
+banana,28,80,fridge,204,0
+banana,20,75,open_air ,300,1
+banana,4,50,fridge,396,1
+banana,22,70,open_air ,204,0
+banana,4,55,fridge,324,0
+banana,4,60,fridge,540,1
+banana,25,80,open_air ,420,1
+orange,4,60,fridge,540,0
+orange,20,80,open_air ,540,1
+orange,4,65,fridge,300,0
+orange,25,70,open_air ,660,1
+orange,15,60,fridge,420,0
+orange,4,50,fridge,780,0
+orange,25,75,open_air ,300,0
+orange,4,55,fridge,900,1
+orange,20,70,open_air ,420,1
+orange,4,60,fridge,180,0
+salad,4,65,fridge,30,0
+salad,25,70,open_air ,1,1
+salad,4,60,fridge,90,1
+salad,77,77,open_air ,18,1
+salad,40,90,open_air ,4,1
+salad,4,50,fridge,66,0
+salad,25,80,open_air ,12,1
+salad,4,55,fridge,102,1
+salad,77,77,open_air ,42,1
+salad,15,60,fridge,54,0
+meat,4,60,fridge,18,0
+meat,30,55,open_air ,5,1
+meat,4,65,fridge,54,1
+meat,85,85,open_air ,36,1
+meat,77,77,open_air ,84,1
+meat,4,50,fridge,6,0
+meat,33,55,open_air ,10,1
+meat,25,70,open_air ,18,1
+meat,40,80,open_air ,6,1
+meat,15,60,fridge,30,0
+rice,4,50,fridge,60,0
+rice,20,80,open_air ,4,1
+rice,4,65,fridge,108,0
+rice,30,60,open_air ,20,1
+rice,25,70,open_air ,30,1
+rice,4,55,fridge,66,0
+rice,27,65,fridge,102,1
+rice,20,75,open_air ,15,1
+rice,4,60,fridge,126,1
+rice,25,80,open_air ,9,1
+bread,4,60,fridge,132,0
+bread,22,75,open_air ,108,0
+bread,4,65,fridge,180,1
+bread,28,80,fridge,132,0
+bread,20,70,open_air ,156,1
+bread,4,50,fridge,180,0
+bread,22,75,open_air ,48,0
+bread,4,55,fridge,168,1
+bread,25,80,open_air ,132,1
+bread,4,60,fridge,108,0

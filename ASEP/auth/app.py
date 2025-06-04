@@ -1,4 +1,4 @@
-from flask import Flask, request, session, render_template, redirect, url_for, jsonify, flash, make_response
+from flask import Flask, request, session, render_template, redirect, url_for, jsonify, flash, make_response,send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
@@ -22,6 +22,11 @@ from threading import Timer
 import cloudinary, cloudinary.uploader, cloudinary.api
 from cloudinary.utils import cloudinary_url
 from sqlalchemy import create_engine
+from spoilage_predictor.predict import predict_spoilage
+from spoilage_predictor.utils import generate_spoilage_report_pdf  # Import the new function
+import logging
+from spoilage_predictor.predict_image import predict_spoilage_image
+
 
 load_dotenv()
 
@@ -470,6 +475,93 @@ def application_form():
     if user:
         return render_template("V-Application_form.html", name=user.name, email=user.email)
     return render_template("V-Application_form.html", name=session["name"], email=session["email"])
+
+@app.route('/predict_spoilage', methods=['POST'])
+def predict_spoilage_route():
+    try:
+        if request.is_json:
+            data = request.get_json()
+            food_type = data['food_type']
+            temperature = float(data['temperature'])
+            humidity = float(data['humidity'])
+            storage_type = data['storage_type']
+            time_since_preparation = float(data['time_since_preparation'])
+        else:
+            food_type = request.form['food_type']
+            temperature = float(request.form['temperature'])
+            humidity = float(request.form['humidity'])
+            storage_type = request.form['storage_type']
+            time_since_preparation = float(request.form['time_since_preparation'])
+
+        input_data = {
+            'food_type': food_type,
+            'temperature': temperature,
+            'humidity': humidity,
+            'storage_type': storage_type,
+            'time_since_preparation': time_since_preparation
+        }
+
+        result = predict_spoilage(input_data)
+        return jsonify(result)
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    
+# Route to handle food spoilage prediction (image upload)
+@app.route('/predict_spoilage_image', methods=['POST'])
+@csrf.exempt
+def predict_spoilage_image_route():
+    try:
+        if 'image' not in request.files:
+            return jsonify({"status": "error", "message": "No image file provided"}), 400
+
+        image_file = request.files['image']
+        if image_file.filename == '':
+            return jsonify({"status": "error", "message": "No selected file"}), 400
+
+        # Save the image temporarily
+        temp_path = os.path.join("temp", image_file.filename)
+        os.makedirs("temp", exist_ok=True)
+        image_file.save(temp_path)
+
+        # Predict spoilage using the image
+        prediction = predict_spoilage_image(temp_path)
+
+        # Clean up the temporary file
+        os.remove(temp_path)
+
+        # Check if prediction contains an error
+        if "error" in prediction:
+            return jsonify({"status": "error", "message": prediction["error"]}), 400
+
+        return jsonify(prediction)
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+@app.route('/download_report', methods=['POST'])
+def download_report():
+    try:
+        data = request.form  # Get form data
+        prediction = data.to_dict()  # Convert form data to dictionary
+
+        # Generate the PDF using the utility function
+        buffer = generate_spoilage_report_pdf(prediction)
+
+        return send_file(
+            buffer,
+            as_attachment=True,
+            download_name="spoilage_report.pdf",
+            mimetype="application/pdf"
+        )
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+@app.route("/spoilage_form")
+def spoilage_form():
+    return render_template("N-spoilage_form.html")
+
 
 if __name__ == '__main__':
     app.run(debug=True)

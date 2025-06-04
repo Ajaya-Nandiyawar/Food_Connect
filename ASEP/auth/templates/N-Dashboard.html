@@ -37,10 +37,6 @@
             <span class="menu-text">Dashboard</span>
         </a>
         </div>
-        <!-- <a href={{url_for('notifications')}} class="menu-item">
-            <div class="icon alert-icon" onclick="openSidebar()"></div>
-            <span class="menu-text">Notifications</span>
-        </a> -->
         <a href="{{url_for('ngo.handle_request')}}" class="menu-item">
             <div class="icon request-icon" onclick="openSidebar()"></div>
             <span class="menu-text">Requests</span>
@@ -52,7 +48,11 @@
         <a href="{{url_for('certification')}}" class="menu-item">
           <div class="icon Approval-icon" onclick="openSidebar()"></div>
           <span class="menu-text">Certification</span>
-      </a>
+        </a>
+        <a href="{{url_for('spoilage_form')}}" class="menu-item ">
+          <div class="icon prediction-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Spoilage Predictor</span>
+        </a>
         <a href="{{url_for('profile')}}" class="menu-item">
             <div class="icon settings-icon" onclick="openSidebar()"></div>
             <span class="menu-text">Settings</span>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <title>FoodConnect - Spoilage Predictor</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/N-spoilage_form.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/sidebar.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar" id="sidebar">
+        <div class="logo">
+          <img
+            src="{{url_for('static', filename='img/logo.ico')}}"
+            alt="FoodShare"
+          />
+          <h1>
+            Food<b
+              style="
+                background: linear-gradient(to right, #f57c00, #ffcc00);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+              "
+              >Connect</b
+            >
+          </h1>
+                     
+          <button class="toggle-btn" id="toggleBtn">X</button>
+        </div>
+        <div class="menu">
+          <a href="{{url_for('dashboard')}}" class="menu-item">
+            <div class="icon dashboard-icon" onclick="openSidebar()"></div>
+            <span class="menu-text">Dashboard</span>
+          </a>
+        </div>
+        <a href="{{url_for('ngo.handle_request')}}" class="menu-item">
+          <div class="icon request-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Requests</span>
+        </a>
+        <a href="{{url_for('Events_schedule')}}" class="menu-item">
+          <div class="icon event-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Schedule Events</span>
+        </a>
+        <a href="{{url_for('certification')}}" class="menu-item ">
+          <div class="icon achievement-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Certification</span>
+        </a>
+        <a href="{{url_for('spoilage_form')}}" class="menu-item active">
+          <div class="icon prediction-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Spoilage Predictor</span>
+        </a>
+        <a href="{{url_for('profile')}}" class="menu-item">
+          <div class="icon settings-icon" onclick="openSidebar()"></div>
+          <span class="menu-text">Settings</span>
+        </a>
+      </div>
+      
+      <div class="center-area">
+        <div class="content-wrapper">
+        <div class="main-header">
+          <header class="main_header">
+            <h1>FoodConnect Spoilage Predictor</h1>
+          </header>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="form-tab">
+            Check by Form
+          </button>
+          <button class="tab-btn" data-tab="image-tab">Check by Image</button>
+        </div>
+
+        <div class="tab-content active" id="form-tab">
+          <div class="form-section">
+            <h2>Enter Food Details</h2>
+            <form id="spoilageForm" method="POST" action="/predict_spoilage">
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+              <div class="input-group">
+                <label for="foodType">Food Type</label>
+                <select id="foodType" name="food_type" required>
+                  <option value="">Select food type</option>
+                  <option value="apple">Apple</option>
+                  <option value="banana">Banana</option>
+                  <option value="orange">Orange</option>
+                  <option value="salad">Salad</option>
+                  <option value="meat">Meat</option>
+                  <option value="rice">Rice</option>
+                  <option value="leftovers">Leftovers</option>
+                </select>
+              </div>
+
+              <div class="input-row">
+                <div class="input-group">
+                  <label for="temperature">Temperature (°C)</label>
+                  <input
+                    type="number"
+                    id="temperature"
+                    name="temperature"
+                    placeholder="Temperature (°C)"
+                    required
+                  />
+                </div>
+                <div class="input-group">
+                  <label for="humidity">Humidity (%)</label>
+                  <input
+                    type="number"
+                    id="humidity"
+                    name="humidity"
+                    placeholder="Humidity (%)"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="input-group">
+                <label for="storageType">Storage Type</label>
+                <select
+                  id="storageType"
+                  name="storage_type"
+                  placeholder="Storage Type (fridge, open_air)"
+                  required
+                >
+                  <option value="fridge">fridge</option>
+                  <option value="open_air ">open_air </option>
+                </select>
+              </div>
+
+              <div class="input-group">
+                <label for="storageDate">Storage Date & Time</label>
+                <div class="datetime-input">
+                  <input
+                    type="date"
+                    name="time_since_preparation"
+                    placeholder="Preparation Date & Time"
+                    id="storageDate"
+                    required
+                  />
+                  <input
+                    type="time"
+                    name="time_since_preparation"
+                    placeholder="Preparation Date & Time"
+                    id="storageTime"
+                    required
+                  />
+                </div>
+              </div>
+
+              <button type="submit" class="primary-btn">
+                Check Spoilage Risk
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="tab-content" id="image-tab">
+          <div class="image-section">
+            <h2>Upload Food Image</h2>
+            <div class="upload-container">
+              <div class="dropzone" id="dropzone">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Drag & drop an image or click to upload</p>
+                <input type="file" id="fileInput" accept="image/*" />
+              </div>
+              <div class="image-preview" id="imagePreview">
+                <img id="uploadedImage" src="" alt="Uploaded food image" />
+                <button class="primary-btn" id="analyzeImageBtn" disabled>
+                  Analyze Image
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+          <div class="result-card">
+            <h2>Analysis Report</h2>
+            <div class="result-details">
+              <div class="food-info">
+                <span id="resultFoodType">-</span>
+                <span id="resultDateTime">-</span>
+              </div>
+              <div class="spoilage-status">
+                <h3 id="statusText">-</h3>
+                <div class="probability-meter">
+                  <div class="probability-fill" id="probabilityFill"></div>
+                </div>
+                <span id="probabilityText">Spoilage Probability: 0%</span>
+              </div>
+              <div class="recommendation">
+                <h4><i class="fas fa-clipboard-check"></i> Recommendation</h4>
+                <p id="recommendationText">
+                  Submit food details or upload an image to get analysis.
+                </p>
+                <div class="additional-tips" id="additionalTips"></div>
+              </div>
+              <div class="storage-tip">
+                <h4><i class="fas fa-temperature-low"></i> Storage Tip</h4>
+                <p id="storageTipText">-</p>
+                <div class="optimal-conditions" id="optimalConditions"></div>
+              </div>
+              <div class="safety-warning" id="safetyWarning"></div>
+            </div>
+            <div class="action-buttons">
+              <button class="secondary-btn" id="downloadReport">
+                <i class="fas fa-download"></i> Download Report
+              </button>
+              <button class="primary-btn" id="newAnalysis">
+                <i class="fas fa-redo"></i> New Analysis
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/N-spoilage_form.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+  </body>
+</html>
