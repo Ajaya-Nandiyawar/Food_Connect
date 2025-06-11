@@ -14,6 +14,7 @@ body {
   display: flex;
   min-height: 100vh;
 }
+
 .dashboard-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -257,10 +258,10 @@ tr:hover {
 
 .modal-content {
   background-color: white;
-  margin: 10% auto;
+  margin: 5% auto;
   padding: 20px;
   border-radius: 8px;
-  max-width: 500px;
+  max-width: 800px; /* Increased to accommodate certificate */
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -297,7 +298,6 @@ tr:hover {
   transform: scale(1.1);
   animation: spin 2s infinite linear;
 }
-
 
 @keyframes spin {
   from {
@@ -409,29 +409,45 @@ tr:hover {
   background-color: #fffdf8;
   border-radius: 5px;
   position: relative;
+  min-height: 400px; /* Ensure enough space for the certificate */
 }
 
-.certificate-preview img.watermark {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0.1;
-  width: 80%;
-  pointer-events: none;
+.certificate-inner {
+  text-align: center;
+  padding: 20px;
+  border: 3px double #666;
+  background: url('https://www.transparenttextures.com/patterns/paper-fibers.png'); /* Subtle background texture */
+  height: 100%;
 }
 
 .certificate-title {
-  text-align: center;
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
+  font-size: 28px;
   font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ff8c00;
+  display: inline-block;
+  padding-bottom: 5px;
 }
 
 .certificate-content {
-  text-align: center;
-  line-height: 1.6;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.certificate-content h3 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #e67e22;
+  margin: 10px 0;
+}
+
+.certificate-content h4 {
+  font-size: 20px;
+  font-style: italic;
+  color: #34495e;
+  margin: 10px 0;
 }
 
 .certificate-signature {
@@ -444,6 +460,32 @@ tr:hover {
   height: 1px;
   background-color: #333;
   margin: 10px auto;
+}
+
+.certificate-signature p {
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Style the certificate metadata above the iframe (if needed) */
+.certificate-metadata {
+  margin-bottom: 15px;
+}
+
+.certificate-metadata p {
+  margin: 5px 0;
+}
+
+.certificate-metadata strong {
+  font-weight: bold;
+  width: 100px;
+  display: inline-block;
+  color: #333;
+}
+
+.certificate-metadata span {
+  color: #666;
 }
 
 .notification {
@@ -492,6 +534,54 @@ tr:hover {
   background: linear-gradient(to right, #f57c00, #ffcc00);
   color: white;
   border-color: #ff8400;
+}
+
+/* Certificate Stats Styles */
+.certificate-stats {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 24px 32px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  min-width: 200px;
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-card h3 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #ff8c00;
+}
+
+.stat-card p {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Responsive for certificate stats */
+@media (max-width: 900px) {
+  .certificate-stats {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .stat-card {
+    min-width: unset;
+    width: 100%;
+    padding: 20px;
+  }
 }
 
 /* Responsive adjustments */

@@ -257,7 +257,7 @@ def profile():
     elif organization == 'volunteer':
         user = Volunteer.query.filter_by(email=email).first()
         if user:
-            return render_template("V-Profile.html", name=user.name, email=user.email)
+            return render_template("V-Profile.html", name=user.name, email=user.email, volunteer_id=user.id)
         else:
             return redirect("/login")
     if "name" in session:

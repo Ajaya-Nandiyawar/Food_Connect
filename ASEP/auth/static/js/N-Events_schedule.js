@@ -7,12 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
       ?.getAttribute("content") || "";
 
   // Modal elements
-  const modal = document.getElementById('modal');
-  const overlay = document.getElementById('overlay');
-  const applicationsList = document.getElementById('applicationsList');
-  let currentEventId = null; // Track which event's volunteers are being viewed
+  const modal = document.getElementById("modal");
+  const overlay = document.getElementById("overlay");
+  const applicationsList = document.getElementById("applicationsList");
+  let currentEventId = null;
 
-  // Track current status filter and volunteers data
   let currentStatusFilter = "All";
   let currentVolunteersData = [];
 
@@ -86,15 +85,13 @@ document.addEventListener("DOMContentLoaded", () => {
           `;
           eventsList.appendChild(eventItem);
 
-          // Add event listener for view volunteers button
           const viewButton = eventItem.querySelector(".view-volunteers-btn");
           viewButton.addEventListener("click", () => {
-            currentEventId = event.id; // Store the current event ID
+            currentEventId = event.id;
             fetchVolunteers(event.id);
           });
         });
 
-        // Add delete event listeners
         document.querySelectorAll(".delete-btn").forEach((button) => {
           button.addEventListener("click", () =>
             deleteEvent(button.dataset.id)
@@ -107,20 +104,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-
-
   // Fetch and display volunteers for an event in modal
   function fetchVolunteers(eventId) {
     console.log(`Fetching volunteers for event ${eventId}...`);
     currentEventId = eventId;
-    
-    // Show modal and overlay
-    modal.style.display = 'flex';
-    overlay.style.display = 'block';
-    
-    // Set loading state
-    applicationsList.innerHTML = '<p>Loading volunteers...</p>';
-    
+
+    modal.style.display = "flex";
+    overlay.style.display = "block";
+
+    applicationsList.innerHTML = "<p>Loading volunteers...</p>";
+
     fetch(`/ngo/events/${eventId}/applications`, {
       method: "GET",
       headers: {
@@ -136,13 +129,13 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .then((volunteers) => {
         console.log("Received volunteers:", volunteers);
-        currentVolunteersData = volunteers; // Store the original data
-        
+        currentVolunteersData = volunteers;
+
         if (volunteers.length === 0) {
-          applicationsList.innerHTML = '<p>No volunteers applied yet.</p>';
+          applicationsList.innerHTML = "<p>No volunteers applied yet.</p>";
           return;
         }
-        
+
         renderVolunteers(volunteers);
       })
       .catch((error) => {
@@ -152,20 +145,36 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderVolunteers(volunteers) {
-    applicationsList.innerHTML = '';
-    
-    const filteredVolunteers = currentStatusFilter === "All" 
-      ? volunteers 
-      : volunteers.filter(v => v.status === currentStatusFilter);
-    
+    applicationsList.innerHTML = "";
+
+    const filteredVolunteers =
+      currentStatusFilter === "All"
+        ? volunteers
+        : volunteers.filter((v) => v.status === currentStatusFilter);
+
     if (filteredVolunteers.length === 0) {
       applicationsList.innerHTML = `<p>No ${currentStatusFilter.toLowerCase()} volunteers.</p>`;
       return;
     }
 
     filteredVolunteers.forEach((volunteer) => {
-      const volunteerCard = document.createElement('div');
-      volunteerCard.className = 'volunteer-card';
+      const volunteerCard = document.createElement("div");
+      volunteerCard.className = "volunteer-card";
+      let certificateBtnHTML = "";
+
+      if (volunteer.status === "Completed" && !volunteer.certificate_link) {
+        certificateBtnHTML = `
+          <button class="btn-certificate" data-id="${volunteer.id}">
+            Generate Certificate
+          </button>
+        `;
+      } else if (
+        volunteer.status === "Completed" &&
+        volunteer.certificate_link
+      ) {
+        certificateBtnHTML = `<span class="certificate-status">Certificate Generated</span>`;
+      }
+
       volunteerCard.innerHTML = `
         <div class="volunteer-card-header">
           <div>
@@ -173,53 +182,118 @@ document.addEventListener("DOMContentLoaded", () => {
             <h4 class="volunteer-name">${volunteer.name}</h4>
           </div>
           <div class="volunteer-actions" id="actions-${volunteer.id}">
-            ${volunteer.status === 'Pending' ? `
+            ${
+              volunteer.status === "Pending"
+                ? `
               <button class="btn-approve" data-id="${volunteer.id}">Approve</button>
               <button class="btn-decline" data-id="${volunteer.id}">Decline</button>
-            ` : ''}
+            `
+                : ""
+            }
             <button class="btn-view" data-id="${volunteer.id}">
-              ${volunteer.status !== 'Pending' ? 'View Details' : 'View More'}
+              ${volunteer.status !== "Pending" ? "View Details" : "View More"}
             </button>
+            ${certificateBtnHTML}
           </div>
         </div>
         <div class="volunteer-details" id="details-${volunteer.id}">
-          <p><strong>Email:</strong> ${volunteer.Email || 'N/A'}</p>
-          <p><strong>Phone:</strong> ${volunteer.phone || 'N/A'}</p>
-          <p><strong>City:</strong> ${volunteer.City || 'N/A'}</p>
-          <p><strong>Availability:</strong> ${volunteer.availability || 'N/A'}</p>
-          <p><strong>Reason:</strong> ${volunteer.reason || 'N/A'}</p>
-          <p><strong>Status:</strong> ${volunteer.status || 'Pending'}</p>
+          <p><strong>Email:</strong> ${volunteer.Email || "N/A"}</p>
+          <p><strong>Phone:</strong> ${volunteer.phone || "N/A"}</p>
+          <p><strong>City:</strong> ${volunteer.City || "N/A"}</p>
+          <p><strong>Availability:</strong> ${
+            volunteer.availability || "N/A"
+          }</p>
+          <p><strong>Reason:</strong> ${volunteer.reason || "N/A"}</p>
+          <p><strong>Status:</strong> ${volunteer.status || "Pending"}</p>
         </div>
       `;
       applicationsList.appendChild(volunteerCard);
-      
-      // Add click handler for view more button
-      const viewButton = volunteerCard.querySelector('.btn-view');
-      viewButton.addEventListener('click', () => {
+
+      const viewButton = volunteerCard.querySelector(".btn-view");
+      viewButton.addEventListener("click", () => {
         const details = document.getElementById(`details-${volunteer.id}`);
-        details.classList.toggle('show');
-        viewButton.textContent = details.classList.contains('show') 
-          ? 'View Less' 
-          : (volunteer.status !== 'Pending' ? 'View Details' : 'View More');
+        details.classList.toggle("show");
+        viewButton.textContent = details.classList.contains("show")
+          ? "View Less"
+          : volunteer.status !== "Pending"
+          ? "View Details"
+          : "View More";
       });
-      
-      // Add click handlers for approve/decline buttons if they exist
-      const approveButton = volunteerCard.querySelector('.btn-approve');
-      const declineButton = volunteerCard.querySelector('.btn-decline');
-      
+
+      const approveButton = volunteerCard.querySelector(".btn-approve");
+      const declineButton = volunteerCard.querySelector(".btn-decline");
+
       if (approveButton) {
-        approveButton.addEventListener('click', () => updateVolunteerStatus(volunteer.id, 'Approved'));
+        approveButton.addEventListener("click", () =>
+          updateVolunteerStatus(volunteer.id, "Approved")
+        );
       }
       if (declineButton) {
-        declineButton.addEventListener('click', () => updateVolunteerStatus(volunteer.id, 'Declined'));
+        declineButton.addEventListener("click", () =>
+          updateVolunteerStatus(volunteer.id, "Declined")
+        );
+      }
+
+      const certBtn = volunteerCard.querySelector(".btn-certificate");
+      if (certBtn) {
+        certBtn.addEventListener("click", async () => {
+          certBtn.disabled = true;
+          certBtn.textContent = "Generating...";
+          try {
+            const response = await fetch(
+              `/ngo/generate_certificate/${volunteer.id}`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRF-Token": csrfToken,
+                },
+              }
+            );
+            const result = await response.json();
+            if (response.ok && result.status === "success") {
+              certBtn.style.display = "none";
+              const actionsDiv = volunteerCard.querySelector(
+                `#actions-${volunteer.id}`
+              );
+              actionsDiv.insertAdjacentHTML(
+                "beforeend",
+                `<span class="certificate-status">Certificate Generated</span>`
+              );
+              const idx = currentVolunteersData.findIndex(
+                (v) => v.id === volunteer.id
+              );
+              if (idx !== -1) {
+                currentVolunteersData[idx].certificate_link =
+                  result.certificate_link;
+              }
+              const statusMessage = document.createElement("div");
+              statusMessage.className = "status-message success";
+              statusMessage.textContent = "Certificate generated successfully!";
+              document.body.appendChild(statusMessage);
+              setTimeout(() => statusMessage.remove(), 3000);
+            } else {
+              alert(result.message || "Failed to generate certificate.");
+              certBtn.disabled = false;
+              certBtn.textContent = "Generate Certificate";
+            }
+          } catch (err) {
+            console.error("Error generating certificate:", err);
+            alert("Error generating certificate: " + err.message);
+            certBtn.disabled = false;
+            certBtn.textContent = "Generate Certificate";
+          }
+        });
       }
     });
   }
 
   // Update volunteer application status
   function updateVolunteerStatus(applicationId, status) {
-    console.log(`Updating status for application ${applicationId} to ${status}`);
-    
+    console.log(
+      `Updating status for application ${applicationId} to ${status}`
+    );
+
     fetch(`/ngo/volunteer_applications/${applicationId}/status`, {
       method: "PATCH",
       headers: {
@@ -231,25 +305,26 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((response) => {
         if (!response.ok) {
           return response.text().then((text) => {
-            throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
+            throw new Error(
+              `HTTP error! Status: ${response.status}, Response: ${text}`
+            );
           });
         }
         return response.json();
       })
       .then((data) => {
         if (data.status === "success") {
-          // Update the local data
-          const volunteerIndex = currentVolunteersData.findIndex(v => v.id == applicationId);
+          const volunteerIndex = currentVolunteersData.findIndex(
+            (v) => v.id == applicationId
+          );
           if (volunteerIndex !== -1) {
             currentVolunteersData[volunteerIndex].status = status;
           }
-          
-          // Re-render with current filter
+
           renderVolunteers(currentVolunteersData);
-          
-          // Show success message
-          const statusMessage = document.createElement('div');
-          statusMessage.className = 'status-message success';
+
+          const statusMessage = document.createElement("div");
+          statusMessage.className = "status-message success";
           statusMessage.textContent = `Application ${status} successfully!`;
           document.body.appendChild(statusMessage);
           setTimeout(() => statusMessage.remove(), 3000);
@@ -263,51 +338,46 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-  // Close modal function
   function closeModal() {
-    if (modal) modal.style.display = 'none';
-    if (overlay) overlay.style.display = 'none';
+    if (modal) modal.style.display = "none";
+    if (overlay) overlay.style.display = "none";
   }
 
-  // Add event listener for overlay click
   if (overlay) {
-    overlay.addEventListener('click', closeModal);
+    overlay.addEventListener("click", closeModal);
   }
 
-  // Add event listener for close button
-  const closeButton = document.querySelector('.modal-footer .btn');
+  const closeButton = document.querySelector(".modal-footer .btn");
   if (closeButton) {
-    closeButton.addEventListener('click', closeModal);
+    closeButton.addEventListener("click", closeModal);
   }
 
-  // Add tab switching functionality
-  document.querySelectorAll('.status-tab').forEach(tab => {
-    tab.addEventListener('click', function() {
-      // Remove active class from all tabs
-      document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
-      // Add active class to clicked tab
-      this.classList.add('active');
-      // Filter volunteers by status
+  document.querySelectorAll(".status-tab").forEach((tab) => {
+    tab.addEventListener("click", function () {
+      document
+        .querySelectorAll(".status-tab")
+        .forEach((t) => t.classList.remove("active"));
+      this.classList.add("active");
       const status = this.dataset.status;
       filterVolunteersByStatus(status);
     });
   });
 
-  // Filter volunteers by status
   function filterVolunteersByStatus(status) {
     console.log(`Filtering volunteers by status: ${status}`);
     currentStatusFilter = status;
-    
-    // Update active tab UI
-    document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.status-tab[data-status="${status}"]`).classList.add('active');
-    
-    // Re-render volunteers with the new filter
+
+    document
+      .querySelectorAll(".status-tab")
+      .forEach((t) => t.classList.remove("active"));
+    document
+      .querySelector(`.status-tab[data-status="${status}"]`)
+      .classList.add("active");
+
     renderVolunteers(currentVolunteersData);
   }
 
-  // Add this CSS for status messages
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.textContent = `
     .status-message {
       position: fixed;
@@ -334,10 +404,9 @@ document.addEventListener("DOMContentLoaded", () => {
       to { opacity: 0; transform: translateY(-20px); }
     }
   `;
-document.head.appendChild(style);
+  document.head.appendChild(style);
 
-// Handle event form submission
-eventForm.addEventListener("submit", (e) => {
+  eventForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const formData = new FormData(eventForm);
     const data = {
@@ -352,7 +421,6 @@ eventForm.addEventListener("submit", (e) => {
       description: formData.get("description")?.trim() || "",
     };
 
-    // Validate required fields
     const requiredFields = [
       "name",
       "focus_area",
@@ -403,7 +471,6 @@ eventForm.addEventListener("submit", (e) => {
         console.log("Event creation response:", data);
         if (data.status === "success") {
           eventForm.reset();
-          // Add a small delay to ensure DB commit
           setTimeout(() => {
             fetchEvents();
           }, 500);
@@ -418,7 +485,6 @@ eventForm.addEventListener("submit", (e) => {
       });
   });
 
-  // Delete an event
   function deleteEvent(eventId) {
     console.log(`Deleting event ${eventId}`);
     fetch(`/ngo/events/${eventId}`, {
@@ -454,6 +520,5 @@ eventForm.addEventListener("submit", (e) => {
       });
   }
 
-  // Load events on page load
   fetchEvents();
 });

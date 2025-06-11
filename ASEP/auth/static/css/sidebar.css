@@ -116,7 +116,7 @@
 .achievement-icon,
 .event-icon,
 .alert-icon,
-.user-icon .prediction-icon {
+.user-icon, .prediction-icon {
   background: currentColor;
   mask-size: contain;
   mask-repeat: no-repeat;
